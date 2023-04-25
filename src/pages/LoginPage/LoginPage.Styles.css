@@ -1,0 +1,95 @@
+.login-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  padding: 40px;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,.5);
+  box-shadow: 0 15px 25px rgba(0,0,0,.6);
+  border-radius: 10px;  
+}
+
+.login-box h2 {
+  margin: 0 0 30px;
+  padding: 0;
+  color: #fff;
+  text-align: center;
+}
+
+.login-box .user-box {
+  position: relative;
+}
+
+.login-box .user-box input {
+  width: 100%;
+  padding: 10px 0;
+  font-size: 1.5em;
+  color: #fff;
+  margin-bottom: 30px;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  background: transparent;
+}
+
+.login-box .user-box label {
+  position: absolute;
+  top:0;
+  left: 0;
+  padding: 10px 0;
+  font-size: 1.5em;
+  color: #fff;
+  pointer-events: none;
+  transition: .5s;
+}
+
+.login-box .user-box input:focus ~ label,
+.login-box .user-box input:valid > label,
+.login-box .user-box.has-value label {
+  top: -20px;
+  left: 0px;
+  color: #3ddc97;
+  font-size: 1em;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+}
+
+.login-button,
+.sign-up-button {
+  position: relative;
+  display: inline-block;
+  padding: 10px 20px;
+  color: #3ddc97;
+  font-size: 16px;
+  text-decoration: none;
+  text-transform: uppercase;
+  overflow: hidden;
+  transition: .5s;
+  margin-top: 40px;
+  letter-spacing: 4px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.login-button:hover,
+.sign-up-button:hover {
+  background: #3ddc97;
+  color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #3ddc97,
+              0 0 25px #3ddc97,
+              0 0 50px #3ddc97,
+              0 0 100px #3ddc97;
+}
+
+@media screen and (max-width: 488px) {
+    .login-box {
+        width: 17em;
+        padding: 20px;
+    }
+}
