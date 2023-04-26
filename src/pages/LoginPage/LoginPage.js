@@ -15,6 +15,7 @@ const Background = styled.div`
 
 // TODO:
 // 1. Handle Forgotten Password
+// 2. Add Google sign in
 
 const LoginPage = () => {
 
@@ -45,36 +46,36 @@ const LoginPage = () => {
         }
     };
 
-    // const handleSignUp = async (event) => {
-    //     event.preventDefault();
+    const handleSignUp = async (event) => {
+        event.preventDefault();
 
-    //     try {
-    //         const { user } = await createUser(email, password);
-    //         console.log('User created successfully!');
+        try {
+            const { user } = await createUser(email, password);
+            console.log('User created successfully!');
 
-    //         const userRef = doc(collection(db, 'users'), user.uid);
-    //         await setDoc(userRef, {
-    //             uid: user.uid,
-    //             email: user.email,
-    //             createdAt: new Date(),
-    //         });
+            // const userRef = doc(collection(db, 'users'), user.uid);
+            // await setDoc(userRef, {
+            //     uid: user.uid,
+            //     email: user.email,
+            //     createdAt: new Date(),
+            // });
 
-    //         // Create the 'tasks' sub=collection for the new user
-    //         const tasksRef = collection(userRef, 'tasks');
+            // // Create the 'tasks' sub=collection for the new user
+            // const tasksRef = collection(userRef, 'tasks');
 
-    //         // Add a sample task to 'tasks' sub-collection
-    //         await addDoc(tasksRef, {
-    //             title: 'Sample task',
-    //             completed: false,
-    //             userId: user.uid,
-    //             note: 'A brief description.'
-    //         });
+            // // Add a sample task to 'tasks' sub-collection
+            // await addDoc(tasksRef, {
+            //     title: 'Sample task',
+            //     completed: false,
+            //     userId: user.uid,
+            //     note: 'A brief description.'
+            // });
 
-    //         // navigate('/'); TODO: Navigate to Feed
-    //     } catch (error) {
-    //         setError(error.message)
-    //     }
-    // };
+            // navigate('/'); TODO: Navigate to Feed
+        } catch (error) {
+            setError(error.message)
+        }
+    };
 
 
   return (
@@ -89,9 +90,12 @@ const LoginPage = () => {
                     <input type="password" name="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} onBlur={handleInputChange} onFocus={handleInputChange} />
                     <label htmlFor="password" >Password</label>
                 </div>
+                <div className="info">
+                    <p>Don't have an account? Fill in your email and a new password, then click sign up.</p>
+                </div>
                 <div className="controls">
                     <button className="login-button" type="submit">Log In</button>
-                    {/* <button onClick={handleSignUp} className="sign-up-button" >Sign Up</button> */}
+                    <button onClick={handleSignUp} className="sign-up-button" >Sign Up</button>
                 </div>
                 {error && <div>{error}</div>}
             </form>
