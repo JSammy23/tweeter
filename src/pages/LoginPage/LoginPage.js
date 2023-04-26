@@ -3,7 +3,15 @@ import app from "../../firebase.config";
 import auth, { login, createUser } from "../../services/auth";
 import { collection, setDoc, addDoc, doc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import './LoginPage.Styles.css';        
+import './LoginPage.Styles.css'; 
+import styled from "styled-components";  
+
+const Background = styled.div`
+    background-color: ${props => props.theme.colors.bgDark};
+    width: 100vw;
+    height: 100vh;
+`
+
 
 // TODO:
 // 1. Handle Forgotten Password
@@ -70,7 +78,7 @@ const LoginPage = () => {
 
 
   return (
-    <div>
+    <Background>
         <div className="login-box">
             <form onSubmit={handleLogin}>
                 <div className="user-box">
@@ -88,7 +96,7 @@ const LoginPage = () => {
                 {error && <div>{error}</div>}
             </form>
         </div>
-    </div>
+    </Background>
   )
 }
 
