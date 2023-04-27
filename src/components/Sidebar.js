@@ -32,6 +32,12 @@ const Nav = styled.nav`
     span {
         margin-left: .3em;
     }
+
+    @media (max-width: 868px) {
+        span {
+            display: none;
+        }
+    }
  }
 `;
 
