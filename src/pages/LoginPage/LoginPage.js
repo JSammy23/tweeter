@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import app from "../../firebase.config";
-import auth, { login, createUser } from "../../services/auth";
-import { collection, setDoc, addDoc, doc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+import auth, { login } from "services/auth";
+import { useNavigate, Link } from "react-router-dom";
 import './LoginPage.Styles.css'; 
 import styled from "styled-components";  
 
@@ -46,36 +45,7 @@ const LoginPage = () => {
         }
     };
 
-    const handleSignUp = async (event) => {
-        event.preventDefault();
-
-        try {
-            const { user } = await createUser(email, password);
-            console.log('User created successfully!');
-
-            // const userRef = doc(collection(db, 'users'), user.uid);
-            // await setDoc(userRef, {
-            //     uid: user.uid,
-            //     email: user.email,
-            //     createdAt: new Date(),
-            // });
-
-            // // Create the 'tasks' sub=collection for the new user
-            // const tasksRef = collection(userRef, 'tasks');
-
-            // // Add a sample task to 'tasks' sub-collection
-            // await addDoc(tasksRef, {
-            //     title: 'Sample task',
-            //     completed: false,
-            //     userId: user.uid,
-            //     note: 'A brief description.'
-            // });
-
-            // navigate('/'); TODO: Navigate to Feed
-        } catch (error) {
-            setError(error.message)
-        }
-    };
+    
 
 
   return (
@@ -91,13 +61,13 @@ const LoginPage = () => {
                     <label htmlFor="password" >Password</label>
                 </div>
                 <div className="info">
-                    <p>Don't have an account? Fill in your email and a new password, then click sign up.</p>
+                    <p>Don't have an account? Click sign up below.</p>
                 </div>
                 <div className="controls">
                     <button className="login-button" type="submit">Log In</button>
-                    <button onClick={handleSignUp} className="sign-up-button" >Sign Up</button>
+                    <Link to='/signup' className="sign-up-button" >Sign Up</Link>
                 </div>
-                {error && <div>{error}</div>}
+                {error && <div className='error'>{error}</div>}
             </form>
         </div>
     </Background>
