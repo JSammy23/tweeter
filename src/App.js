@@ -22,7 +22,7 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/" element={user ? <Navigate to="/home" /> : <LoginPage />} />
-        <Route path="/home" element={<FeedPage />} />
+        <Route path="/home" element={<FeedPage user={user} />} />
         <Route path="/signup" element={<SignUpPage />} />
       </Routes>
     </div>
