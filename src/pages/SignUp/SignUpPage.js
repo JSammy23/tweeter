@@ -3,13 +3,9 @@ import auth, { createUser } from 'services/auth.js';
 import { collection, setDoc, doc } from 'firebase/firestore';
 import db from 'services/storage.js';
 import styled from 'styled-components';
+import { Background } from 'styles/styledComponents';
 import 'pages/LoginPage/LoginPage.Styles.css';
 
-const Background = styled.div`
-    background-color: ${props => props.theme.colors.bgDark};
-    width: 100vw;
-    height: 100vh;
-`
 
 const SignUpPage = () => {
 
