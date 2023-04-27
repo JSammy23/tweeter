@@ -72,8 +72,8 @@ const Sidebar = ({ user }) => {
             <Nav>
                 <ul>
                     <li><FontAwesomeIcon icon={faHome} /><span>Home</span></li>
-                    <li><FontAwesomeIcon icon={faHashtag} /><span>Explore</span></li>
-                    <li><FontAwesomeIcon icon={faUser} /><span>Profile</span></li>
+                    <li><FontAwesomeIcon icon={faHashtag} /> <span>Explore</span></li>
+                    <li><FontAwesomeIcon icon={faUser} /> <span>Profile</span></li>
                 </ul>
             </Nav>
         </div>
