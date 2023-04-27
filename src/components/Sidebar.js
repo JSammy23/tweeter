@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Logo } from 'styles/styledComponents';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTwitter } from '@fortawesome/fontawesome-free-brands';
+import { faHome, faHashtag, faUser } from '@fortawesome/fontawesome-free-solid';
 
 
 const Header = styled.header`
@@ -26,6 +27,10 @@ const Nav = styled.nav`
 
     &:hover {
         color: ${props => props.theme.colors.accent};
+    }
+
+    span {
+        margin-left: .3em;
     }
  }
 `;
@@ -60,9 +65,9 @@ const Sidebar = ({ user }) => {
             <Logo><FontAwesomeIcon icon={faTwitter} /></Logo>
             <Nav>
                 <ul>
-                    <li>Home</li>
-                    <li>Explore</li>
-                    <li>Profile</li>
+                    <li><FontAwesomeIcon icon={faHome} /><span>Home</span></li>
+                    <li><FontAwesomeIcon icon={faHashtag} /><span>Explore</span></li>
+                    <li><FontAwesomeIcon icon={faUser} /><span>Profile</span></li>
                 </ul>
             </Nav>
         </div>
