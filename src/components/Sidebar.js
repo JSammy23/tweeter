@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { logout } from 'services/auth';
 import styled from 'styled-components';
 import { Logo } from 'styles/styledComponents';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTwitter } from '@fortawesome/fontawesome-free-brands';
 import { faHome, faHashtag, faUser } from '@fortawesome/fontawesome-free-solid';
+import { AppContext } from 'services/appContext';
 
 
 const Header = styled.header`
@@ -26,6 +27,10 @@ const Nav = styled.nav`
     cursor: pointer;
 
     &:hover {
+        color: ${props => props.theme.colors.accent};
+    }
+
+    &.active {
         color: ${props => props.theme.colors.accent};
     }
 
@@ -61,6 +66,12 @@ const UserControls = styled.div`
 
 const Sidebar = ({ user }) => {
 
+    const { activeFilter, setActiveFilter } = useContext(AppContext);
+
+    const handleNavClick = (filter) => {
+        setActiveFilter(filter);
+    };
+
     const handleLogout = () => {
         logout();
     };
@@ -71,9 +82,9 @@ const Sidebar = ({ user }) => {
             <Logo><FontAwesomeIcon icon={faTwitter} /></Logo>
             <Nav>
                 <ul>
-                    <li><FontAwesomeIcon icon={faHome} /><span>Home</span></li>
-                    <li><FontAwesomeIcon icon={faHashtag} /> <span>Explore</span></li>
-                    <li><FontAwesomeIcon icon={faUser} /> <span>Profile</span></li>
+                    <li onClick={() => handleNavClick('home')} className={activeFilter === 'home' ? 'active' : ''} ><FontAwesomeIcon icon={faHome} /><span>Home</span></li>
+                    <li onClick={() => handleNavClick('explore')} className={activeFilter === 'explore' ? 'active' : ''} ><FontAwesomeIcon icon={faHashtag} /> <span>Explore</span></li>
+                    <li onClick={() => handleNavClick('profile')} className={activeFilter === 'profile' ? 'active' : ''} ><FontAwesomeIcon icon={faUser} /> <span>Profile</span></li>
                 </ul>
             </Nav>
         </div>
