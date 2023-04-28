@@ -53,11 +53,16 @@ const SignUpPage = () => {
 
             // Create user sub-collection followers
             const followersRef = collection(userRef, 'followers');
-            // TODO: Add Tom as first follower
+            // Add Tom as first follower
+            await addDoc(followersRef, {
+                user: 'Lpckb0DmB4ahjnLruadN7Kjisa42'
+            });
 
             // Create user sub-collection following
             const followingRef = collection(userRef, 'following');
-
+            await addDoc(followingRef, {
+                user: 'Lpckb0DmB4ahjnLruadN7Kjisa42'
+            });
 
             // navigate('/'); TODO: Navigate to Feed
         } catch (error) {
