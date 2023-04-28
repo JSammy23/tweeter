@@ -68,6 +68,12 @@ const Sidebar = ({ user }) => {
 
     const { activeFilter, setActiveFilter } = useContext(AppContext);
 
+    const navItems = [
+        {id: 'home', icon: faHome, text: 'Home'},
+        {id: 'explore', icon: faHashtag, text: 'Explore'},
+        {id: 'profile', icon: faUser, text: 'Profile'},
+    ];
+
     const handleNavClick = (filter) => {
         setActiveFilter(filter);
     };
@@ -82,9 +88,15 @@ const Sidebar = ({ user }) => {
             <Logo><FontAwesomeIcon icon={faTwitter} /></Logo>
             <Nav>
                 <ul>
-                    <li onClick={() => handleNavClick('home')} className={activeFilter === 'home' ? 'active' : ''} ><FontAwesomeIcon icon={faHome} /><span>Home</span></li>
-                    <li onClick={() => handleNavClick('explore')} className={activeFilter === 'explore' ? 'active' : ''} ><FontAwesomeIcon icon={faHashtag} /> <span>Explore</span></li>
-                    <li onClick={() => handleNavClick('profile')} className={activeFilter === 'profile' ? 'active' : ''} ><FontAwesomeIcon icon={faUser} /> <span>Profile</span></li>
+                    {navItems.map((item) => (
+                        <li
+                        key={item.id}
+                        onClick={() => handleNavClick(item.id)}
+                        className={activeFilter === item.id ? 'active' : ''} >
+                            <FontAwesomeIcon icon={item.icon} />
+                            <span>{item.text}</span>
+                        </li>
+                    ))}
                 </ul>
             </Nav>
         </div>
