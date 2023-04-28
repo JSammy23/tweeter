@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import auth, { createUser } from 'services/auth.js';
 import { collection, setDoc, doc, addDoc, Timestamp } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 import db from 'services/storage.js';
 import styled from 'styled-components';
 import { Background } from 'styles/styledComponents';
@@ -13,6 +14,8 @@ const SignUpPage = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
+
+    const navigate = useNavigate();
 
 
     const handleSignUp = async (event) => {
@@ -64,7 +67,7 @@ const SignUpPage = () => {
                 user: 'Lpckb0DmB4ahjnLruadN7Kjisa42'
             });
 
-            // navigate('/'); TODO: Navigate to Feed
+            navigate('/home'); 
         } catch (error) {
             setError(error.message)
         }
