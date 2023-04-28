@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import auth, { createUser } from 'services/auth.js';
-import { collection, setDoc, doc } from 'firebase/firestore';
+import { collection, setDoc, doc, addDoc, Timestamp } from 'firebase/firestore';
 import db from 'services/storage.js';
 import styled from 'styled-components';
 import { Background } from 'styles/styledComponents';
@@ -28,22 +28,36 @@ const SignUpPage = () => {
             console.log('User created successfully!');
 
             const userRef = doc(collection(db, 'users'), user.uid);
+            const date = new Date();
             await setDoc(userRef, {
                 uid: user.uid,
                 email: user.email,
-                createdAt: new Date(),
+                createdAt: Timestamp.fromDate(date),
             });
 
-            // // Create the 'tasks' sub=collection for the new user
-            // const tasksRef = collection(userRef, 'tasks');
+            // Create user first tweet
+            const tweetsRef = collection(db, 'tweets');
+            const newTweetRef = await addDoc(tweetsRef, {
+                authorID: user.uid,
+                body: 'I just joined the twitter clone Tweeter!',
+                date: Timestamp.fromDate(date),
+            });
 
-            // // Add a sample task to 'tasks' sub-collection
-            // await addDoc(tasksRef, {
-            //     title: 'Sample task',
-            //     completed: false,
-            //     userId: user.uid,
-            //     note: 'A brief description.'
-            // });
+            const tweetID = newTweetRef.id;
+
+            // Create user sub-collection tweetBucket
+            const tweetBucketRef = collection(userRef, 'tweetBucket');
+            await addDoc(tweetBucketRef, {
+                tweetID: tweetID,
+            });
+
+            // Create user sub-collection followers
+            const followersRef = collection(userRef, 'followers');
+            // TODO: Add Tom as first follower
+
+            // Create user sub-collection following
+            const followingRef = collection(userRef, 'following');
+
 
             // navigate('/'); TODO: Navigate to Feed
         } catch (error) {
