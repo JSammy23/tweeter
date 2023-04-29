@@ -7,3 +7,17 @@
 body {
   background-color: #1e1e24;
 }
+
+/* Utilities */
+
+.flex {
+  display: flex;
+}
+
+.column {
+  flex-direction: column;
+}
+
+.spacer {
+  justify-content: space-between;
+}
