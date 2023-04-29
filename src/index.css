@@ -21,3 +21,8 @@ body {
 .spacer {
   justify-content: space-between;
 }
+
+.center {
+  justify-content: center;
+  align-items: center;
+}
