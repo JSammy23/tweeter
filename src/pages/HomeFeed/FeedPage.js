@@ -1,11 +1,10 @@
 import React from 'react'
 import Sidebar from 'components/Sidebar';
+import Feed from 'components/Feed';
 
 
 import styled from 'styled-components';
-import { Background, Logo, Wrapper } from 'styles/styledComponents';
-
-
+import { Background, Wrapper } from 'styles/styledComponents';
 
 
 
@@ -16,7 +15,7 @@ const Grid = styled.div`
   @media (max-width: 1200px) {
     grid-template-columns: 1fr 600px;
   }
-`
+`;
 
 const FeedPage = ({ user }) => {
   return (
@@ -24,7 +23,7 @@ const FeedPage = ({ user }) => {
       <Wrapper>
         <Grid>
         <Sidebar user={user}/>
-        {/* Feed component */}
+        <Feed user={user}/>
         </Grid>
       </Wrapper>
     </Background>
