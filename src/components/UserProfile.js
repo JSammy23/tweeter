@@ -1,8 +1,10 @@
 import React, { useContext, useState } from 'react';
 import auth from 'services/auth';
+import EditProfile from './EditProfile';
 
 
 import styled from 'styled-components';
+import { Title, UserHandle, Button } from 'styles/styledComponents';
 
 
 const ProfileCard = styled.div`
@@ -21,33 +23,6 @@ const UserImage = styled.img`
  margin: .7em;
 `;
 
-const Button = styled.button`
- background-color: ${props => props.theme.colors.primary};
- font-size: 1em;
- font-weight: bold;
- padding: .5em;
- margin: .7em;
- border-radius: 10px;
- border: none;
- outline: none;
- cursor: pointer;
-
- &:hover {
-     background-color: ${props => props.theme.colors.accent};
- }
-`;
-
-const Title = styled.h2`
- color: ${props => props.theme.colors.primary};
- font-weight: bold;
- margin-left: .7em;
-`;
-
-const UserHandle = styled.h3`
- color: ${props => props.theme.colors.secondary};
- margin-left: .7em;
-`;
-
 
 
 const UserProfile = () => {
@@ -57,7 +32,7 @@ const UserProfile = () => {
     const user = auth.currentUser;
 
     const toggleEditProfile = () => {
-        setEditProfile(true);
+        setEditProfile(!editProfile);
     };
     
 
@@ -76,6 +51,7 @@ const UserProfile = () => {
             <UserHandle>{user.handle || '@userhandle'}</UserHandle>
         </div>
         {/* TODO: Add follower & following count */}
+        {editProfile && (<EditProfile toggleClose={toggleEditProfile} />)}
     </ProfileCard>
   )
 }
