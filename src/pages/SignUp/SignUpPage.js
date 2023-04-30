@@ -13,6 +13,8 @@ const SignUpPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [displayName, setDisplayName] = useState('');
+    const [userHandle, setUserHandle] = useState('');
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
@@ -30,12 +32,14 @@ const SignUpPage = () => {
             const { user } = await createUser(email, password);
             console.log('User created successfully!');
 
-            const userRef = doc(collection(db, 'users'), user.uid);
+            const userRef = doc(db, 'users', user.uid);
             const date = new Date();
             await setDoc(userRef, {
                 uid: user.uid,
                 email: user.email,
                 createdAt: Timestamp.fromDate(date),
+                userHandle: userHandle,
+                displayName: displayName,
             });
 
             // Create user first tweet
@@ -85,20 +89,32 @@ const SignUpPage = () => {
     <Background>
         <div className="login-box">
             <form onSubmit={handleSignUp}>
-                <div className="user-box">
-                    <input type="email" name="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} onBlur={handleInputChange} onFocus={handleInputChange} />
-                    <label htmlFor="email" >Email</label>
+                <div>
+                    <div className="user-box">
+                        <input type="email" name="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} onBlur={handleInputChange} onFocus={handleInputChange} />
+                        <label htmlFor="email" >Email</label>
+                    </div>
+                    <div className="user-box">
+                        <input type="password" name="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} onBlur={handleInputChange} onFocus={handleInputChange} />
+                        <label htmlFor="password" >Password</label>
+                    </div>
+                    <div className="user-box">
+                        <input type="password" name='confirmPassword' id='confirmPassword' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} onBlur={handleInputChange} onFocus={handleInputChange} />
+                        <label htmlFor="confirmPassword">Confirm Password</label>
+                    </div>
+                    <div className="info">
+                        <p></p>
+                    </div>
                 </div>
-                <div className="user-box">
-                    <input type="password" name="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} onBlur={handleInputChange} onFocus={handleInputChange} />
-                    <label htmlFor="password" >Password</label>
-                </div>
-                <div className="user-box">
-                    <input type="password" name='confirmPassword' id='confirmPassword' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} onBlur={handleInputChange} onFocus={handleInputChange} />
-                    <label htmlFor="confirmPassword">Confirm Password</label>
-                </div>
-                <div className="info">
-                    <p></p>
+                <div>
+                    <div className="user-box">
+                        <input type="text" name='displayName' id='displayName' value={displayName} onChange={(e) => setDisplayName(e.target.value)} onBlur={handleInputChange} onFocus={handleInputChange} />
+                        <label htmlFor="displayName" >Display Name</label>
+                    </div>
+                    <div className="user-box">
+                        <input type="text" name='userHandle' id='userHandle' value={userHandle} onChange={(e) => setUserHandle(e.target.value)} onBlur={handleInputChange} onFocus={handleInputChange} />
+                        <label htmlFor="userHandle" >User Handle</label>
+                    </div>
                 </div>
                 <div className="sign-up-controls">
                     <button className="login-button" type="submit">Sign Up</button>
