@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import auth from 'services/auth';
-import EditProfile from './EditProfile';
+import EditProfile from './Edit Profile/EditProfile';
 
 
 import styled from 'styled-components';
