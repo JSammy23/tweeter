@@ -1,0 +1,38 @@
+.float-label {
+  position: relative;
+  border: 1px solid;
+  border-color: var(--primary);
+  width: 100%;
+  padding: .2em;
+  margin-top: .5em;
+}
+
+.float-label input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 1.1em;
+    color: var(--primary);
+    padding: .3em;
+    margin: 1em 0;
+}
+
+.float-label label {
+    position: absolute;
+    top: .8em;
+    left: 0;
+    padding: .5em;
+    font-size: 1.2em;
+    color: #fff;
+    pointer-events: none;
+    transition: .5s;
+}
+
+.float-label input:focus ~ label,
+.float-label input:valid > label,
+.float-label.has-value label {
+    top: -7px;
+    left: 0px;
+    font-size: 1em;
+    color: var(--accent);
+}
