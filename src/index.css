@@ -1,3 +1,11 @@
+:root {
+  --primary: #3ddc97;
+  --secondary: #357266;
+  --bg-light: #edf5fc;
+  --bg-dark: #1e1e24;
+  --accent: #63adf2;
+}
+
 *, *::before, *::after {
   margin: 0;
   padding: 0;
