@@ -23,7 +23,7 @@ const FeedPage = ({ user }) => {
       <Wrapper>
         <Grid>
         <Sidebar user={user}/>
-        <Feed user={user}/>
+        <Feed />
         </Grid>
       </Wrapper>
     </Background>
