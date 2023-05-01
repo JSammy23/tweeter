@@ -55,7 +55,7 @@ const UserProfile = ({ user }) => {
         </div>
         <div className="flex column">
             <Title>{user?.displayName}</Title>
-            <UserHandle>@{user?.userHandle}</UserHandle>
+            <UserHandle>{user?.userHandle}</UserHandle>
         </div>
         {/* TODO: Add follower & following count */}
         {editProfile && (
