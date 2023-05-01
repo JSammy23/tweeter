@@ -134,7 +134,11 @@ const SignUpPage = () => {
                 {error && <div className='error'>{error}</div>}
             </form>
         </div>
-        {isLoading && <Loading />}
+        {isLoading && (
+            <div className='overlay' >
+                <Loading />
+            </div>
+        )}
     </Background>
   )
 }
