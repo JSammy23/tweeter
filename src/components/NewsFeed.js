@@ -2,12 +2,13 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'services/appContext';
 import db from 'services/storage';
+import Tweet from './Tweet';
 
 import styled from 'styled-components';
 
 
 const Container = styled.div`
- width: 95%;
+ width: 100%;
  margin-left: auto;
  margin-right: auto;
  display: flex;
@@ -39,7 +40,9 @@ const NewsFeed = ({ user }) => {
 
   return (
     <Container>
-
+        {tweets.map((tweet) => (
+            <Tweet key={tweet.id} tweet={tweet} />
+        ))}
     </Container>
   )
 }
