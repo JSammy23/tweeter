@@ -5,7 +5,7 @@ import EditProfile from './Edit Profile/EditProfile';
 
 import styled from 'styled-components';
 import { Title, UserHandle, Button } from 'styles/styledComponents';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import db from 'services/storage';
 import { onAuthStateChanged } from 'firebase/auth';
 
@@ -55,6 +55,28 @@ const UserProfile = () => {
         return unsubscribe
     }, []);
 
+    useEffect(() => {
+        if (user) {
+          const userRef = doc(db, 'users', user.uid);
+          const unsubscribe = onSnapshot(userRef, (doc) => {
+            if (doc.exists()) {
+              setUser(doc.data());
+            }
+            else {
+              setUser(null);
+            }
+          });
+          return unsubscribe;
+        }
+    }, [user]);
+      
+
+    const handleUpdateUser = async (updatedUser) => {
+        setEditProfile(false);
+        const userRef = doc(db, 'users', user.uid);
+        await setDoc(userRef, updatedUser);
+    };
+
   return (
     <ProfileCard>
         <div className="flex spacer">
@@ -70,7 +92,10 @@ const UserProfile = () => {
             <UserHandle>@{user?.userHandle}</UserHandle>
         </div>
         {/* TODO: Add follower & following count */}
-        {editProfile && (<EditProfile toggleClose={toggleEditProfile} />)}
+        {editProfile && (
+        <EditProfile onUpdateUser={handleUpdateUser} 
+        toggleClose={toggleEditProfile}
+        user={user} />)}
     </ProfileCard>
   )
 }

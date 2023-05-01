@@ -34,26 +34,23 @@ const IconBtn = styled.button`
 
 
 
-const EditProfile = ({ toggleClose }) => {
+const EditProfile = ({ toggleClose, user, onUpdateUser }) => {
 
-    const user = auth.currentUser;
-    const [displayName, setDisplayName] = useState(user ? user.displayName : '');
-    const [userHandle, setUserHandle] = useState(user ? user.userHandle : '');
+    const [displayName, setDisplayName] = useState(user.displayName);
+    const [userHandle, setUserHandle] = useState(user.userHandle);
+    
     
 
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-
-        switch (name) {
-            case 'displayName':
-                setDisplayName(value);
-                break;
-            case 'userHandle':
-                setUserHandle(value);
-                break;
-            default:
-                break;
-        }
+    const handleSubmit = (event) => {
+        event.preventDefault();
+    
+        const updatedUser = {
+          ...user,
+          displayName,
+          userHandle,
+        };
+    
+        onUpdateUser(updatedUser);
     };
 
     const handleInputChange = (e) => {
@@ -74,15 +71,15 @@ const EditProfile = ({ toggleClose }) => {
                 <IconBtn onClick={toggleClose} ><FontAwesomeIcon icon={faTimesCircle} /></IconBtn>
                 <p>Edit Profile</p>
             </div>
-            <Button fontSize='.6em' >Save</Button>
+            <Button form='editProfile' type='submit' fontSize='.6em' >Save</Button>
         </Header>
-        <form>
-            <div className='float-label' >
-                <input type="text" name='displayName' id='displayName' required  onChange={handleChange} onBlur={handleInputChange} onFocus={handleInputChange}/>
+        <form id='editProfile' onSubmit={handleSubmit} >
+            <div className='float-label has-value' >
+                <input type="text" name='displayName' id='displayName' required  onChange={(e) => setDisplayName(e.target.value)} onBlur={handleInputChange} onFocus={handleInputChange} value={displayName}/>
                 <label htmlFor="dislpayName">Display Name</label>
             </div>
-            <div className='float-label' >
-                <input type="text" name='userHandle' id='userHandle' required onChange={handleChange} onBlur={handleInputChange} onFocus={handleInputChange} />
+            <div className='float-label has-value' >
+                <input type="text" name='userHandle' id='userHandle' required onChange={(e) => setUserHandle(e.target.value)} onBlur={handleInputChange} onFocus={handleInputChange} value={userHandle} />
                 <label htmlFor="userHandle">User Handle</label>
             </div>
         </form>
