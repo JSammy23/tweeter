@@ -48,7 +48,7 @@ const SignUpPage = () => {
                 uid: user.uid,
                 email: user.email,
                 createdAt: Timestamp.fromDate(date),
-                userHandle: userHandle,
+                userHandle: `@${userHandle}`,
                 displayName: displayName,
                 profileImg: imageURL,
             });
