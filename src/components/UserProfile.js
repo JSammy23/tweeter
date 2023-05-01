@@ -1,10 +1,13 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import auth from 'services/auth';
 import EditProfile from './Edit Profile/EditProfile';
 
 
 import styled from 'styled-components';
 import { Title, UserHandle, Button } from 'styles/styledComponents';
+import { doc, getDoc } from 'firebase/firestore';
+import db from 'services/storage';
+import { onAuthStateChanged } from 'firebase/auth';
 
 
 const ProfileCard = styled.div`
@@ -28,27 +31,43 @@ const UserImage = styled.img`
 const UserProfile = () => {
 
     const [editProfile, setEditProfile] = useState(false);
+    const [user, setUser] = useState(null);
 
-    const user = auth.currentUser;
-
+    
     const toggleEditProfile = () => {
         setEditProfile(!editProfile);
     };
     
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userRef);
+
+                if (userDoc.exists()) {
+                    setUser(userDoc.data());
+                }
+                else {
+                    setUser(null);
+                }
+            }
+        });
+        return unsubscribe
+    }, []);
 
   return (
     <ProfileCard>
         <div className="flex spacer">
             <div>
-                <UserImage src={user.photoURL} />
+                <UserImage src={user?.profileImg} />
             </div>
             <div>
                 <Button onClick={toggleEditProfile} >Edit profile</Button>
             </div>
         </div>
         <div className="flex column">
-            <Title>{user.displayName || 'New User'}</Title>
-            <UserHandle>{user.handle || '@userhandle'}</UserHandle>
+            <Title>{user?.displayName}</Title>
+            <UserHandle>@{user?.userHandle}</UserHandle>
         </div>
         {/* TODO: Add follower & following count */}
         {editProfile && (<EditProfile toggleClose={toggleEditProfile} />)}
