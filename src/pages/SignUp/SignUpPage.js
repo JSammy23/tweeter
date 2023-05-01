@@ -3,9 +3,12 @@ import auth, { createUser } from 'services/auth.js';
 import { collection, setDoc, doc, addDoc, Timestamp } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import db from 'services/storage.js';
+import { storage } from 'services/storage.js';
+import { getDownloadURL, ref } from 'firebase/storage';
 import styled from 'styled-components';
 import { Background } from 'styles/styledComponents';
 import 'pages/LoginPage/LoginPage.Styles.css';
+import Loading from 'components/Loading/Loading';
 
 
 const SignUpPage = () => {
@@ -16,12 +19,14 @@ const SignUpPage = () => {
     const [displayName, setDisplayName] = useState('');
     const [userHandle, setUserHandle] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
 
 
     const handleSignUp = async (event) => {
         event.preventDefault();
+        setIsLoading(true);
 
         if (password !== confirmPassword) {
             setError('Passwords do not match!');
@@ -32,6 +37,11 @@ const SignUpPage = () => {
             const { user } = await createUser(email, password);
             console.log('User created successfully!');
 
+            // Assign user stock prfoile image
+            const imageRef = ref(storage, '/profile-imgs/default-user.jpg');
+            const imageURL = await getDownloadURL(imageRef);
+
+            // Add user to the users collection by uid
             const userRef = doc(db, 'users', user.uid);
             const date = new Date();
             await setDoc(userRef, {
@@ -40,6 +50,7 @@ const SignUpPage = () => {
                 createdAt: Timestamp.fromDate(date),
                 userHandle: userHandle,
                 displayName: displayName,
+                profileImg: imageURL,
             });
 
             // Create user first tweet
@@ -73,6 +84,7 @@ const SignUpPage = () => {
 
             navigate('/home'); 
         } catch (error) {
+            setIsLoading(false);
             setError(error.message)
         }
     };
@@ -122,6 +134,7 @@ const SignUpPage = () => {
                 {error && <div className='error'>{error}</div>}
             </form>
         </div>
+        {isLoading && <Loading />}
     </Background>
   )
 }
