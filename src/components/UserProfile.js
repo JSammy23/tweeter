@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { Title, UserHandle, Button } from 'styles/styledComponents';
 import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import db from 'services/storage';
-import { onAuthStateChanged } from 'firebase/auth';
+
 
 
 const ProfileCard = styled.div`
@@ -28,49 +28,15 @@ const UserImage = styled.img`
 
 
 
-const UserProfile = () => {
+const UserProfile = ({ user }) => {
 
     const [editProfile, setEditProfile] = useState(false);
-    const [user, setUser] = useState(null);
 
     
     const toggleEditProfile = () => {
         setEditProfile(!editProfile);
     };
     
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const userRef = doc(db, 'users', user.uid);
-                const userDoc = await getDoc(userRef);
-
-                if (userDoc.exists()) {
-                    setUser(userDoc.data());
-                }
-                else {
-                    setUser(null);
-                }
-            }
-        });
-        return unsubscribe
-    }, []);
-
-    useEffect(() => {
-        if (user) {
-          const userRef = doc(db, 'users', user.uid);
-          const unsubscribe = onSnapshot(userRef, (doc) => {
-            if (doc.exists()) {
-              setUser(doc.data());
-            }
-            else {
-              setUser(null);
-            }
-          });
-          return unsubscribe;
-        }
-    }, [user]);
-      
-
     const handleUpdateUser = async (updatedUser) => {
         setEditProfile(false);
         const userRef = doc(db, 'users', user.uid);
