@@ -6,7 +6,7 @@ import { format, addDays } from 'date-fns';
 import styled from 'styled-components';
 import { Title, UserHandle } from 'styles/styledComponents';
 
-const TweetCard = styled.div`
+export const TweetCard = styled.div`
  width: 100%;
  display: flex;
  padding: .5em;
@@ -24,9 +24,9 @@ const Div = styled.div`
  justify-content: space-between;
 `;
 
-const UserImage = styled.img`
- width: 75px;
- height: 75px;
+export const UserImage = styled.img`
+ width: 60px;
+ height: 60px;
  border-radius: 50%;
  border: 1px solid ${props => props.theme.colors.primary};
  margin-right: .5em;

@@ -67,7 +67,7 @@ const EditProfile = ({ toggleClose, user, onUpdateUser }) => {
   return (
     <Module>
         <Header>
-            <div className='flex center'>
+            <div className='flex align'>
                 <IconBtn onClick={toggleClose} ><FontAwesomeIcon icon={faTimesCircle} /></IconBtn>
                 <p>Edit Profile</p>
             </div>

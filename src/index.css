@@ -20,6 +20,7 @@ body {
 
 .flex {
   display: flex;
+  width: 100%;
 }
 
 .column {
@@ -30,7 +31,10 @@ body {
   justify-content: space-between;
 }
 
+.align {
+  align-items: center;
+}
+
 .center {
   justify-content: center;
-  align-items: center;
 }
