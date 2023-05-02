@@ -1,6 +1,7 @@
 import { doc, getDoc } from 'firebase/firestore';
 import React, {useEffect, useState} from 'react';
 import db from 'services/storage';
+import { format, addDays } from 'date-fns';
 
 import styled from 'styled-components';
 import { Title, UserHandle } from 'styles/styledComponents';
@@ -33,6 +34,7 @@ const UserImage = styled.img`
 
 const Name = styled.h2`
  color: ${props => props.theme.colors.primary};
+ margin-right: .3em;
 `;
 
 const Handle = styled.h3`
@@ -44,6 +46,7 @@ const TweetBody = styled.div`
  text-align: center;
  color: #fff;
  font-size: 1.3em;
+ margin-top: .3em;
 `;
 
 const Tweet = ({ tweet }) => {
@@ -60,6 +63,22 @@ const Tweet = ({ tweet }) => {
         fetchAuthor();
     },[]);
 
+    // Format dueDate
+    let formattedDate;
+    let date;
+    let lagDate;
+    // if (task.dueDate) {
+    //   console.log(typeof task.dueDate)
+    // }
+    if (tweet.date) {
+      if (typeof tweet.date === 'string') {
+        lagDate = new Date(tweet.date)
+      } else {
+        lagDate = tweet.date.toDate(); // convert Firestore Timestamp to Date object
+      }
+        date = addDays(lagDate, 1) // Might need to remove addDay 
+        formattedDate = format(date, "K:m bbb MM/dd/yyy")
+    };
 
   return (
     <TweetCard>
@@ -67,13 +86,11 @@ const Tweet = ({ tweet }) => {
         <div className="flex column">
             <TweetHeader>
                 <Div>
-                    <div className="flex column">
+                    <div className="flex align">
                         <Name>{author?.displayName}</Name>
                         <Handle>{author?.userHandle}</Handle>
                     </div>
-                    <div className="flex column">
-                        <Handle>Tweet Date</Handle>
-                    </div>
+                    <Handle>{formattedDate}</Handle>
                 </Div>
             </TweetHeader>
             <TweetBody>
