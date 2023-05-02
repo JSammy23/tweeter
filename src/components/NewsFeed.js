@@ -38,6 +38,8 @@ const NewsFeed = ({ user }) => {
 
     }, [activeFilter]);
 
+    // TODO: renderTweets() by active filter
+
   return (
     <Container>
         {tweets.map((tweet) => (
