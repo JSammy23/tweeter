@@ -9,6 +9,7 @@ import auth from 'services/auth';
 
 import styled from 'styled-components';
 import NewsFeed from './NewsFeed';
+import Compose from './Compose';
 
 
 
@@ -59,12 +60,18 @@ const Feed = () => {
       }
   }, [user]);
 
+  const renderByFilter = () => {
+    switch (activeFilter) {
+      default:
+        return <Compose user={user} />;
+      case 'profile':
+        return <UserProfile user={user} />
+    }
+  }
 
   return (
     <FeedContainer>
-        {activeFilter === 'profile' ? (
-            <UserProfile user={user} />
-        ) : null }
+        {renderByFilter()}
         <NewsFeed user={user} />
     </FeedContainer>
   )
