@@ -41,6 +41,13 @@ const Handle = styled.h3`
  color: ${props => props.theme.colors.secondary};
 `;
 
+const TweetDate = styled.div`
+ display: flex;
+ color: ${props => props.theme.colors.secondary};
+ font-size: 1em;
+ justify-content: flex-end;
+`;
+
 const TweetBody = styled.div`
  width: 100%;
  text-align: center;
@@ -90,7 +97,7 @@ const Tweet = ({ tweet }) => {
                         <Name>{author?.displayName}</Name>
                         <Handle>{author?.userHandle}</Handle>
                     </div>
-                    <Handle>{formattedDate}</Handle>
+                    <TweetDate>{formattedDate}</TweetDate>
                 </Div>
             </TweetHeader>
             <TweetBody>
