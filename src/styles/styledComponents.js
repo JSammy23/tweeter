@@ -46,6 +46,11 @@ export const Button = styled.button`
  &:hover {
      background-color: ${props => props.theme.colors.accent};
  }
+
+ &:disabled {
+    background-color: ${props => props.theme.colors.secondary};
+    color: ${props => props.theme.colors.primary};
+ }
 `;
 
 export const Module = styled.div`
