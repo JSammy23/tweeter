@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import db from 'services/storage';
+import { collection, addDoc, Timestamp,doc } from 'firebase/firestore';
 
 import styled from 'styled-components';
 import { TweetCard, UserImage } from './Tweet';
 import { Button } from 'styles/styledComponents';
-import ContentEditable from 'react-contenteditable';
 
 const ImgDiv = styled.div`
  width: auto;
@@ -60,6 +61,8 @@ const Compose = ({ user }) => {
         setText(e.target.innerText);
     };
 
+    const isComposeDisabled = text.trim(). length === 0;
+
     const handleFocus = () => {
         setIsInputFocused(true);
     };
@@ -82,6 +85,25 @@ const Compose = ({ user }) => {
         }
     };
 
+    const composeTweet = async () => {
+        const date =  new Date();
+        const tweetsRef = collection(db, 'tweets');
+        const newTweetRef = await addDoc(tweetsRef, {
+            authorID: user.uid,
+            body: text,
+            date: Timestamp.fromDate(date),
+        });
+
+        const tweetID = newTweetRef.id;
+        const userRef = doc(db, 'users', user.uid);
+        const tweetBucketRef = collection(userRef, 'tweetBucket');
+        await addDoc(tweetBucketRef, {
+            tweetID: tweetID,
+        });
+        console.log('Tweeted!');
+        setText('');
+    };
+
   return (
     <TweetCard>
         <ImgDiv>
@@ -93,7 +115,7 @@ const Compose = ({ user }) => {
             </Input>
             <Controls>
                 <div>
-                    <Button>Tweet</Button>
+                    <Button disabled={isComposeDisabled} onClick={composeTweet} >Tweet</Button>
                 </div>
             </Controls>
         </ComposeBody>
