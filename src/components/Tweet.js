@@ -83,8 +83,8 @@ const Tweet = ({ tweet }) => {
       } else {
         lagDate = tweet.date.toDate(); // convert Firestore Timestamp to Date object
       }
-        date = addDays(lagDate, 1) // Might need to remove addDay 
-        formattedDate = format(date, "K:m bbb MM/dd/yyy")
+        // date = addDays(lagDate, 1) // Might need to remove addDay 
+        formattedDate = format(lagDate, "K:m bbb MM/dd/yyy");
     };
 
   return (
