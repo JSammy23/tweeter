@@ -5,6 +5,7 @@ import { collection, addDoc, Timestamp,doc } from 'firebase/firestore';
 import styled from 'styled-components';
 import { TweetCard, UserImage } from './Tweet';
 import { Button } from 'styles/styledComponents';
+import TextEditor from './TextEditor';
 
 const ImgDiv = styled.div`
  width: auto;
@@ -110,9 +111,7 @@ const Compose = ({ user }) => {
             <UserImage src={user?.profileImg} />
         </ImgDiv>
         <ComposeBody>
-            <Input contentEditable onInput={handleTextChange} onFocus={handleFocus} onBlur={handleBlur} onKeyDown={handleKeyDown} >
-                {text === '' && !isInputFocused && <Placeholder>What's Happening?</Placeholder>}
-            </Input>
+            <TextEditor />
             <Controls>
                 <div>
                     <Button disabled={isComposeDisabled} onClick={composeTweet} >Tweet</Button>
