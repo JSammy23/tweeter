@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import db from 'services/storage';
 import { collection, addDoc, Timestamp,doc } from 'firebase/firestore';
+import TextEditor from './TextEditor';
 
 import styled from 'styled-components';
 import { TweetCard, UserImage } from './Tweet';
-import { Button } from 'styles/styledComponents';
-import TextEditor from './TextEditor';
+
 
 const ImgDiv = styled.div`
  width: auto;
@@ -48,45 +48,10 @@ const ComposeBody = styled.div`
  height: fit-content;
 `;
 
-const Controls = styled.div`
- width: 100%;
- display: flex;
- justify-content: end;
-`;
 
 const Compose = ({ user }) => {
-    const [text, setText] = useState('');
-    const [isInputFocused, setIsInputFocused] = useState(false);
-
-    const handleTextChange = (e) => {
-        setText(e.target.innerText);
-    };
-
-    const isComposeDisabled = text.trim(). length === 0;
-
-    const handleFocus = () => {
-        setIsInputFocused(true);
-    };
-
-    const handleBlur = () => {
-        setIsInputFocused(false);
-    };
-
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-            const selection = window.getSelection();
-            const range = selection.getRangeAt(0);
-            const br = document.createElement("br");
-            range.insertNode(br);
-            range.setStartAfter(br);
-            range.setEndAfter(br);
-            range.collapse(false);
-            selection.removeAllRanges();
-            selection.addRange(range);
-        }
-    };
-
-    const composeTweet = async () => {
+    
+    const composeTweet = async (text) => {
         const date =  new Date();
         const tweetsRef = collection(db, 'tweets');
         const newTweetRef = await addDoc(tweetsRef, {
@@ -102,7 +67,6 @@ const Compose = ({ user }) => {
             tweetID: tweetID,
         });
         console.log('Tweeted!');
-        setText('');
     };
 
   return (
@@ -111,12 +75,8 @@ const Compose = ({ user }) => {
             <UserImage src={user?.profileImg} />
         </ImgDiv>
         <ComposeBody>
-            <TextEditor />
-            <Controls>
-                <div>
-                    <Button disabled={isComposeDisabled} onClick={composeTweet} >Tweet</Button>
-                </div>
-            </Controls>
+            <TextEditor  onTweet={composeTweet} />
+            
         </ComposeBody>
     </TweetCard>
   )

@@ -1,10 +1,10 @@
 import { doc, getDoc } from 'firebase/firestore';
 import React, {useEffect, useState} from 'react';
 import db from 'services/storage';
-import { format, addDays } from 'date-fns';
+import { format } from 'date-fns';
+import { convertFromRaw, Editor, EditorState } from 'draft-js';
 
 import styled from 'styled-components';
-import { Title, UserHandle } from 'styles/styledComponents';
 
 export const TweetCard = styled.div`
  width: 100%;
@@ -60,6 +60,9 @@ const Tweet = ({ tweet }) => {
 
     const [author, setAuthor] = useState(null);
 
+    const contentState = convertFromRaw(JSON.parse(tweet.body));
+    const editorState = EditorState.createWithContent(contentState);
+
     useEffect(() => {
         const fetchAuthor = async () => {
             const authorRef = doc(db, 'users', tweet.authorID);
@@ -70,21 +73,17 @@ const Tweet = ({ tweet }) => {
         fetchAuthor();
     },[]);
 
+
     // Format dueDate
     let formattedDate;
     let date;
-    let lagDate;
-    // if (task.dueDate) {
-    //   console.log(typeof task.dueDate)
-    // }
     if (tweet.date) {
       if (typeof tweet.date === 'string') {
-        lagDate = new Date(tweet.date)
+        date = new Date(tweet.date)
       } else {
-        lagDate = tweet.date.toDate(); // convert Firestore Timestamp to Date object
-      }
-        // date = addDays(lagDate, 1) // Might need to remove addDay 
-        formattedDate = format(lagDate, "K:m bbb MM/dd/yyy");
+        date = tweet.date.toDate(); // convert Firestore Timestamp to Date object
+      } 
+        formattedDate = format(date, "K:m bbb MM/dd/yyy");
     };
 
   return (
@@ -101,7 +100,7 @@ const Tweet = ({ tweet }) => {
                 </Div>
             </TweetHeader>
             <TweetBody>
-                {tweet.body}
+                <Editor editorState={editorState} readOnly />
             </TweetBody>
         </div>
     </TweetCard>
