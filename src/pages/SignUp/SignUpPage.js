@@ -57,7 +57,7 @@ const SignUpPage = () => {
             const tweetsRef = collection(db, 'tweets');
             const newTweetRef = await addDoc(tweetsRef, {
                 authorID: user.uid,
-                body: 'I just joined the twitter clone Tweeter!',
+                body: '{"blocks":[{"key":"1mrjt","text":"I just joined the twitter clone Tweeter!","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',
                 date: Timestamp.fromDate(date),
             });
 
@@ -73,13 +73,13 @@ const SignUpPage = () => {
             const followersRef = collection(userRef, 'followers');
             // Add Tom as first follower
             await addDoc(followersRef, {
-                user: 'Lpckb0DmB4ahjnLruadN7Kjisa42'
+                user: 'FaaNkzhneeXE1e6KTlqoQPXIskf2'
             });
 
             // Create user sub-collection following
             const followingRef = collection(userRef, 'following');
             await addDoc(followingRef, {
-                user: 'Lpckb0DmB4ahjnLruadN7Kjisa42'
+                user: 'FaaNkzhneeXE1e6KTlqoQPXIskf2'
             });
 
             navigate('/home'); 
