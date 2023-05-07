@@ -28,7 +28,7 @@ export const UserImage = styled.img`
  width: 60px;
  height: 60px;
  border-radius: 50%;
- border: 1px solid ${props => props.theme.colors.primary};
+ border: 1px solid black;
  margin-right: .5em;
 `;
 
@@ -50,7 +50,7 @@ const TweetDate = styled.div`
 
 const TweetBody = styled.div`
  width: 100%;
- text-align: center;
+ text-align: start;
  color: #fff;
  font-size: 1.3em;
  margin-top: .3em;

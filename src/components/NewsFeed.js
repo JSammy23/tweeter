@@ -52,7 +52,7 @@ const NewsFeed = ({ user }) => {
 
     }, [activeFilter]);
 
-    // TODO: renderTweets() by active filter
+    // TODO: render home filter tweets, only tweets and retweets of following. 
 
   return (
     <Container>

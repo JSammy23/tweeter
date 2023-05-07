@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import auth from 'services/auth';
 import db, { storage } from 'services/storage';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { doc, updateDoc } from 'firebase/firestore';
 
 
 import styled from 'styled-components';
@@ -9,8 +9,6 @@ import { Button, Module } from 'styles/styledComponents';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimesCircle } from '@fortawesome/fontawesome-free-regular';
 import '/home/jordan/repos/tweeter/src/components/Edit Profile/EditProfile.styles.css';
-import { doc, updateDoc } from 'firebase/firestore';
-
 
 
 
