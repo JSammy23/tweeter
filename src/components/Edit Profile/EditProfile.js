@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import auth from 'services/auth';
+import db, { storage } from 'services/storage';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
 
 import styled from 'styled-components';
 import { Button, Module } from 'styles/styledComponents';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimesCircle } from '@fortawesome/fontawesome-free-regular';
 import '/home/jordan/repos/tweeter/src/components/Edit Profile/EditProfile.styles.css';
+import { doc, updateDoc } from 'firebase/firestore';
 
 
 
@@ -38,7 +42,7 @@ const EditProfile = ({ toggleClose, user, onUpdateUser }) => {
 
     const [displayName, setDisplayName] = useState(user.displayName);
     const [userHandle, setUserHandle] = useState(user.userHandle);
-    
+    const [profileImg, setProfileImg] = useState(user.profileImg)
     
 
     const handleSubmit = (event) => {
@@ -61,6 +65,29 @@ const EditProfile = ({ toggleClose, user, onUpdateUser }) => {
         }
     };
 
+    const handleProfileImgChange = async (e) => {
+        const file = e.target.files[0];
+      
+        const storageRef = ref(storage, `users/${user.uid}/profile-img/${file.name}`);
+      
+        try {
+          const snapshot = await uploadBytes(storageRef, file);
+          const downloadURL = await getDownloadURL(snapshot.ref);
+          console.log('Profile image uploaded successfully:', downloadURL);
+      
+          // Update user profileImg field in Firestore
+          const userRef = doc(db, 'users', user.uid);
+          await updateDoc(userRef, { profileImg: downloadURL });
+        } catch (error) {
+          console.error('Error uploading profile image:', error);
+        };
+    };
+
+    const openFileInput = () => {
+        const fileInput = document.getElementById('profileImgInput');
+        fileInput.click();
+    };
+
     
 
     
@@ -74,6 +101,17 @@ const EditProfile = ({ toggleClose, user, onUpdateUser }) => {
             <Button form='editProfile' type='submit' fontSize='.6em' >Save</Button>
         </Header>
         <form id='editProfile' onSubmit={handleSubmit} >
+            <div className="profile-img-cont">
+                <img onClick={openFileInput} className='profile-pic' src={user.profileImg} alt='profile pic' />
+                <div onClick={openFileInput} className="edit-label">Edit</div>
+                <input 
+                type="file"
+                id='profileImgInput'
+                accept='image/*'
+                onChange={handleProfileImgChange}
+                style={{ display: 'none' }}
+                 />
+            </div>
             <div className='float-label has-value' >
                 <input type="text" name='displayName' id='displayName' required  onChange={(e) => setDisplayName(e.target.value)} onBlur={handleInputChange} onFocus={handleInputChange} value={displayName}/>
                 <label htmlFor="dislpayName">Display Name</label>
