@@ -13,6 +13,9 @@ const Container = styled.div`
 
 const EditorWrapper = styled.div`
   position: relative;
+  /* border: 1px solid lime; */
+  max-width: 505px;
+  max-height: 158px;
 `;
 
 const StyledEditor = styled.div`
@@ -35,6 +38,8 @@ const StyledEditor = styled.div`
   .public-DraftEditor-content {
     color: #fff;
     font-size: 1.4em;
+    max-height: 158px;
+    overflow: auto;
   }
 `;
 
@@ -47,13 +52,22 @@ const Controls = styled.div`
 const TextEditor = ({ onTweet }) => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [isComposeDisabled, setIsComposeDisabled] = useState(true);
+  const maxTweetLength = 180;
 
   const handleEditorChange = (newEditorState) => {
     setEditorState(newEditorState);
     // Enable Tweet button
     const contentState = newEditorState.getCurrentContent();
     const nonWhitespaceText = contentState.getPlainText().trim();
-    setIsComposeDisabled(nonWhitespaceText.length === 0);
+    const tweetLength = nonWhitespaceText.length;
+    setIsComposeDisabled(nonWhitespaceText.length === 0 || tweetLength > maxTweetLength);
+  };
+
+  const handleBeforeInput = (e) => {
+    const currentContentLength = editorState.getCurrentContent().getPlainText().length;
+    if (currentContentLength >= maxTweetLength) {
+      e.preventDefault();
+    }
   };
 
   const toggleInlineStyle = (inlineStyle) => {
@@ -72,6 +86,7 @@ const TextEditor = ({ onTweet }) => {
     setEditorState(EditorState.createEmpty());
   }
 
+
   return (
     <EditorWrapper>
       <StyledEditor>
@@ -79,6 +94,8 @@ const TextEditor = ({ onTweet }) => {
           editorState={editorState}
           onChange={handleEditorChange}
           placeholder="What's Happening?"
+          maxLength={maxTweetLength}
+          onBeforeInput={handleBeforeInput}
         />
         <Controls>
                 <div>
