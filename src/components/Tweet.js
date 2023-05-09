@@ -58,20 +58,20 @@ const TweetBody = styled.div`
 
 const Tweet = ({ tweet }) => {
 
-    const [author, setAuthor] = useState(null);
+    // const [author, setAuthor] = useState(null);
 
     const contentState = convertFromRaw(JSON.parse(tweet.body));
     const editorState = EditorState.createWithContent(contentState);
 
-    useEffect(() => {
-        const fetchAuthor = async () => {
-            const authorRef = doc(db, 'users', tweet.authorID);
-            const authorDoc = await getDoc(authorRef);
-            setAuthor(authorDoc.data());
-        }
+    // useEffect(() => {
+    //     const fetchAuthor = async () => {
+    //         const authorRef = doc(db, 'users', tweet.authorID);
+    //         const authorDoc = await getDoc(authorRef);
+    //         setAuthor(authorDoc.data());
+    //     }
 
-        fetchAuthor();
-    },[]);
+    //     fetchAuthor();
+    // },[]);
 
 
     // Format dueDate
@@ -88,13 +88,13 @@ const Tweet = ({ tweet }) => {
 
   return (
     <TweetCard>
-        <UserImage src={author?.profileImg} />
+        <UserImage src={tweet.profileImg} />
         <div className="flex column">
             <TweetHeader>
                 <Div>
                     <div className="flex align">
-                        <Name>{author?.displayName}</Name>
-                        <Handle>{author?.userHandle}</Handle>
+                        <Name>{tweet.displayName}</Name>
+                        <Handle>{tweet.userHandle}</Handle>
                     </div>
                     <TweetDate>{formattedDate}</TweetDate>
                 </Div>
