@@ -29,36 +29,60 @@ const Feed = () => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-      const unsubscribe = onAuthStateChanged(auth, async (user) => {
-          if (user) {
-              const userRef = doc(db, 'users', user.uid);
-              const userDoc = await getDoc(userRef);
+      console.log('Feed Mounted!')
+    },[]);
 
-              if (userDoc.exists()) {
-                  setUser(userDoc.data());
-              }
-              else {
-                  setUser(null);
-              }
+    useEffect(() => {
+      const getUserData = async () => {
+        try {
+          const userDocRef = doc(db, "users", auth.currentUser.uid);
+          const userDocSnap = await getDoc(userDocRef);
+          
+          if (userDocSnap.exists()) {
+            setUser(userDocSnap.data());
+          } else {
+            console.log("No such document!");
           }
-      });
-      return unsubscribe
-  }, []);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      
+      getUserData();
+      
+    }, []);
 
-  useEffect(() => {
-      if (user) {
-        const userRef = doc(db, 'users', user.uid);
-        const unsubscribe = onSnapshot(userRef, (doc) => {
-          if (doc.exists()) {
-            setUser(doc.data());
-          }
-          else {
-            setUser(null);
-          }
-        });
-        return unsubscribe;
-      }
-  }, [user]);
+  //   useEffect(() => {
+  //     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+  //         if (user) {
+  //             const userRef = doc(db, 'users', user.uid);
+  //             const userDoc = await getDoc(userRef);
+
+  //             if (userDoc.exists()) {
+  //                 setUser(userDoc.data());
+  //             }
+  //             else {
+  //                 setUser(null);
+  //             }
+  //         }
+  //     });
+  //     return unsubscribe
+  // }, []);
+
+  // useEffect(() => {
+  //     if (user) {
+  //       const userRef = doc(db, 'users', user.uid);
+  //       const unsubscribe = onSnapshot(userRef, (doc) => {
+  //         if (doc.exists()) {
+  //           setUser(doc.data());
+  //         }
+  //         else {
+  //           setUser(null);
+  //         }
+  //       });
+  //       return unsubscribe;
+  //     }
+  // }, [user]);
 
   const renderByFilter = () => {
     switch (activeFilter) {
