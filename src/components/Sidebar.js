@@ -64,7 +64,7 @@ const UserControls = styled.div`
  }
 `;
 
-const Sidebar = ({ user }) => {
+const Sidebar = () => {
 
     const { activeFilter, setActiveFilter } = useContext(AppContext);
 

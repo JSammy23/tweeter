@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Sidebar from 'components/Sidebar';
 import Feed from 'components/Feed';
 
@@ -17,12 +17,17 @@ const Grid = styled.div`
   }
 `;
 
-const FeedPage = ({ user }) => {
+const FeedPage = () => {
+
+  useEffect(() => {
+    console.log('FeedPage mounted!');
+  }, []);
+
   return (
     <Background>
       <Wrapper>
         <Grid>
-        <Sidebar user={user}/>
+        <Sidebar />
         <Feed />
         </Grid>
       </Wrapper>
