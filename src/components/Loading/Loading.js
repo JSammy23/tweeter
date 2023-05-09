@@ -4,26 +4,26 @@ import './Loading.styles.css';
 const Loading = () => {
   return (
     <div className="background">
-        <div class="boxes">
-            <div class="box">
+        <div className="boxes">
+            <div className="box">
                 <div></div>
                 <div></div>
                 <div></div>
                 <div></div>
             </div>
-            <div class="box">
+            <div className="box">
                 <div></div>
                 <div></div>
                 <div></div>
                 <div></div>
             </div>
-            <div class="box">
+            <div className="box">
                 <div></div>
                 <div></div>
                 <div></div>
                 <div></div>
             </div>
-            <div class="box">
+            <div className="box">
                 <div></div>
                 <div></div>
                 <div></div>
