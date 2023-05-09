@@ -59,6 +59,9 @@ const SignUpPage = () => {
                 authorID: user.uid,
                 body: '{"blocks":[{"key":"1mrjt","text":"I just joined the twitter clone Tweeter!","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',
                 date: Timestamp.fromDate(date),
+                displayName: displayName,
+                profileImg: imageURL,
+
             });
 
             const tweetID = newTweetRef.id;
@@ -67,20 +70,21 @@ const SignUpPage = () => {
             const tweetBucketRef = collection(userRef, 'tweetBucket');
             await addDoc(tweetBucketRef, {
                 tweetID: tweetID,
+                date: Timestamp.fromDate(date),
             });
 
-            // Create user sub-collection followers
-            const followersRef = collection(userRef, 'followers');
-            // Add Tom as first follower
-            await addDoc(followersRef, {
-                user: 'FaaNkzhneeXE1e6KTlqoQPXIskf2'
-            });
+            // // Create user sub-collection followers
+            // const followersRef = collection(userRef, 'followers');
+            // // Add Tom as first follower
+            // await addDoc(followersRef, {
+            //     user: 'FaaNkzhneeXE1e6KTlqoQPXIskf2'
+            // });
 
-            // Create user sub-collection following
-            const followingRef = collection(userRef, 'following');
-            await addDoc(followingRef, {
-                user: 'FaaNkzhneeXE1e6KTlqoQPXIskf2'
-            });
+            // // Create user sub-collection following
+            // const followingRef = collection(userRef, 'following');
+            // await addDoc(followingRef, {
+            //     user: 'FaaNkzhneeXE1e6KTlqoQPXIskf2'
+            // });
 
             navigate('/home'); 
         } catch (error) {
