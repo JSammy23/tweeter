@@ -58,6 +58,9 @@ const Compose = ({ user }) => {
             authorID: user.uid,
             body: text,
             date: Timestamp.fromDate(date),
+            userHandle: user.userHandle,
+            userProfileImg: user.ProfileImg,
+            displayName: user.displayName,
         });
 
         const tweetID = newTweetRef.id;
@@ -65,6 +68,7 @@ const Compose = ({ user }) => {
         const tweetBucketRef = collection(userRef, 'tweetBucket');
         await addDoc(tweetBucketRef, {
             tweetID: tweetID,
+            date: newTweetRef.date,
         });
         console.log('Tweeted!');
     };
