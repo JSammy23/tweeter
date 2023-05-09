@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import app from "../../firebase.config";
-import auth, { login } from "services/auth";
+import { login } from "services/auth";
 import { useNavigate, Link } from "react-router-dom";
 import './LoginPage.Styles.css'; 
 import styled from "styled-components";  
@@ -22,7 +21,7 @@ const LoginPage = () => {
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
 
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
     const handleLogin = (event) => {
         event.preventDefault();
@@ -30,7 +29,7 @@ const LoginPage = () => {
         login(email, password)
             .then(() => {
                 console.log('Logged in successfully!')
-                // navigate('/'); TODO: Navigate to Feed
+                navigate('/home');
             })
             .catch((error) => {
                 setError(error.message)
