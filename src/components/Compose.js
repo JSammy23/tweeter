@@ -53,13 +53,14 @@ const Compose = ({ user }) => {
     
     const composeTweet = async (text) => {
         const date =  new Date();
+        const tweetDate = Timestamp.fromDate(date)
         const tweetsRef = collection(db, 'tweets');
         const newTweetRef = await addDoc(tweetsRef, {
             authorID: user.uid,
             body: text,
-            date: Timestamp.fromDate(date),
+            date: tweetDate,
             userHandle: user.userHandle,
-            userProfileImg: user.ProfileImg,
+            profileImg: user.profileImg,
             displayName: user.displayName,
         });
 
@@ -68,7 +69,7 @@ const Compose = ({ user }) => {
         const tweetBucketRef = collection(userRef, 'tweetBucket');
         await addDoc(tweetBucketRef, {
             tweetID: tweetID,
-            date: newTweetRef.date,
+            date: tweetDate,
         });
         console.log('Tweeted!');
     };
