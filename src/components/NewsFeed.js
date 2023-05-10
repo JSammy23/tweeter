@@ -4,6 +4,7 @@ import { AppContext } from 'services/appContext';
 import db from 'services/storage';
 import auth from 'services/auth';
 import Tweet from './Tweet';
+import Loading from './Loading/Loading';
 
 import styled from 'styled-components';
 
@@ -18,7 +19,6 @@ const Container = styled.div`
 
 
 const NewsFeed = ({ user }) => {
-
     // TODO: 
     // 1. Optimize tweet fetching so the same tweets aren't being grabbed repeatedly
 
@@ -30,42 +30,50 @@ const NewsFeed = ({ user }) => {
     const tweetsRef = collection(db, 'tweets');
     // const userTweetBucketRef = collection(db, 'users', user.uid, 'tweetBucket');
 
-    useEffect(() => {
-        console.log('NewsFeed Mounted!')
-      }, []);
+    // useEffect(() => {
+    //     console.log('NewsFeed Mounted!', user)
+    //   }, []);
 
-    // Fetch user tweets
-    const fetchUserTweets = async () => {
-        let userTweetsQuery = query(tweetsRef, where('authorID', '==', auth.currentUser.uid), orderBy('date', 'desc'), limit(50));
-        if (userTweets.length > 0) {
-            const lastTweet = userTweets[userTweets.length - 1];
-            userTweetsQuery = query(tweetsRef, orderBy('date', 'desc'), startAfter(lastTweet.date), limit(50));
+    
+    useEffect(() => {
+        if (!user) {
+            return;
         }
-        const userTweetsSnapshot = await getDocs(userTweetsQuery);
-        const userTweetsData = userTweetsSnapshot.docs.map((doc) => doc.data());
-        setUserTweets(userTweetsData);
-        console.log(userTweetsData);
+
+        // Fetch user tweets
+        const fetchUserTweets = async () => {
+            let userTweetsQuery = query(tweetsRef, where('authorID', '==', user.uid), orderBy('date', 'desc'), limit(50));
+            if (userTweets.length > 0) {
+                const lastTweet = userTweets[userTweets.length - 1];
+                userTweetsQuery = query(tweetsRef, orderBy('date', 'desc'), startAfter(lastTweet.date), limit(50));
+            }
+            const userTweetsSnapshot = await getDocs(userTweetsQuery);
+            const userTweetsData = userTweetsSnapshot.docs.map((doc) => doc.data());
+            setUserTweets(userTweetsData);
+            console.log(userTweetsData);
+        };
+    
+        // Fetch all tweets for explore page
+        const fetchTweets = async () => {
+            let tweetsQuery = query(tweetsRef, orderBy('date', 'desc'), limit(100));
+            if (tweets.length > 0) {
+                const lastTweet = tweets[tweets.length - 1];
+                tweetsQuery = query(tweetsRef, orderBy('date', 'desc'), startAfter(lastTweet.date), limit(50));
+            }
+            const tweetsSnapshot = await getDocs(tweetsQuery);
+            const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
+            console.log(tweetsData);
+            setTweets(tweetsData);
+        };
+
+        fetchTweets();
+        fetchUserTweets();
+
+    }, [user]);
+
+    if (!user) {
+        return <Loading />;
     };
-
-    // Fetch all tweets for explore page
-    const fetchTweets = async () => {
-        let tweetsQuery = query(tweetsRef, orderBy('date', 'desc'), limit(100));
-        if (tweets.length > 0) {
-            const lastTweet = tweets[tweets.length - 1];
-            tweetsQuery = query(tweetsRef, orderBy('date', 'desc'), startAfter(lastTweet.date), limit(50));
-        }
-        const tweetsSnapshot = await getDocs(tweetsQuery);
-        const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
-        console.log(tweetsData);
-        setTweets(tweetsData);
-    }
-
-
-    useEffect(() => {
-        fetchTweets()
-        fetchUserTweets()
-
-    }, []);
 
     // TODO: render home filter tweets, only tweets and retweets of following. 
     const renderTweets = () => {
