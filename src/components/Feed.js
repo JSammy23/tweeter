@@ -89,7 +89,7 @@ const Feed = () => {
       default:
         return <Compose user={user} />;
       case 'profile':
-        return <UserProfile user={user} />
+        return <UserProfile user={user} isCurrentUser={true} />
     }
   }
 

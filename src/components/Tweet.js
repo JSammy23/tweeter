@@ -56,6 +56,9 @@ const TweetBody = styled.div`
  margin-top: .3em;
 `;
 
+// TODO:
+// User handle needs to link to that user profile
+
 const Tweet = ({ tweet }) => {
 
     // const [author, setAuthor] = useState(null);

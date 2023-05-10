@@ -26,9 +26,12 @@ const UserImage = styled.img`
  margin: .7em;
 `;
 
+// TODO:
+// User profile needs to be able display other users than current
+// When displaying a user that is not current user, a follow option needs to replace edit
 
 
-const UserProfile = ({ user }) => {
+const UserProfile = ({ user, isCurrentUser }) => {
 
     const [editProfile, setEditProfile] = useState(false);
 
@@ -50,7 +53,11 @@ const UserProfile = ({ user }) => {
                 <UserImage src={user?.profileImg} />
             </div>
             <div>
-                <Button onClick={toggleEditProfile} >Edit profile</Button>
+                {isCurrentUser ? (
+                    <Button onClick={toggleEditProfile} >Edit profile</Button>
+                ) : (
+                    <Button  >Follow</Button>
+                )}
             </div>
         </div>
         <div className="flex column">

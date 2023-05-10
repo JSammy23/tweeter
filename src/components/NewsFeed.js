@@ -17,14 +17,18 @@ const Container = styled.div`
  flex-direction: column;
 `;
 
+// TODO: 
+    // Optimize tweet fetching so the same tweets aren't being grabbed repeatedly
+    // A load more tweets function to grab older tweets
+    // A refresh tweets for the latest tweets since last fetch
+    // Grab user tweets from tweetBucket
 
 const NewsFeed = ({ user }) => {
-    // TODO: 
-    // 1. Optimize tweet fetching so the same tweets aren't being grabbed repeatedly
 
     const { activeFilter, setActiveFilter } = useContext(AppContext);
     const [tweets, setTweets] = useState([]);
     const [userTweets, setUserTweets] = useState([]);
+    const [followingTweets, setFollowingTweets] = useState([]);
     const [lastTweetTimestamp, setLastTweetTimestamp] = useState(null);
     
     const tweetsRef = collection(db, 'tweets');
@@ -65,6 +69,8 @@ const NewsFeed = ({ user }) => {
             console.log(tweetsData);
             setTweets(tweetsData);
         };
+
+        // Fetch tweets for acounts user follows
 
         fetchTweets();
         fetchUserTweets();
