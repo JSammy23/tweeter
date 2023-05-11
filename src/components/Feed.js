@@ -10,6 +10,7 @@ import auth from 'services/auth';
 import styled from 'styled-components';
 import NewsFeed from './NewsFeed';
 import Compose from './Compose';
+import Loading from './Loading/Loading';
 
 
 
@@ -25,31 +26,30 @@ const FeedContainer = styled.div`
 
 const Feed = () => {
 
-    const { activeFilter, setActiveFilter } = useContext(AppContext);
+    const { activeFilter, setActiveFilter, userInfo, isUserLoaded } = useContext(AppContext);
     const [user, setUser] = useState(null);
 
     useEffect(() => {
       console.log('Feed Mounted!')
     },[]);
 
-    useEffect(() => {
-      const getUserData = async () => {
-        try {
-          const userDocRef = doc(db, "users", auth.currentUser.uid);
-          const userDocSnap = await getDoc(userDocRef);
-          
-          if (userDocSnap.exists()) {
-            setUser(userDocSnap.data());
-          } else {
-            console.log("No such document!");
-          }
-        } catch (error) {
-          console.log(error);
+    const getUserData = async (userUid) => {
+      try {
+        const userDocRef = doc(db, "users", userUid);
+        const userDocSnap = await getDoc(userDocRef);
+        
+        if (userDocSnap.exists()) {
+          setUser(userDocSnap.data());
+        } else {
+          console.log("No such document!");
         }
-      };
-      
-      getUserData();
-      
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    useEffect(() => {
+      getUserData(auth.currentUser.uid);
     }, []);
 
   //   useEffect(() => {
@@ -90,6 +90,12 @@ const Feed = () => {
         return <Compose user={user} />;
       case 'profile':
         return <UserProfile user={user} isCurrentUser={true} />
+      case 'viewUser':
+        return isUserLoaded ? (
+          <UserProfile user={userInfo} isCurrentUser={auth.currentUser.uid === userInfo.uid} />
+        ) : (
+          <Loading />
+        )
     }
   }
 

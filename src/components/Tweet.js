@@ -1,10 +1,12 @@
 import { doc, getDoc } from 'firebase/firestore';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import db from 'services/storage';
 import { format } from 'date-fns';
+import { AppContext } from 'services/appContext';
 import { convertFromRaw, Editor, EditorState } from 'draft-js';
 
 import styled from 'styled-components';
+
 
 export const TweetCard = styled.div`
  width: 100%;
@@ -30,6 +32,7 @@ export const UserImage = styled.img`
  border-radius: 50%;
  border: 1px solid black;
  margin-right: .5em;
+ cursor: pointer;
 `;
 
 const Name = styled.h2`
@@ -62,6 +65,7 @@ const TweetBody = styled.div`
 const Tweet = ({ tweet }) => {
 
     // const [author, setAuthor] = useState(null);
+    const {setActiveFilter, setUserInfo, setIsUserLoaded} = useContext(AppContext);
 
     const contentState = convertFromRaw(JSON.parse(tweet.body));
     const editorState = EditorState.createWithContent(contentState);
@@ -75,6 +79,27 @@ const Tweet = ({ tweet }) => {
 
     //     fetchAuthor();
     // },[]);
+
+    const getUserData = async (userUid) => {
+      try {
+        const userDocRef = doc(db, "users", userUid);
+        const userDocSnap = await getDoc(userDocRef);
+        
+        if (userDocSnap.exists()) {
+          setUserInfo(userDocSnap.data());
+          setIsUserLoaded(true);
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const handleUserProfileClick = () => {
+      getUserData(tweet.authorID);
+      setActiveFilter('viewUser');
+    };
 
 
     // Format dueDate
@@ -91,7 +116,7 @@ const Tweet = ({ tweet }) => {
 
   return (
     <TweetCard>
-        <UserImage src={tweet.profileImg} />
+        <UserImage src={tweet.profileImg}  onClick={handleUserProfileClick}/>
         <div className="flex column">
             <TweetHeader>
                 <Div>
