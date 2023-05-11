@@ -61,6 +61,7 @@ const SignUpPage = () => {
                 date: Timestamp.fromDate(date),
                 displayName: displayName,
                 profileImg: imageURL,
+                userHandle: `@${userHandle}`,
 
             });
 
