@@ -26,8 +26,8 @@ const FeedContainer = styled.div`
 
 const Feed = () => {
 
-    const { activeFilter, setActiveFilter, userInfo, isUserLoaded } = useContext(AppContext);
-    const [user, setUser] = useState(null);
+    const { activeFilter, viewedUser, isUserLoaded, user, setUser } = useContext(AppContext);
+    
 
     useEffect(() => {
       console.log('Feed Mounted!')
@@ -52,22 +52,7 @@ const Feed = () => {
       getUserData(auth.currentUser.uid);
     }, []);
 
-  //   useEffect(() => {
-  //     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-  //         if (user) {
-  //             const userRef = doc(db, 'users', user.uid);
-  //             const userDoc = await getDoc(userRef);
-
-  //             if (userDoc.exists()) {
-  //                 setUser(userDoc.data());
-  //             }
-  //             else {
-  //                 setUser(null);
-  //             }
-  //         }
-  //     });
-  //     return unsubscribe
-  // }, []);
+  
 
   // useEffect(() => {
   //     if (user) {
@@ -92,7 +77,7 @@ const Feed = () => {
         return <UserProfile user={user} isCurrentUser={true} />
       case 'viewUser':
         return isUserLoaded ? (
-          <UserProfile user={userInfo} isCurrentUser={auth.currentUser.uid === userInfo.uid} />
+          <UserProfile user={viewedUser} isCurrentUser={auth.currentUser.uid === viewedUser.uid} />
         ) : (
           <Loading />
         )

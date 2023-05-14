@@ -65,7 +65,7 @@ const TweetBody = styled.div`
 const Tweet = ({ tweet }) => {
 
     // const [author, setAuthor] = useState(null);
-    const {setActiveFilter, setUserInfo, setIsUserLoaded} = useContext(AppContext);
+    const {setActiveFilter, setViewedUser, setIsUserLoaded} = useContext(AppContext);
 
     const contentState = convertFromRaw(JSON.parse(tweet.body));
     const editorState = EditorState.createWithContent(contentState);
@@ -86,7 +86,7 @@ const Tweet = ({ tweet }) => {
         const userDocSnap = await getDoc(userDocRef);
         
         if (userDocSnap.exists()) {
-          setUserInfo(userDocSnap.data());
+          setViewedUser(userDocSnap.data());
           setIsUserLoaded(true);
         } else {
           console.log("No such document!");

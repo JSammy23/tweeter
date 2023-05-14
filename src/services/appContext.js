@@ -5,16 +5,19 @@ export const AppContext = createContext();
 export const AppProvider = ({ children }) => {
 
     const [activeFilter, setActiveFilter] = useState(null);
-    const [userInfo, setUserInfo] = useState(null);
+    const [viewedUser, setViewedUser] = useState(null);
     const [isUserLoaded, setIsUserLoaded] = useState(false);
+    const [user, setUser] = useState(null);
 
     const contextValue = {
         activeFilter,
         setActiveFilter,
-        userInfo,
-        setUserInfo,
+        viewedUser,
+        setViewedUser,
         isUserLoaded,
         setIsUserLoaded,
+        user,
+        setUser,
     }
 
 
