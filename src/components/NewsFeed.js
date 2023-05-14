@@ -32,7 +32,7 @@ const NewsFeed = ({ user }) => {
     const [lastTweetTimestamp, setLastTweetTimestamp] = useState(null);
     
     const tweetsRef = collection(db, 'tweets');
-    // const userTweetBucketRef = collection(db, 'users', user.uid, 'tweetBucket');
+    const userTweetBucketRef = collection(db, 'users', user.uid, 'tweetBucket');
 
     // useEffect(() => {
     //     console.log('NewsFeed Mounted!', user)
@@ -46,15 +46,27 @@ const NewsFeed = ({ user }) => {
 
         // Fetch user tweets
         const fetchUserTweets = async () => {
-            let userTweetsQuery = query(tweetsRef, where('authorID', '==', user.uid), orderBy('date', 'desc'), limit(50));
-            if (userTweets.length > 0) {
-                const lastTweet = userTweets[userTweets.length - 1];
-                userTweetsQuery = query(tweetsRef, orderBy('date', 'desc'), startAfter(lastTweet.date), limit(50));
-            }
-            const userTweetsSnapshot = await getDocs(userTweetsQuery);
-            const userTweetsData = userTweetsSnapshot.docs.map((doc) => doc.data());
-            setUserTweets(userTweetsData);
-            console.log(userTweetsData);
+            const userTweetBucketQuery = query(userTweetBucketRef, orderBy('date', 'desc'), limit(50));
+            const userTweetBucketSnapshot = await getDocs(userTweetBucketQuery);
+
+            // Extract the tweet IDs from the document snapshots
+            const tweetIds = userTweetBucketSnapshot.docs.map((doc) => doc.data().tweetId);
+
+            // Use the tweet IDs to query the tweets collection to retrieve the actual tweet documents
+            const tweetsQuery = query(tweetsRef, where(db.firestore.FieldPath.documentId(), 'in', tweetIds));
+            const tweetsSnapshot = await getDocs(tweetsQuery);
+            const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
+            setUserTweets(tweetsData);
+            console.log(tweetsData);
+
+
+
+            // let userTweetsQuery = query(tweetsRef, where('authorID', '==', user.uid), orderBy('date', 'desc'), limit(50));
+            // if (userTweets.length > 0) {
+            //     const lastTweet = userTweets[userTweets.length - 1];
+            //     userTweetsQuery = query(tweetsRef, orderBy('date', 'desc'), startAfter(lastTweet.date), limit(50));
+            // }
+            
         };
     
         // Fetch all tweets for explore page
