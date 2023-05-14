@@ -140,9 +140,7 @@ const SignUpPage = () => {
             </form>
         </div>
         {isLoading && (
-            <div className='overlay' >
-                <Loading />
-            </div>
+            <Loading />
         )}
     </Background>
   )
