@@ -23,9 +23,9 @@ const Container = styled.div`
     // A refresh tweets for the latest tweets since last fetch
     // Grab user tweets from tweetBucket
 
-const NewsFeed = ({ user }) => {
+const NewsFeed = () => {
 
-    const { activeFilter, setActiveFilter } = useContext(AppContext);
+    const { activeFilter, setActiveFilter, viewedUser, user } = useContext(AppContext);
     const [tweets, setTweets] = useState([]);
     const [userTweets, setUserTweets] = useState([]);
     const [followingTweets, setFollowingTweets] = useState([]);
@@ -38,32 +38,28 @@ const NewsFeed = ({ user }) => {
     //     console.log('NewsFeed Mounted!', user)
     //   }, []);
 
+    // Fetch user tweets
+    const fetchUserTweets = async (uid) => {
+        const userTweetBucketRef = collection(db, 'users', uid, 'tweetBucket');
+        const userTweetBucketQuery = query(userTweetBucketRef, orderBy('date', 'desc'), limit(50));
+        const userTweetBucketSnapshot = await getDocs(userTweetBucketQuery);
+
+        // Extract the tweet IDs from the document snapshots
+        const tweetIds = userTweetBucketSnapshot.docs.map((doc) => doc.data().tweetID);
+
+        // Use the tweet IDs to query the tweets collection to retrieve the actual tweet documents
+        const tweetsQuery = query(tweetsRef, where('__name__', 'in', tweetIds));
+        const tweetsSnapshot = await getDocs(tweetsQuery);
+        const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
+        setUserTweets(tweetsData);
+        console.log(tweetsData);
+    };
     
     useEffect(() => {
         if (!user) {
             return;
         }
-
-        // Fetch user tweets
-        const fetchUserTweets = async () => {
-            const userTweetBucketRef = collection(db, 'users', user.uid, 'tweetBucket');
-            const userTweetBucketQuery = query(userTweetBucketRef, orderBy('date', 'desc'), limit(50));
-            const userTweetBucketSnapshot = await getDocs(userTweetBucketQuery);
-
-            // Extract the tweet IDs from the document snapshots
-            const tweetIds = userTweetBucketSnapshot.docs.map((doc) => doc.data().tweetID);
-
-            // Use the tweet IDs to query the tweets collection to retrieve the actual tweet documents
-            const tweetsQuery = query(tweetsRef, where('__name__', 'in', tweetIds));
-            const tweetsSnapshot = await getDocs(tweetsQuery);
-            const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
-            setUserTweets(tweetsData);
-            console.log(tweetsData);
-
-
-        };
-
-        fetchUserTweets();
+        fetchUserTweets(user.uid);
     }, [user]);
 
     useEffect(() => {
@@ -82,6 +78,13 @@ const NewsFeed = ({ user }) => {
         fetchTweets();
     }, []);
 
+    useEffect(() => {
+        if (activeFilter !== 'viewUser') {
+            return;
+        }
+        fetchUserTweets(viewedUser.uid);
+    }, [activeFilter, viewedUser]);
+
     if (!user) {
         return <Loading />;
     };
@@ -90,6 +93,7 @@ const NewsFeed = ({ user }) => {
     const renderTweets = () => {
         switch (activeFilter) {
             case 'profile':
+            case 'viewUser':
                 return userTweets.map((tweet) => (
                     <Tweet key={tweet.date} tweet={tweet} />
                 ));
