@@ -5,7 +5,7 @@ import EditProfile from './Edit Profile/EditProfile';
 
 import styled from 'styled-components';
 import { Title, UserHandle, Button } from 'styles/styledComponents';
-import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, setDoc, onSnapshot, collection, addDoc } from 'firebase/firestore';
 import db from 'services/storage';
 
 
@@ -31,7 +31,7 @@ const UserImage = styled.img`
 // When displaying a user that is not current user, a follow option needs to replace edit
 
 
-const UserProfile = ({ user, isCurrentUser }) => {
+const UserProfile = ({user, isCurrentUser }) => {
 
     const [editProfile, setEditProfile] = useState(false);
 
@@ -46,6 +46,21 @@ const UserProfile = ({ user, isCurrentUser }) => {
         await setDoc(userRef, updatedUser);
     };
 
+    const handleFollowUser =  async () => {
+        // Add user uid to current user follow list
+        try {
+            const userRef = doc(db, 'users', auth.currentUser.uid);
+            const followingRef = collection(userRef, 'following');
+            await addDoc(followingRef, {
+            user: user.uid
+            });
+            console.log('User followed')
+    
+        } catch (error) {
+            console.error('Error following user', error);
+        };
+    };
+
   return (
     <ProfileCard>
         <div className="flex spacer">
@@ -56,7 +71,7 @@ const UserProfile = ({ user, isCurrentUser }) => {
                 {isCurrentUser ? (
                     <Button onClick={toggleEditProfile} >Edit profile</Button>
                 ) : (
-                    <Button  >Follow</Button>
+                    <Button onClick={handleFollowUser} >Follow</Button>
                 )}
             </div>
         </div>
