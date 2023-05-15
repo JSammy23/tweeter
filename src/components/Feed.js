@@ -89,7 +89,7 @@ const Feed = () => {
   return (
     <FeedContainer>
         {renderByFilter()}
-        <NewsFeed user={user} />
+        <NewsFeed />
     </FeedContainer>
   )
 }
