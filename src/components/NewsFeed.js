@@ -1,4 +1,4 @@
-import { collection, getDocs, limit, orderBy, query, startAfter, where } from 'firebase/firestore';
+import { collection, getDocs, limit, orderBy, query, startAfter, where, FieldPath, doc, documentId } from 'firebase/firestore';
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'services/appContext';
 import db from 'services/storage';
@@ -32,7 +32,7 @@ const NewsFeed = ({ user }) => {
     const [lastTweetTimestamp, setLastTweetTimestamp] = useState(null);
     
     const tweetsRef = collection(db, 'tweets');
-    const userTweetBucketRef = collection(db, 'users', user.uid, 'tweetBucket');
+    
 
     // useEffect(() => {
     //     console.log('NewsFeed Mounted!', user)
@@ -46,29 +46,27 @@ const NewsFeed = ({ user }) => {
 
         // Fetch user tweets
         const fetchUserTweets = async () => {
+            const userTweetBucketRef = collection(db, 'users', user.uid, 'tweetBucket');
             const userTweetBucketQuery = query(userTweetBucketRef, orderBy('date', 'desc'), limit(50));
             const userTweetBucketSnapshot = await getDocs(userTweetBucketQuery);
 
             // Extract the tweet IDs from the document snapshots
-            const tweetIds = userTweetBucketSnapshot.docs.map((doc) => doc.data().tweetId);
+            const tweetIds = userTweetBucketSnapshot.docs.map((doc) => doc.data().tweetID);
 
             // Use the tweet IDs to query the tweets collection to retrieve the actual tweet documents
-            const tweetsQuery = query(tweetsRef, where(db.firestore.FieldPath.documentId(), 'in', tweetIds));
+            const tweetsQuery = query(tweetsRef, where('__name__', 'in', tweetIds));
             const tweetsSnapshot = await getDocs(tweetsQuery);
             const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
             setUserTweets(tweetsData);
             console.log(tweetsData);
 
 
-
-            // let userTweetsQuery = query(tweetsRef, where('authorID', '==', user.uid), orderBy('date', 'desc'), limit(50));
-            // if (userTweets.length > 0) {
-            //     const lastTweet = userTweets[userTweets.length - 1];
-            //     userTweetsQuery = query(tweetsRef, orderBy('date', 'desc'), startAfter(lastTweet.date), limit(50));
-            // }
-            
         };
-    
+
+        fetchUserTweets();
+    }, [user]);
+
+    useEffect(() => {
         // Fetch all tweets for explore page
         const fetchTweets = async () => {
             let tweetsQuery = query(tweetsRef, orderBy('date', 'desc'), limit(100));
@@ -81,13 +79,8 @@ const NewsFeed = ({ user }) => {
             console.log(tweetsData);
             setTweets(tweetsData);
         };
-
-        // Fetch tweets for acounts user follows
-
         fetchTweets();
-        fetchUserTweets();
-
-    }, [user]);
+    }, []);
 
     if (!user) {
         return <Loading />;
