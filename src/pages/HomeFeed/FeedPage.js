@@ -11,6 +11,7 @@ import { Background, Wrapper } from 'styles/styledComponents';
 const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr 600px 1fr;
+  grid-template-rows: 100vh;
 
   @media (max-width: 1200px) {
     grid-template-columns: 1fr 600px;
