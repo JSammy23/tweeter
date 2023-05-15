@@ -21,7 +21,6 @@ const Container = styled.div`
     // Optimize tweet fetching so the same tweets aren't being grabbed repeatedly
     // A load more tweets function to grab older tweets
     // A refresh tweets for the latest tweets since last fetch
-    // Grab user tweets from tweetBucket
 
 const NewsFeed = () => {
 
@@ -59,8 +58,10 @@ const NewsFeed = () => {
         if (!user) {
             return;
         }
-        fetchUserTweets(user.uid);
-    }, [user]);
+        if (activeFilter !== 'viewUser') {
+            fetchUserTweets(user.uid);
+        }
+    }, [user, activeFilter]);
 
     useEffect(() => {
         // Fetch all tweets for explore page
@@ -82,7 +83,7 @@ const NewsFeed = () => {
         if (activeFilter !== 'viewUser') {
             return;
         }
-        fetchUserTweets(viewedUser.uid);
+        fetchUserTweets(viewedUser?.uid);
     }, [activeFilter, viewedUser]);
 
     if (!user) {
