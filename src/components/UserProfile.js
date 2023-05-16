@@ -1,13 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
-import auth from 'services/auth';
 import EditProfile from './Edit Profile/EditProfile';
+import { doc, getDocs, setDoc, collection } from 'firebase/firestore';
+import db from 'services/storage';
+import FollowButton from './FollowButton';
 
 
 import styled from 'styled-components';
 import { Title, UserHandle, Button } from 'styles/styledComponents';
-import { doc, getDocs, setDoc, onSnapshot, collection, addDoc, query } from 'firebase/firestore';
-import db from 'services/storage';
-import FollowButton from './FollowButton';
 
 
 
@@ -104,7 +103,6 @@ const UserProfile = ({user, isCurrentUser }) => {
                 <span>{following.length}</span> Following <span>{followers.length}</span> Followers
             </CountsDiv>
         </div>
-        {/* TODO: Add follower & following count */}
         {editProfile && (
         <EditProfile onUpdateUser={handleUpdateUser} 
         toggleClose={toggleEditProfile}
