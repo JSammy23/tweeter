@@ -26,19 +26,18 @@ const FollowButton = () => {
 
     useEffect(() => {
         checkIsFollwing();
-    }, [viewedUser]);
+    }, [currentUser, viewedUser]);
 
     const checkIsFollwing = async () => {
         try {
+            let isFollowing = false;
             const querySnapshot = await getDocs(followingRef);
             querySnapshot.forEach((doc) => {
                 if (doc.data().user === viewedUser.uid) {
-                    setIsFollowing(true);
+                    isFollowing = true;
                 }
-                else {
-                    console.log('User not followed')
-                }
-            })
+            });
+            setIsFollowing(isFollowing);
         } catch (error) {
             console.error('Error checking is currentUser follows user', error)
         };
