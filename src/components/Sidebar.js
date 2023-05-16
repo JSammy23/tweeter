@@ -79,6 +79,7 @@ const Sidebar = () => {
     };
 
     const handleLogout = () => {
+        localStorage.clear();
         logout();
     };
 
