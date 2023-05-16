@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { doc, deleteDoc, collection, addDoc, getDocs } from 'firebase/firestore';
 import db from 'services/storage';
-import auth from 'services/auth';
 
 import styled from 'styled-components';
 import { Button } from 'styles/styledComponents';
@@ -58,6 +57,17 @@ const FollowButton = () => {
         } catch (error) {
             console.error('Error following user', error);
         };
+
+        // Add currentUser to viewedUser follower list
+        try {
+            const followersRef = collection(viewedUserRef, 'followers');
+            await addDoc(followersRef, {
+                user: currentUser.uid
+            });
+            console.log('Current User added to follower list');
+        } catch (error) {
+            console.error('Error adding current user to follower list.', error);
+        };
     };
 
     const handleUnfollowUser = async () => {
@@ -74,7 +84,21 @@ const FollowButton = () => {
           });
         } catch (error) {
           console.error('Error unfollowing user', error);
-        }
+        };
+
+        // Remove current user from viewedUser follower list
+        try {
+            const followersRef = collection(viewedUserRef, 'followers');
+            const querySnapshot = await getDocs(followersRef);
+            querySnapshot.forEach((doc) => {
+                if (doc.data().user === currentUser.uid) {
+                    deleteDoc(doc.ref);
+                    console.log('Current user removed from viewedUser follower list');
+                }
+            });
+        } catch (error) {
+            console.error('Error removing current user from viewedUser follower list', error);
+        };
     };
 
     const renderFollowButton = () => {
