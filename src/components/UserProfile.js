@@ -5,7 +5,7 @@ import EditProfile from './Edit Profile/EditProfile';
 
 import styled from 'styled-components';
 import { Title, UserHandle, Button } from 'styles/styledComponents';
-import { doc, getDoc, setDoc, onSnapshot, collection, addDoc } from 'firebase/firestore';
+import { doc, getDocs, setDoc, onSnapshot, collection, addDoc, query } from 'firebase/firestore';
 import db from 'services/storage';
 import FollowButton from './FollowButton';
 
@@ -28,13 +28,37 @@ const UserImage = styled.img`
 `;
 
 // TODO:
-// User profile needs to be able display other users than current
-// When displaying a user that is not current user, a follow option needs to replace edit
-// Toggle button when user is followed
+// Add followers & following state array
+// Add followers & following count to user profile
+// Pass follower & FOllowing array down to follow button
+
 
 const UserProfile = ({user, isCurrentUser }) => {
 
     const [editProfile, setEditProfile] = useState(false);
+    const [followers, setFollowers] = useState([]);
+    const [following, setFollowing] = useState([]);
+
+    const userRef = doc(db, 'users', user?.uid);
+
+    useEffect(() => {
+        fetchFollowers();
+        fetchFollowing();
+    }, [user]);
+
+    const fetchFollowers = async () => {
+        const followersRef = collection(userRef, 'followers');
+        const querySnapshot = await getDocs(followersRef);
+        const followers = querySnapshot.docs.map(doc => doc.data().user);
+        setFollowers(followers);
+    };
+
+    const fetchFollowing = async () => {
+        const followingRef = collection(userRef, 'following');
+        const querySnapshot = await getDocs(followingRef);
+        const following = querySnapshot.docs.map(doc => doc.data().user);
+        setFollowing(following);
+    };
 
     
     const toggleEditProfile = () => {
