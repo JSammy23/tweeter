@@ -64,21 +64,30 @@ const TweetBody = styled.div`
 
 const Tweet = ({ tweet }) => {
 
-    // const [author, setAuthor] = useState(null);
+    const [author, setAuthor] = useState(null);
     const {setActiveFilter, setViewedUser, setIsUserLoaded} = useContext(AppContext);
 
     const contentState = convertFromRaw(JSON.parse(tweet.body));
     const editorState = EditorState.createWithContent(contentState);
 
-    // useEffect(() => {
-    //     const fetchAuthor = async () => {
-    //         const authorRef = doc(db, 'users', tweet.authorID);
-    //         const authorDoc = await getDoc(authorRef);
-    //         setAuthor(authorDoc.data());
-    //     }
+    useEffect(() => {
+      const fetchAuthor = async () => {
+        // Check if author is already cached in memory
+        const cachedAuthor = localStorage.getItem(tweet.authorID);
+        if (cachedAuthor) {
+          setAuthor(JSON.parse(cachedAuthor));
+        } else {
+          // Fetch author from Firestore and cache in memory
+          const authorRef = doc(db, "users", tweet.authorID);
+          const authorDoc = await getDoc(authorRef);
+          const authorData = authorDoc.data();
+          localStorage.setItem(tweet.authorID, JSON.stringify(authorData));
+          setAuthor(authorData);
+        }
+      };
 
-    //     fetchAuthor();
-    // },[]);
+      fetchAuthor();
+    },[tweet.authorID]);
 
     const getUserData = async (userUid) => {
       try {
@@ -116,13 +125,13 @@ const Tweet = ({ tweet }) => {
 
   return (
     <TweetCard>
-        <UserImage src={tweet.profileImg}  onClick={handleUserProfileClick}/>
+        <UserImage src={author?.profileImg}  onClick={handleUserProfileClick}/>
         <div className="flex column">
             <TweetHeader>
                 <Div>
                     <div className="flex align">
-                        <Name>{tweet.displayName}</Name>
-                        <Handle>{tweet.userHandle}</Handle>
+                        <Name>{author?.displayName}</Name>
+                        <Handle>{author?.userHandle}</Handle>
                     </div>
                     <TweetDate>{formattedDate}</TweetDate>
                 </Div>
