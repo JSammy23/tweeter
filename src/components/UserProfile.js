@@ -27,6 +27,17 @@ const UserImage = styled.img`
  margin: .7em;
 `;
 
+const CountsDiv = styled.div`
+ color: ${props => props.theme.colors.secondary};
+ margin-left: .7em;
+
+ span {
+    color: ${props => props.theme.colors.primary};
+    margin: 0 .3em;
+ }
+`;
+
+
 // TODO:
 // Add followers & following state array
 // Add followers & following count to user profile
@@ -89,6 +100,9 @@ const UserProfile = ({user, isCurrentUser }) => {
         <div className="flex column">
             <Title>{user?.displayName}</Title>
             <UserHandle>{user?.userHandle}</UserHandle>
+            <CountsDiv>
+                <span>{following.length}</span> Following <span>{followers.length}</span> Followers
+            </CountsDiv>
         </div>
         {/* TODO: Add follower & following count */}
         {editProfile && (
