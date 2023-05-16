@@ -50,6 +50,7 @@ const EditProfile = ({ toggleClose, user, onUpdateUser }) => {
           ...user,
           displayName,
           userHandle,
+          profileImg,
         };
     
         onUpdateUser(updatedUser);
@@ -72,10 +73,7 @@ const EditProfile = ({ toggleClose, user, onUpdateUser }) => {
           const snapshot = await uploadBytes(storageRef, file);
           const downloadURL = await getDownloadURL(snapshot.ref);
           console.log('Profile image uploaded successfully:', downloadURL);
-      
-          // Update user profileImg field in Firestore
-          const userRef = doc(db, 'users', user.uid);
-          await updateDoc(userRef, { profileImg: downloadURL });
+          setProfileImg(downloadURL);
         } catch (error) {
           console.error('Error uploading profile image:', error);
         };
