@@ -24,7 +24,7 @@ const Container = styled.div`
 
 const NewsFeed = () => {
 
-    const { activeFilter, setActiveFilter, viewedUser, user } = useContext(AppContext);
+    const { activeFilter, setActiveFilter, viewedUser, currentUser } = useContext(AppContext);
     const [tweets, setTweets] = useState([]);
     const [userTweets, setUserTweets] = useState([]);
     const [followingTweets, setFollowingTweets] = useState([]);
@@ -55,13 +55,13 @@ const NewsFeed = () => {
     };
     
     useEffect(() => {
-        if (!user) {
+        if (!currentUser) {
             return;
         }
         if (activeFilter !== 'viewUser') {
-            fetchUserTweets(user.uid);
+            fetchUserTweets(currentUser.uid);
         }
-    }, [user, activeFilter]);
+    }, [currentUser, activeFilter]);
 
     useEffect(() => {
         // Fetch all tweets for explore page
@@ -86,7 +86,7 @@ const NewsFeed = () => {
         fetchUserTweets(viewedUser?.uid);
     }, [activeFilter, viewedUser]);
 
-    if (!user) {
+    if (!currentUser) {
         return <Loading />;
     };
 

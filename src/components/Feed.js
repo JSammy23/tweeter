@@ -28,7 +28,7 @@ const FeedContainer = styled.div`
 
 const Feed = () => {
 
-    const { activeFilter, viewedUser, isUserLoaded, user, setUser } = useContext(AppContext);
+    const { activeFilter, viewedUser, isUserLoaded, currentUser, setCurrentUser } = useContext(AppContext);
     
 
     useEffect(() => {
@@ -41,7 +41,7 @@ const Feed = () => {
         const userDocSnap = await getDoc(userDocRef);
         
         if (userDocSnap.exists()) {
-          setUser(userDocSnap.data());
+          setCurrentUser(userDocSnap.data());
         } else {
           console.log("No such document!");
         }
@@ -74,9 +74,9 @@ const Feed = () => {
   const renderByFilter = () => {
     switch (activeFilter) {
       default:
-        return <Compose user={user} />;
+        return <Compose user={currentUser} />;
       case 'profile':
-        return <UserProfile user={user} isCurrentUser={true} />
+        return <UserProfile user={currentUser} isCurrentUser={true} />
       case 'viewUser':
         return isUserLoaded ? (
           <UserProfile user={viewedUser} isCurrentUser={auth.currentUser.uid === viewedUser.uid} />

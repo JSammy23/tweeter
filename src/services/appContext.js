@@ -7,7 +7,7 @@ export const AppProvider = ({ children }) => {
     const [activeFilter, setActiveFilter] = useState(null);
     const [viewedUser, setViewedUser] = useState(null);
     const [isUserLoaded, setIsUserLoaded] = useState(false);
-    const [user, setUser] = useState(null);
+    const [currentUser, setCurrentUser] = useState(null);
 
     const contextValue = {
         activeFilter,
@@ -16,8 +16,8 @@ export const AppProvider = ({ children }) => {
         setViewedUser,
         isUserLoaded,
         setIsUserLoaded,
-        user,
-        setUser,
+        currentUser,
+        setCurrentUser,
     }
 
 
