@@ -77,8 +77,9 @@ const UserProfile = ({user, isCurrentUser }) => {
     
     const handleUpdateUser = async (updatedUser) => {
         setEditProfile(false);
-        const userRef = doc(db, 'users', user.uid);
+        // const userRef = doc(db, 'users', user.uid);
         await setDoc(userRef, updatedUser);
+        localStorage.removeItem(user.uid);
     };
 
 
