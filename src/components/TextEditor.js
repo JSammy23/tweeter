@@ -4,12 +4,6 @@ import { Editor, EditorState, RichUtils, convertToRaw } from 'draft-js';
 import styled from 'styled-components';
 import { Button } from 'styles/styledComponents';
 
-const Container = styled.div`
-  border: 1px solid #ccc;
-  padding: 8px;
-  font-size: 16px;
-  line-height: 1.5;
-`;
 
 const EditorWrapper = styled.div`
   position: relative;

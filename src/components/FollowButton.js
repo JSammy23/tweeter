@@ -1,19 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { doc, deleteDoc, collection, addDoc, getDocs } from 'firebase/firestore';
 import db from 'services/storage';
+import { AppContext } from 'services/appContext';
 
 import styled from 'styled-components';
 import { Button } from 'styles/styledComponents';
 import { faCheck } from '@fortawesome/fontawesome-free-solid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { AppContext } from 'services/appContext';
+
 
 const Checkmark = styled.span`
  position: relative;
  margin-left: .3em;
 `;
-
-
 
 
 const FollowButton = () => {

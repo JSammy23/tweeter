@@ -3,15 +3,13 @@ import { AppContext } from 'services/appContext';
 import UserProfile from './UserProfile';
 import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import db from 'services/storage';
-import { onAuthStateChanged } from 'firebase/auth';
 import auth from 'services/auth';
-
-
-import styled from 'styled-components';
 import NewsFeed from './NewsFeed';
 import Compose from './Compose';
 import Loading from './Loading/Loading';
 
+
+import styled from 'styled-components';
 
 
 const FeedContainer = styled.div`

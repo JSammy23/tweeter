@@ -15,32 +15,6 @@ const ImgDiv = styled.div`
  align-items: flex-start;
 `;
 
-const InputWrapper = styled.div`
- position: relative;
-`;
-
-const Input = styled.div`
- width: 100%;
- min-height: 3em;
- height: auto;
- resize: none;
- background: transparent;
- border: none;
- word-wrap: normal;
- font-size: 1.2em;
- color: #fff;
-
- &:focus {
-    outline: none;
- }
-`;
-
-const Placeholder = styled.span`
- font-size: 1.2em;
- color: ${props => props.theme.colors.secondary};
- pointer-events: none;
-`;
-
 const ComposeBody = styled.div`
  display: flex;
  flex-direction: column;
