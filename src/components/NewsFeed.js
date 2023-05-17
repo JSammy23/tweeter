@@ -1,8 +1,7 @@
-import { collection, getDocs, limit, orderBy, query, startAfter, where, FieldPath, doc, documentId } from 'firebase/firestore';
+import { collection, getDocs, limit, orderBy, query, startAfter, where } from 'firebase/firestore';
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'services/appContext';
 import db from 'services/storage';
-import auth from 'services/auth';
 import Tweet from './Tweet';
 import Loading from './Loading/Loading';
 
@@ -24,11 +23,11 @@ const Container = styled.div`
 
 const NewsFeed = () => {
 
-    const { activeFilter, setActiveFilter, viewedUser, currentUser } = useContext(AppContext);
+    const { activeFilter, viewedUser, currentUser } = useContext(AppContext);
     const [tweets, setTweets] = useState([]);
     const [userTweets, setUserTweets] = useState([]);
-    const [followingTweets, setFollowingTweets] = useState([]);
-    const [lastTweetTimestamp, setLastTweetTimestamp] = useState(null);
+    const [subscribedTweets, setSubscribedTweets] = useState([]);
+    // const [lastTweetTimestamp, setLastTweetTimestamp] = useState(null);
     
     const tweetsRef = collection(db, 'tweets');
     
