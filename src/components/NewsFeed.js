@@ -1,4 +1,4 @@
-import { collection, getDocs, limit, orderBy, query, startAfter, where } from 'firebase/firestore';
+import { collection, getDoc, getDocs, limit, orderBy, query, startAfter, where } from 'firebase/firestore';
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'services/appContext';
 import db from 'services/storage';
@@ -36,6 +36,40 @@ const NewsFeed = () => {
     //     console.log('NewsFeed Mounted!', user)
     //   }, []);
 
+    
+
+    // Fetch subscribed tweets
+    const fetchSubscribedTweets = async () => {
+        const userSubsRef = collection(db, 'users', currentUser.uid, 'following');
+        const userSubsSnapshot = await getDocs(userSubsRef);
+        const userSubsIds = userSubsSnapshot.docs.map((doc) => doc.data().user);
+
+        const subscribedTweets = [];
+
+        for (const user of userSubsIds) {
+            const userTweetBucketRef = collection(db, 'users', user, 'tweetBucket');
+            const userTweetBucketQuery = query(userTweetBucketRef, orderBy('date', 'desc'));
+            const userTweetBucketSnapshot = await getDocs(userTweetBucketQuery);
+
+            // Extract the tweet IDs from the document snapshots
+            const tweetIds = userTweetBucketSnapshot.docs.map((doc) => doc.data().tweetID);
+
+            // Use the tweet IDs to query the tweets collection to retrieve the actual tweet documents
+            const tweetsQuery = query(tweetsRef, where('__name__', 'in', tweetIds));
+            const tweetsSnapshot = await getDocs(tweetsQuery);
+            const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
+
+            // Update the subscribedTweets state for the current user
+            subscribedTweets.push({
+                userId: user,
+                tweets: tweetsData
+            });
+        }
+
+        // Set the subscribedTweets state with all the fetched tweet data
+        setSubscribedTweets(subscribedTweets);
+    };
+
     // Fetch user tweets
     const fetchUserTweets = async (uid) => {
         const userTweetBucketRef = collection(db, 'users', uid, 'tweetBucket');
@@ -52,6 +86,15 @@ const NewsFeed = () => {
         setUserTweets(tweetsData);
         console.log(tweetsData);
     };
+
+    useEffect(() => {
+        if (!currentUser) {
+            return
+        }
+        if (activeFilter === 'home') {
+            fetchSubscribedTweets()
+        };
+    }, [activeFilter, currentUser])
     
     useEffect(() => {
         if (!currentUser) {
