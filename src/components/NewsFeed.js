@@ -60,11 +60,10 @@ const NewsFeed = () => {
             const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
 
             // Update the subscribedTweets state for the current user
-            subscribedTweets.push({
-                userId: user,
-                tweets: tweetsData
-            });
+            subscribedTweets.push(...tweetsData);
         }
+
+        subscribedTweets.sort((a, b) => b.date - a.date);
 
         // Set the subscribedTweets state with all the fetched tweet data
         setSubscribedTweets(subscribedTweets);
@@ -73,7 +72,7 @@ const NewsFeed = () => {
     // Fetch user tweets
     const fetchUserTweets = async (uid) => {
         const userTweetBucketRef = collection(db, 'users', uid, 'tweetBucket');
-        const userTweetBucketQuery = query(userTweetBucketRef, orderBy('date', 'desc'), limit(50));
+        const userTweetBucketQuery = query(userTweetBucketRef);
         const userTweetBucketSnapshot = await getDocs(userTweetBucketQuery);
 
         // Extract the tweet IDs from the document snapshots
@@ -83,8 +82,9 @@ const NewsFeed = () => {
         const tweetsQuery = query(tweetsRef, where('__name__', 'in', tweetIds));
         const tweetsSnapshot = await getDocs(tweetsQuery);
         const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
+        // Sort by date in descending order
+        tweetsData.sort((a, b) => b.date - a.date);
         setUserTweets(tweetsData);
-        console.log(tweetsData);
     };
 
     useEffect(() => {
@@ -94,7 +94,7 @@ const NewsFeed = () => {
         if (activeFilter === 'home') {
             fetchSubscribedTweets()
         };
-    }, [activeFilter, currentUser])
+    }, [activeFilter, currentUser]);
     
     useEffect(() => {
         if (!currentUser) {
@@ -142,6 +142,10 @@ const NewsFeed = () => {
                 ));
             case 'explore':
                 return tweets.map((tweet) => (
+                    <Tweet key={tweet.date} tweet={tweet} />
+                ));
+            case 'home':
+                return subscribedTweets.map((tweet) => (
                     <Tweet key={tweet.date} tweet={tweet} />
                 ));
             default:
