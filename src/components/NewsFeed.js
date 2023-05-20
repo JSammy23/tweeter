@@ -27,6 +27,7 @@ const NewsFeed = () => {
     const [tweets, setTweets] = useState([]);
     const [userTweets, setUserTweets] = useState([]);
     const [subscribedTweets, setSubscribedTweets] = useState([]);
+    const [loading, setLoading] = useState(false);
     // const [lastTweetTimestamp, setLastTweetTimestamp] = useState(null);
     
     const tweetsRef = collection(db, 'tweets');
@@ -40,33 +41,42 @@ const NewsFeed = () => {
 
     // Fetch subscribed tweets
     const fetchSubscribedTweets = async () => {
-        const userSubsRef = collection(db, 'users', currentUser.uid, 'following');
-        const userSubsSnapshot = await getDocs(userSubsRef);
-        const userSubsIds = userSubsSnapshot.docs.map((doc) => doc.data().user);
-
-        const subscribedTweets = [];
-
-        for (const user of userSubsIds) {
+        try {
+          setLoading(true); // Set loading state to true before fetching
+      
+          const userSubsRef = collection(db, 'users', currentUser.uid, 'following');
+          const userSubsSnapshot = await getDocs(userSubsRef);
+          const userSubsIds = userSubsSnapshot.docs.map((doc) => doc.data().user);
+      
+          const subscribedTweets = [];
+      
+          for (const user of userSubsIds) {
             const userTweetBucketRef = collection(db, 'users', user, 'tweetBucket');
             const userTweetBucketQuery = query(userTweetBucketRef, orderBy('date', 'desc'));
             const userTweetBucketSnapshot = await getDocs(userTweetBucketQuery);
-
+      
             // Extract the tweet IDs from the document snapshots
             const tweetIds = userTweetBucketSnapshot.docs.map((doc) => doc.data().tweetID);
-
+      
             // Use the tweet IDs to query the tweets collection to retrieve the actual tweet documents
             const tweetsQuery = query(tweetsRef, where('__name__', 'in', tweetIds));
             const tweetsSnapshot = await getDocs(tweetsQuery);
             const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
-
+      
             // Update the subscribedTweets state for the current user
             subscribedTweets.push(...tweetsData);
+          }
+      
+          subscribedTweets.sort((a, b) => b.date - a.date);
+      
+          // Set the subscribedTweets state with all the fetched tweet data
+          setSubscribedTweets(subscribedTweets);
+        } catch (error) {
+          console.error('Error fetching subscribed tweets:', error);
+          // Handle the error if needed
+        } finally {
+          setLoading(false); // Set loading state to false after fetching
         }
-
-        subscribedTweets.sort((a, b) => b.date - a.date);
-
-        // Set the subscribedTweets state with all the fetched tweet data
-        setSubscribedTweets(subscribedTweets);
     };
 
     // Fetch user tweets
@@ -155,6 +165,7 @@ const NewsFeed = () => {
 
   return (
     <Container>
+        {loading && (<Loading />)}
         {renderTweets()}
     </Container>
   )
