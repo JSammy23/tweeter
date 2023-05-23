@@ -66,16 +66,17 @@ const TweetBody = styled.div`
 const TweetReactions = styled.div`
  display: flex;
  margin-top: .3em;
+ gap: .3em;
 `;
 
 const StyledIcon = styled(FontAwesomeIcon)`
- color: ${props => (props.retweeted ? props.theme.colors.primary : 'inherit')};
+ color: ${props => (props.active ? props.theme.colors.primary : 'inherit')};
  cursor: pointer;
 `;
 
 const RetweetCount = styled.span`
  color: ${props => props.theme.colors.primary};
- margin-left: 0.3em;
+ margin-right: .3em;
 `;
 
 // TODO:
@@ -86,7 +87,9 @@ const Tweet = ({ tweet }) => {
     const [author, setAuthor] = useState(null);
     const {setActiveFilter, setViewedUser, setIsUserLoaded, currentUser} = useContext(AppContext);
     const [retweets, setRetweets] = useState(tweet.retweets || 0);
+    const [likes, setLikes] = useState(tweet.likes || 0);
     const [retweeted, setRetweeted] = useState(false);
+    const [isLiked, setIsLiked] = useState(false);
 
     const contentState = convertFromRaw(JSON.parse(tweet.body));
     const editorState = EditorState.createWithContent(contentState);
@@ -112,6 +115,7 @@ const Tweet = ({ tweet }) => {
 
     useEffect(() => {
       checkIfRetweeted();
+      checkIfLiked();
     }, [tweet.tweetID]);
 
     const getUserData = async (userUid) => {
@@ -147,9 +151,69 @@ const Tweet = ({ tweet }) => {
       setRetweeted(isRetweeted);
     };
 
+    const checkIfLiked = async () => {
+      if (!currentUser) {
+        return;
+      }
+      const userLikesRef = collection(db, 'users', currentUser.uid, 'likes');
+      const userLikesQuery =  query(userLikesRef);
+      const userLikesSnapshot = await getDocs(userLikesQuery);
+
+      const tweetIds = userLikesSnapshot.docs.map((doc) => doc.data().tweetID);
+
+      const isLiked = tweetIds.includes(tweet.tweetID);
+      setIsLiked(isLiked);
+    }
+
     const handleUserProfileClick = () => {
       getUserData(tweet.authorID);
       setActiveFilter('viewUser');
+    };
+
+    const handleLike = async () => {
+      if (isLiked) {
+        const newLikesCount = likes - 1;
+        setLikes(newLikesCount);
+        setIsLiked(false);
+
+        try {
+          const tweetRef = doc(db, 'tweets', tweet.tweetID);
+          await updateDoc(tweetRef, {
+            likes: newLikesCount,
+          });
+
+          // Remove tweet from user likes
+          const userLikesRef = collection(db, 'users', currentUser.uid, 'likes');
+          const userLikesQuery = query(userLikesRef, where('tweetID', '==', tweet.tweetID));
+          const userLikesSnapshot = await getDocs(userLikesQuery);
+          const userLikesDoc = userLikesSnapshot.docs[0];
+          if (userLikesDoc) {
+            const userLikesDocRef = doc(db, 'users', currentUser.uid, 'likes', userLikesDoc.id);
+            await deleteDoc(userLikesDocRef);
+          }
+        } catch (error) {
+          console.error('Error removing like or tweet from user likes', error);
+        }
+      } else {
+        const newLikesCount = likes + 1;
+        setLikes(newLikesCount);
+        setIsLiked(true);
+
+        try {
+          const tweetRef = doc(db, 'tweets', tweet.tweetID);
+          await updateDoc(tweetRef, {
+            likes: newLikesCount,
+          });
+
+          const userLikesRef = collection(db, 'users', currentUser.uid, 'likes');
+          await addDoc(userLikesRef, {
+            tweetID: tweet.tweetID,
+            date: new Date(),
+          })
+        } catch (error) {
+          console.error('Error liking tweet or adding to user likes', error);
+        }
+      };
     };
     
     const handleRetweet = async () => {
@@ -245,8 +309,10 @@ const Tweet = ({ tweet }) => {
                 <Editor editorState={editorState} readOnly />
             </TweetBody>
             <TweetReactions>
-              <StyledIcon icon={faRetweet} retweeted={retweeted}  onClick={handleRetweet} />
+              <StyledIcon icon={faRetweet} active={retweeted}  onClick={handleRetweet} />
               {retweets > 0 && <RetweetCount>{retweets}</RetweetCount>}
+              <StyledIcon icon={faHeart} active={isLiked} onClick={handleLike} />
+              {likes > 0 && <RetweetCount>{likes}</RetweetCount>}
             </TweetReactions>
         </div>
     </TweetCard>
