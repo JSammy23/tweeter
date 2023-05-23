@@ -1,6 +1,6 @@
 import React from 'react';
 import db from 'services/storage';
-import { collection, addDoc, Timestamp,doc } from 'firebase/firestore';
+import { collection, addDoc, Timestamp,doc, updateDoc } from 'firebase/firestore';
 import TextEditor from './TextEditor';
 
 import styled from 'styled-components';
@@ -36,6 +36,7 @@ const Compose = ({ user }) => {
             userHandle: user.userHandle,
             profileImg: user.profileImg,
             displayName: user.displayName,
+            tweetID: '',
         });
 
         const tweetID = newTweetRef.id;
@@ -46,6 +47,10 @@ const Compose = ({ user }) => {
             date: tweetDate,
         });
         console.log('Tweeted!');
+
+        await updateDoc(newTweetRef, {
+            tweetID: tweetID,
+        });
     };
 
   return (
