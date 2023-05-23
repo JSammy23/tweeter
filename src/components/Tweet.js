@@ -289,7 +289,7 @@ const Tweet = ({ tweet }) => {
       } else {
         date = tweet.date.toDate(); // convert Firestore Timestamp to Date object
       } 
-        formattedDate = format(date, "K:mm bbb MM/dd/yyy");
+        formattedDate = format(date, "h:mm bbb MM/dd/yyy");
     };
 
   return (
