@@ -1,4 +1,4 @@
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, updateDoc, query, getDocs, addDoc, deleteDoc, where } from 'firebase/firestore';
 import React, {useContext, useEffect, useState} from 'react';
 import db from 'services/storage';
 import { format } from 'date-fns';
@@ -6,6 +6,10 @@ import { AppContext } from 'services/appContext';
 import { convertFromRaw, Editor, EditorState } from 'draft-js';
 
 import styled from 'styled-components';
+import { faRetweet } from '@fortawesome/fontawesome-free-solid';
+import { faHeart } from '@fortawesome/fontawesome-free-regular';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 
 
 export const TweetCard = styled.div`
@@ -59,13 +63,30 @@ const TweetBody = styled.div`
  margin-top: .3em;
 `;
 
+const TweetReactions = styled.div`
+ display: flex;
+ margin-top: .3em;
+`;
+
+const StyledIcon = styled(FontAwesomeIcon)`
+ color: ${props => (props.retweeted ? props.theme.colors.primary : 'inherit')};
+ cursor: pointer;
+`;
+
+const RetweetCount = styled.span`
+ color: ${props => props.theme.colors.primary};
+ margin-left: 0.3em;
+`;
+
 // TODO:
 // User handle needs to link to that user profile
 
 const Tweet = ({ tweet }) => {
 
     const [author, setAuthor] = useState(null);
-    const {setActiveFilter, setViewedUser, setIsUserLoaded} = useContext(AppContext);
+    const {setActiveFilter, setViewedUser, setIsUserLoaded, currentUser} = useContext(AppContext);
+    const [retweets, setRetweets] = useState(tweet.retweets || 0);
+    const [retweeted, setRetweeted] = useState(false);
 
     const contentState = convertFromRaw(JSON.parse(tweet.body));
     const editorState = EditorState.createWithContent(contentState);
@@ -89,6 +110,10 @@ const Tweet = ({ tweet }) => {
       fetchAuthor();
     },[tweet.authorID]);
 
+    useEffect(() => {
+      checkIfRetweeted();
+    }, [tweet.tweetID]);
+
     const getUserData = async (userUid) => {
       try {
         const userDocRef = doc(db, "users", userUid);
@@ -105,9 +130,89 @@ const Tweet = ({ tweet }) => {
       }
     };
 
+    const checkIfRetweeted = async () => {
+      if (!currentUser) {
+        return;
+      }
+
+      const userRetweetsRef = collection(db, 'users', currentUser.uid, 'retweets');
+      const userRetweetsQuery = query(userRetweetsRef);
+      const userRetweetsSnapshot = await getDocs(userRetweetsQuery);
+
+      // Extract the tweet IDs from the document snapshots
+      const tweetIds = userRetweetsSnapshot.docs.map((doc) => doc.data().tweetID);
+
+      // Check if the tweet ID exists in the tweet bucket
+      const isRetweeted = tweetIds.includes(tweet.tweetID);
+      setRetweeted(isRetweeted);
+    };
+
     const handleUserProfileClick = () => {
       getUserData(tweet.authorID);
       setActiveFilter('viewUser');
+    };
+    
+    const handleRetweet = async () => {
+      if (retweeted) {
+        const newRetweetCount = retweets - 1;
+        setRetweets(newRetweetCount);
+        setRetweeted(false);
+    
+        try {
+          const tweetRef = doc(db, 'tweets', tweet.tweetID);
+          await updateDoc(tweetRef, {
+            retweets: newRetweetCount,
+          });
+    
+          // Remove tweet from user tweetBucket
+          const userTweetBucketRef = collection(db, 'users', currentUser.uid, 'tweetBucket');
+          const userTweetQuery = query(userTweetBucketRef, where('tweetID', '==', tweet.tweetID));
+          const userTweetSnapshot = await getDocs(userTweetQuery);
+          const userTweetDoc = userTweetSnapshot.docs[0];
+          if (userTweetDoc) {
+            const userTweetDocRef = doc(db, 'users', currentUser.uid, 'tweetBucket', userTweetDoc.id);
+            await deleteDoc(userTweetDocRef);
+          }
+
+          // Remove tweet from user retweets
+          const userRetweetsRef = collection(db, 'users', currentUser.uid, 'retweets');
+          const userRetweetsQuery = query(userRetweetsRef, where('tweetID', '==', tweet.tweetID));
+          const userRetweetsSnapshot = await getDocs(userRetweetsQuery);
+          const userRetweetsDoc = userRetweetsSnapshot.docs[0];
+          if (userRetweetsDoc) {
+            const userRetweetsDocRef = doc(db, 'users', currentUser.uid, 'retweets', userRetweetsDoc.id);
+            await deleteDoc(userRetweetsDocRef);
+          }
+        } catch (error) {
+          console.error('Error removing retweet or tweet from user tweet bucket', error);
+        }
+      } else {
+        // If not retweeted, add the retweet
+        const newRetweetCount = retweets + 1;
+        setRetweets(newRetweetCount);
+        setRetweeted(true);
+        try {
+          const tweetRef = doc(db, 'tweets', tweet.tweetID);
+          await updateDoc(tweetRef, {
+            retweets: newRetweetCount,
+          });
+
+          const userTweetBucketRef = collection(db, 'users', currentUser.uid, 'tweetBucket');
+          await addDoc(userTweetBucketRef, {
+            tweetID: tweet.tweetID,
+            date: new Date(),
+          });
+
+          const userRetweetsRef = collection(db, 'users', currentUser.uid, 'retweets');
+          await addDoc(userRetweetsRef, {
+            tweetID: tweet.tweetID,
+            date: new Date(),
+          });
+
+        } catch (error) {
+          console.error('Error updating retweets', error);
+        };
+      }
     };
 
 
@@ -139,6 +244,10 @@ const Tweet = ({ tweet }) => {
             <TweetBody>
                 <Editor editorState={editorState} readOnly />
             </TweetBody>
+            <TweetReactions>
+              <StyledIcon icon={faRetweet} retweeted={retweeted}  onClick={handleRetweet} />
+              {retweets > 0 && <RetweetCount>{retweets}</RetweetCount>}
+            </TweetReactions>
         </div>
     </TweetCard>
   )
