@@ -28,12 +28,8 @@ const FollowButton = () => {
     }, [currentUser, viewedUser]);
 
     const checkIsFollowing = () => {
-        try {
-          const isFollowing = followingList.some((user) => user.user === viewedUser.uid);
-          setIsFollowing(isFollowing);
-        } catch (error) {
-          console.error('Error checking if currentUser follows user', error);
-        }
+        const isFollowing = followingList.some((user) => user.user === viewedUser.uid);
+        setIsFollowing(isFollowing);
     };
 
     const handleFollowUser =  async () => {
