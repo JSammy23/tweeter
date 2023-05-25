@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { AppContext } from 'services/appContext';
 import UserProfile from './UserProfile';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, onSnapshot } from 'firebase/firestore';
 import db from 'services/storage';
 import auth from 'services/auth';
 import NewsFeed from './NewsFeed';
@@ -52,7 +52,7 @@ const FeedContainer = styled.div`
 
 const Feed = () => {
 
-    const { activeFilter, viewedUser, isUserLoaded, currentUser, setCurrentUser } = useContext(AppContext);
+    const { activeFilter, viewedUser, isUserLoaded, currentUser, setCurrentUser, setFollowingList } = useContext(AppContext);
     
 
     useEffect(() => {
@@ -66,6 +66,13 @@ const Feed = () => {
         
         if (userDocSnap.exists()) {
           setCurrentUser(userDocSnap.data());
+
+          // Fetch user 'following' sub-collection
+          const followingRef = collection(db, 'users', userUid, 'following');
+          const followingSnapshot = await getDocs(followingRef);
+          const followingData = followingSnapshot.docs.map((doc) => doc.data());
+          setFollowingList(followingData);
+          
         } else {
           console.log("No such document!");
         }

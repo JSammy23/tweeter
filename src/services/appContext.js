@@ -8,6 +8,7 @@ export const AppProvider = ({ children }) => {
     const [viewedUser, setViewedUser] = useState(null);
     const [isUserLoaded, setIsUserLoaded] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
+    const [followingList, setFollowingList] = useState([]);
 
     const contextValue = {
         activeFilter,
@@ -18,6 +19,8 @@ export const AppProvider = ({ children }) => {
         setIsUserLoaded,
         currentUser,
         setCurrentUser,
+        followingList,
+        setFollowingList,
     }
 
 
