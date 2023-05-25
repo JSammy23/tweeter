@@ -6,6 +6,7 @@ import { AppContext } from 'services/appContext';
 import { convertFromRaw, Editor, EditorState } from 'draft-js';
 import Retweet from './Retweet';
 import LikeButton from './LikeButton';
+import RetweetList from './RetweetList';
 
 import styled from 'styled-components';
 
@@ -137,7 +138,9 @@ const Tweet = ({ tweet }) => {
     };
 
   return (
-    <TweetCard>
+    <>
+      {tweet.retweets > 0 && <RetweetList tweet={tweet} />}
+      <TweetCard>
         <UserImage src={author?.profileImg}  onClick={handleUserProfileClick}/>
         <div className="flex column">
             <TweetHeader>
@@ -157,7 +160,8 @@ const Tweet = ({ tweet }) => {
               <LikeButton tweet={tweet} />
             </TweetReactions>
         </div>
-    </TweetCard>
+      </TweetCard>
+    </>
   )
 }
 
