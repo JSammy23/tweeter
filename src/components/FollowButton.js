@@ -17,40 +17,42 @@ const Checkmark = styled.span`
 
 const FollowButton = () => {
     const [isFollowing, setIsFollowing] = useState(false);
-    const {currentUser, viewedUser} = useContext(AppContext);
+    const {currentUser, viewedUser, followingList, setFollowingList} = useContext(AppContext);
 
     const userRef = doc(db, 'users', currentUser.uid);
     const viewedUserRef = doc(db, 'users', viewedUser?.uid);
     const followingRef = collection(userRef, 'following');
 
     useEffect(() => {
-        checkIsFollwing();
+        checkIsFollowing();
     }, [currentUser, viewedUser]);
 
-    const checkIsFollwing = async () => {
+    const checkIsFollowing = () => {
         try {
-            let isFollowing = false;
-            const querySnapshot = await getDocs(followingRef);
-            querySnapshot.forEach((doc) => {
-                if (doc.data().user === viewedUser.uid) {
-                    isFollowing = true;
-                }
-            });
-            setIsFollowing(isFollowing);
+          const isFollowing = followingList.some((user) => user.user === viewedUser.uid);
+          setIsFollowing(isFollowing);
         } catch (error) {
-            console.error('Error checking is currentUser follows user', error)
-        };
+          console.error('Error checking if currentUser follows user', error);
+        }
     };
 
     const handleFollowUser =  async () => {
-        // Add user uid to current user follow list
-        // Toggle follow button after following
+        // Add user to local follow list
+        try {
+            setFollowingList(prevFollowingList => [...prevFollowingList, {
+                user: viewedUser.uid
+            }]);
+            setIsFollowing(true);
+        } catch (error) {
+            console.error('Error adding user to local followList', error);
+        };
+
+        // Add user to backend follower list
         try {
             await addDoc(followingRef, {
             user: viewedUser.uid
             });
             console.log('User followed')
-            setIsFollowing(true);
     
         } catch (error) {
             console.error('Error following user', error);
@@ -69,15 +71,21 @@ const FollowButton = () => {
     };
 
     const handleUnfollowUser = async () => {
-        // Remove user uid from current user follow list
-        // Toggle follow button after unfollowing
+        // Remove user from local following list
+        try {
+            setFollowingList(prevFollowingList => prevFollowingList.filter(item => item.user !== viewedUser.uid));
+            setIsFollowing(false);
+        } catch (error) {
+            console.error('Error removing user from local followList', error);
+        };
+
+        // Remove user from firebase follower list
         try {
           const querySnapshot = await getDocs(followingRef);
           querySnapshot.forEach((doc) => {
             if (doc.data().user === viewedUser.uid) {
               deleteDoc(doc.ref);
               console.log('User unfollowed');
-              setIsFollowing(false);
             }
           });
         } catch (error) {
@@ -125,4 +133,5 @@ const FollowButton = () => {
   )
 }
 
-export default FollowButton
+export default FollowButton;
+
