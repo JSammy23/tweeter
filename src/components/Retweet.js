@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AppContext } from 'services/appContext';
-import { collection, doc, updateDoc, query, getDocs, addDoc, deleteDoc, where } from 'firebase/firestore';
+import { collection, doc, updateDoc, query, getDocs, addDoc, deleteDoc, where, arrayRemove, arrayUnion } from 'firebase/firestore';
 import db from 'services/storage';
 
 import styled from 'styled-components';
@@ -55,6 +55,7 @@ const Retweet = ({ tweet }) => {
           const tweetRef = doc(db, 'tweets', tweet.tweetID);
           await updateDoc(tweetRef, {
             retweets: newRetweetCount,
+            rewteetedBy: arrayRemove(currentUser.uid),
           });
     
           // Remove tweet from user tweetBucket
@@ -88,6 +89,7 @@ const Retweet = ({ tweet }) => {
           const tweetRef = doc(db, 'tweets', tweet.tweetID);
           await updateDoc(tweetRef, {
             retweets: newRetweetCount,
+            retweetedBy: arrayUnion(currentUser.uid),
           });
 
           const userTweetBucketRef = collection(db, 'users', currentUser.uid, 'tweetBucket');
