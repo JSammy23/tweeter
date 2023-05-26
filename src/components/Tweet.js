@@ -76,7 +76,7 @@ const TweetReactions = styled.div`
 const Tweet = ({ tweet }) => {
 
     const [author, setAuthor] = useState(null);
-    const {setActiveFilter, setViewedUser, setIsUserLoaded, currentUser} = useContext(AppContext);
+    const {setActiveFilter, setViewedUser, setIsUserLoaded, currentUser, activeFilter} = useContext(AppContext);
 
     const contentState = convertFromRaw(JSON.parse(tweet.body));
     const editorState = EditorState.createWithContent(contentState);
@@ -139,7 +139,7 @@ const Tweet = ({ tweet }) => {
 
   return (
     <>
-      {tweet.retweets > 0 && <RetweetList tweet={tweet} />}
+      {tweet.retweets > 0 && activeFilter === 'home' && <RetweetList tweet={tweet} />}
       <TweetCard>
         <UserImage src={author?.profileImg}  onClick={handleUserProfileClick}/>
         <div className="flex column">
