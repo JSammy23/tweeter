@@ -28,25 +28,63 @@ const NewsFeed = () => {
     const [userTweets, setUserTweets] = useState([]);
     const [subscribedTweets, setSubscribedTweets] = useState([]);
     const [loading, setLoading] = useState(false);
-    // const [lastTweetTimestamp, setLastTweetTimestamp] = useState(null);
     
     const tweetsRef = collection(db, 'tweets');
     
+    const subscribedPaginationParams = {
+        startAfterDoc: null,
+        limit: 50
+    };
+      
+    const explorePaginationParams = {
+        startAfterDoc: null,
+        limit: 100
+    };
+    
 
-    // useEffect(() => {
-    //     console.log('NewsFeed Mounted!', user)
-    //   }, []);
+    const fetchTweets = async (paginationParams, tweetsRef) => {
+        const { startAfterDoc, limitValue } = paginationParams;
+      
+        let tweetsQuery = query(
+          tweetsRef,
+          orderBy('date', 'desc'),
+          limit(limitValue)
+        );
+      
+        if (startAfterDoc) {
+          tweetsQuery = query(
+            tweetsRef,
+            orderBy('date', 'desc'),
+            startAfter(startAfterDoc.date),
+            limit(limitValue)
+          );
+        }
+      
+        const tweetsSnapshot = await getDocs(tweetsQuery);
+        const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
+        
+        return tweetsData;
+    };
 
+    const handleLoadMoreTweets = async () => {
+        const lastTweet = tweets[tweets.length - 1];
+        
+        const nextPaginationParams = {
+          startAfterDoc: lastTweet,
+          limit: 50
+        };
+      
+        const newTweetsData = await fetchTweets(nextPaginationParams);
+        
+        // Append the new tweets to the existing tweets list
+        setTweets((prevTweets) => [...prevTweets, ...newTweetsData]);
+    };
     
 
     // Fetch subscribed tweets
     const fetchSubscribedTweets = async () => {
         try {
           setLoading(true); // Set loading state to true before fetching
-      
-        //   const userSubsRef = collection(db, 'users', currentUser.uid, 'following');
-        //   const userSubsSnapshot = await getDocs(userSubsRef);
-        //   const userSubsIds = followingList.map((user) => user.user);
       
           const subscribedTweets = [];
       
@@ -59,8 +97,8 @@ const NewsFeed = () => {
             const tweetIds = userTweetBucketSnapshot.docs.map((doc) => doc.data().tweetID);
       
             // Use the tweet IDs to query the tweets collection to retrieve the actual tweet documents
-            const tweetsQuery = query(tweetsRef, where('__name__', 'in', tweetIds));
-            const tweetsSnapshot = await getDocs(tweetsQuery);
+            const subscribedTweetsQuery = query(tweetsRef, where('__name__', 'in', tweetIds));
+            const tweetsSnapshot = await getDocs(subscribedTweetsQuery);
             const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
       
             // Update the subscribedTweets state for the current user
@@ -115,20 +153,34 @@ const NewsFeed = () => {
         }
     }, [currentUser, activeFilter]);
 
+    // useEffect(() => {
+    //     // Fetch all tweets for explore page
+    //     const fetchTweets = async () => {
+    //         let tweetsQuery = query(tweetsRef, orderBy('date', 'desc'), limit(100));
+    //         if (tweets.length > 0) {
+    //             const lastTweet = tweets[tweets.length - 1];
+    //             tweetsQuery = query(tweetsRef, orderBy('date', 'desc'), startAfter(lastTweet.date), limit(50));
+    //         }
+    //         const tweetsSnapshot = await getDocs(tweetsQuery);
+    //         const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
+    //         console.log(tweetsData);
+    //         setTweets(tweetsData);
+    //     };
+    //     fetchTweets();
+    // }, []);
+
     useEffect(() => {
-        // Fetch all tweets for explore page
-        const fetchTweets = async () => {
-            let tweetsQuery = query(tweetsRef, orderBy('date', 'desc'), limit(100));
-            if (tweets.length > 0) {
-                const lastTweet = tweets[tweets.length - 1];
-                tweetsQuery = query(tweetsRef, orderBy('date', 'desc'), startAfter(lastTweet.date), limit(50));
-            }
-            const tweetsSnapshot = await getDocs(tweetsQuery);
-            const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
-            console.log(tweetsData);
+        const intitialPaginationParams = {
+            startAfterDoc: null,
+            limit: 100,
+        };
+
+        const fetchInitialTweets = async () => {
+            const tweetsData = await fetchTweets(intitialPaginationParams, tweetsRef);
             setTweets(tweetsData);
         };
-        fetchTweets();
+
+        fetchInitialTweets();
     }, []);
 
     useEffect(() => {
