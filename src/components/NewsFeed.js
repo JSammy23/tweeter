@@ -23,7 +23,7 @@ const Container = styled.div`
 
 const NewsFeed = () => {
 
-    const { activeFilter, viewedUser, currentUser } = useContext(AppContext);
+    const { activeFilter, viewedUser, currentUser, followingList } = useContext(AppContext);
     const [tweets, setTweets] = useState([]);
     const [userTweets, setUserTweets] = useState([]);
     const [subscribedTweets, setSubscribedTweets] = useState([]);
@@ -44,14 +44,14 @@ const NewsFeed = () => {
         try {
           setLoading(true); // Set loading state to true before fetching
       
-          const userSubsRef = collection(db, 'users', currentUser.uid, 'following');
-          const userSubsSnapshot = await getDocs(userSubsRef);
-          const userSubsIds = userSubsSnapshot.docs.map((doc) => doc.data().user);
+        //   const userSubsRef = collection(db, 'users', currentUser.uid, 'following');
+        //   const userSubsSnapshot = await getDocs(userSubsRef);
+        //   const userSubsIds = followingList.map((user) => user.user);
       
           const subscribedTweets = [];
       
-          for (const user of userSubsIds) {
-            const userTweetBucketRef = collection(db, 'users', user, 'tweetBucket');
+          for (const user of followingList) {
+            const userTweetBucketRef = collection(db, 'users', user.user, 'tweetBucket');
             const userTweetBucketQuery = query(userTweetBucketRef, orderBy('date', 'desc'));
             const userTweetBucketSnapshot = await getDocs(userTweetBucketQuery);
       
