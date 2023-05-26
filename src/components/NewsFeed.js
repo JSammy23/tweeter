@@ -142,25 +142,32 @@ const NewsFeed = () => {
         return <Loading />;
     };
 
+    const mapTweetsToComponents = (tweets) => {
+        return tweets.map((tweet) => <Tweet key={tweet.date} tweet={tweet} />);
+    };
+
+
+
     // TODO: render home filter tweets, only tweets and retweets of following. 
     const renderTweets = () => {
+        let tweetArray;
         switch (activeFilter) {
             case 'profile':
             case 'viewUser':
-                return userTweets.map((tweet) => (
-                    <Tweet key={tweet.date} tweet={tweet} />
-                ));
+                tweetArray = userTweets;
+                break;
             case 'explore':
-                return tweets.map((tweet) => (
-                    <Tweet key={tweet.date} tweet={tweet} />
-                ));
+                tweetArray = tweets;
+                break;
             case 'home':
-                return subscribedTweets.map((tweet) => (
-                    <Tweet key={tweet.date} tweet={tweet} />
-                ));
+                tweetArray = subscribedTweets;
+                break;
             default:
-                return null;
+                tweetArray = [];
+                break;
         };
+
+        return mapTweetsToComponents(tweetArray);
     };
 
   return (
