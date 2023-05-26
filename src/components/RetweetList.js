@@ -1,5 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AppContext } from 'services/appContext';
+import { doc, getDoc } from 'firebase/firestore';
+import db from 'services/storage';
 
 import styled from 'styled-components';
 
@@ -28,12 +30,42 @@ const RetweetList = ({ tweet }) => {
         setIsAuthorFollowed(isFollowing);
     };
 
-    const fetchRetweetUsers = () => {
+    const fetchDisplayName = async (uid) => {
+        // Check if display name is already cached in local storage
+        const cachedUser = localStorage.getItem(uid);
+        if (cachedUser) {
+          return JSON.parse(cachedUser).displayName;
+        } else {
+          try {
+            // Fetch user document from Firestore
+            const userRef = doc(db, 'users', uid);
+            const userDoc = await getDoc(userRef);
+            const userData = userDoc.data();
+      
+            // Cache display name in local storage
+            localStorage.setItem(uid, JSON.stringify(userData));
+      
+            return userData.displayName;
+          } catch (error) {
+            console.error('Error fetching user display name', error);
+            return null;
+          }
+        }
+    };
+
+    const fetchRetweetUsers = async () => {
         if (tweet.retweetedBy && Array.isArray(tweet.retweetedBy)) {
-          const retweetUsers = tweet.retweetedBy.filter((user) =>
-            followingList.some((followingUser) => followingUser.user === user)
-          );
-          setSubscribedRetweetedBy(retweetUsers);
+          try {
+            const retweetedUsers = await Promise.all(
+              tweet.retweetedBy.map(async (userUid) => {
+                const displayName = await fetchDisplayName(userUid);
+                return displayName;
+              })
+            );
+            setSubscribedRetweetedBy(retweetedUsers);
+          } catch (error) {
+            console.error('Error fetching retweet users', error);
+          }
         } else {
           // Handle the case when `retweetedBy` is missing or not an array
           console.log('RetweetedBy data is missing or invalid');
