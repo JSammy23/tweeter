@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import EditProfile from './Edit Profile/EditProfile';
-import { doc, getDocs, setDoc, collection } from 'firebase/firestore';
+import { doc, getDocs, getDoc, setDoc, collection } from 'firebase/firestore';
 import db from 'services/storage';
 import FollowButton from './FollowButton';
 
@@ -48,12 +48,14 @@ const UserProfile = ({user, isCurrentUser }) => {
     const [editProfile, setEditProfile] = useState(false);
     const [followers, setFollowers] = useState([]);
     const [following, setFollowing] = useState([]);
+    const [userProfileImg, setUserProfileImg] = useState(user?.profileImg);
 
     const userRef = doc(db, 'users', user?.uid);
 
     useEffect(() => {
         fetchFollowers();
         fetchFollowing();
+        setUserProfileImg(user.profileImg)
     }, [user]);
 
     const fetchFollowers = async () => {
@@ -70,6 +72,16 @@ const UserProfile = ({user, isCurrentUser }) => {
         setFollowing(following);
     };
 
+    // const fetchUser = async (uid) => {
+    //     try {
+    //         const userDoc = await getDoc(userRef);
+    //         const userData = userDoc.data();
+    //         localStorage.setItem(uid, JSON.stringify(userData));
+    //     } catch (error) {
+    //         console.error('Error fetching user', error)
+    //     };
+    // };    
+
     
     const toggleEditProfile = () => {
         setEditProfile(!editProfile);
@@ -77,9 +89,7 @@ const UserProfile = ({user, isCurrentUser }) => {
     
     const handleUpdateUser = async (updatedUser) => {
         setEditProfile(false);
-        // const userRef = doc(db, 'users', user.uid);
         await setDoc(userRef, updatedUser);
-        localStorage.removeItem(user.uid);
     };
 
 
@@ -87,7 +97,7 @@ const UserProfile = ({user, isCurrentUser }) => {
     <ProfileCard>
         <div className="flex spacer">
             <div>
-                <UserImage src={user?.profileImg} />
+                <UserImage src={userProfileImg} />
             </div>
             <div>
                 {isCurrentUser ? (
@@ -107,7 +117,8 @@ const UserProfile = ({user, isCurrentUser }) => {
         {editProfile && (
         <EditProfile onUpdateUser={handleUpdateUser} 
         toggleClose={toggleEditProfile}
-        user={user} />)}
+        user={user}
+        updateUserProfileImg={setUserProfileImg} />)}
     </ProfileCard>
   )
 }

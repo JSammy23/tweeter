@@ -36,7 +36,7 @@ const IconBtn = styled.button`
 
 
 
-const EditProfile = ({ toggleClose, user, onUpdateUser }) => {
+const EditProfile = ({ toggleClose, user, onUpdateUser, updateUserProfileImg }) => {
 
     const [displayName, setDisplayName] = useState(user.displayName);
     const [userHandle, setUserHandle] = useState(user.userHandle);
@@ -54,6 +54,7 @@ const EditProfile = ({ toggleClose, user, onUpdateUser }) => {
         };
     
         onUpdateUser(updatedUser);
+        updateUserProfileImg(profileImg);
     };
 
     const handleInputChange = (e) => {
@@ -98,7 +99,7 @@ const EditProfile = ({ toggleClose, user, onUpdateUser }) => {
         </Header>
         <form id='editProfile' onSubmit={handleSubmit} >
             <div className="profile-img-cont">
-                <img onClick={openFileInput} className='profile-pic' src={user.profileImg} alt='profile pic' />
+                <img onClick={openFileInput} className='profile-pic' src={profileImg} alt='profile pic' />
                 <div onClick={openFileInput} className="edit-label">Edit</div>
                 <input 
                 type="file"
