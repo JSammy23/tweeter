@@ -100,9 +100,16 @@ const NewsFeed = () => {
             const subscribedTweetsQuery = query(tweetsRef, where('__name__', 'in', tweetIds));
             const tweetsSnapshot = await getDocs(subscribedTweetsQuery);
             const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
+
+            tweetsData.forEach((tweet) => {
+                const isDuplicate = subscribedTweets.some((existingTweet) => existingTweet.tweetID === tweet.tweetID);
+                if (!isDuplicate) {
+                    subscribedTweets.push(tweet);
+                }
+            });
       
             // Update the subscribedTweets state for the current user
-            subscribedTweets.push(...tweetsData);
+            // subscribedTweets.push(...tweetsData);
           }
       
           subscribedTweets.sort((a, b) => b.date - a.date);
@@ -195,7 +202,7 @@ const NewsFeed = () => {
     };
 
     const mapTweetsToComponents = (tweets) => {
-        return tweets.map((tweet) => <Tweet key={tweet.date} tweet={tweet} />);
+        return tweets.map((tweet) => <Tweet key={tweet.tweetID} tweet={tweet} />);
     };
 
 
