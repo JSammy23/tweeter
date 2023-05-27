@@ -5,8 +5,11 @@ import db from 'services/storage';
 
 import styled from 'styled-components';
 
-// TODO:
-// Fetch user name instead of listing user uid
+const StyledText = styled.p`
+ color: ${props => props.theme.colors.accent};
+ margin-left: .3em;
+ margin-top: .3em;
+`;
 
 const RetweetList = ({ tweet }) => {
     const { currentUser, followingList } = useContext(AppContext);
@@ -74,13 +77,13 @@ const RetweetList = ({ tweet }) => {
 
     const renderRetweetUsers = () => {
         if (subscribedRetweetedBy.length === 1) {
-          return <p>{subscribedRetweetedBy[0]} retweeted</p>;
+          return <StyledText>{subscribedRetweetedBy[0]} retweeted</StyledText>;
         } else if (subscribedRetweetedBy.length > 1) {
           const displayedUsers = subscribedRetweetedBy.slice(0, 2).join(", ");
           const remainingCount = subscribedRetweetedBy.length - 2;
           const othersText = remainingCount === 1 ? "other" : "others";
           const text = `${displayedUsers}, and ${remainingCount} ${othersText} retweeted`;
-          return <p>{text}</p>;
+          return <StyledText>{text}</StyledText>;
         } else {
           return null;
         }
