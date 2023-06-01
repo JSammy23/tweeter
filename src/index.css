@@ -31,6 +31,10 @@ body {
   justify-content: space-between;
 }
 
+.around {
+  justify-content: space-around;
+}
+
 .align {
   align-items: center;
 }
