@@ -3,6 +3,7 @@ import EditProfile from './Edit Profile/EditProfile';
 import { doc, getDocs, getDoc, setDoc, collection } from 'firebase/firestore';
 import db from 'services/storage';
 import FollowButton from './FollowButton';
+import UserProfileControls from './UserProfileControls';
 
 
 import styled from 'styled-components';
@@ -12,7 +13,7 @@ import { Title, UserHandle, Button } from 'styles/styledComponents';
 
 const ProfileCard = styled.div`
  width: 100%;
- height: 15em;
+ height: 17.5em;
  border-top: 1px solid;
  border-bottom: 1px solid;
  border-color: ${props => props.theme.colors.secondary};
@@ -113,6 +114,7 @@ const UserProfile = ({user, isCurrentUser }) => {
             <CountsDiv>
                 <span>{following.length}</span> Following <span>{followers.length}</span> Followers
             </CountsDiv>
+            <UserProfileControls />
         </div>
         {editProfile && (
         <EditProfile onUpdateUser={handleUpdateUser} 
