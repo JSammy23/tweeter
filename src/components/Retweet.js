@@ -9,7 +9,7 @@ import { faRetweet } from '@fortawesome/fontawesome-free-solid';
 
 
 export const StyledIcon = styled(FontAwesomeIcon)`
- color: ${props => (props.active ? props.theme.colors.primary : 'inherit')};
+ color: ${props => (props.active ? props.theme.colors.primary : props.theme.colors.secondary)};
  cursor: pointer;
 `;
 
