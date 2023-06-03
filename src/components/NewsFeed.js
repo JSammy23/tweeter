@@ -21,12 +21,13 @@ const Container = styled.div`
     // A load more tweets function to grab older tweets
     // A refresh tweets for the latest tweets since last fetch
 
-const NewsFeed = () => {
+const NewsFeed = ({showLikes }) => {
 
     const { activeFilter, viewedUser, currentUser, followingList } = useContext(AppContext);
     const [tweets, setTweets] = useState([]);
     const [userTweets, setUserTweets] = useState([]);
     const [subscribedTweets, setSubscribedTweets] = useState([]);
+    const [userLikedTweets, setUserLikedTweets] = useState([]);
     const [loading, setLoading] = useState(false);
     
     const tweetsRef = collection(db, 'tweets');
@@ -66,6 +67,17 @@ const NewsFeed = () => {
         return tweetsData;
     };
 
+    const retrieveAndSortTweets = async (tweetIds) => {
+        // Use the tweet IDs to query the tweets collection to retrieve the actual tweet documents
+        const tweetsQuery = query(tweetsRef, where('__name__', 'in', tweetIds));
+        const tweetsSnapshot = await getDocs(tweetsQuery);
+        const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
+        // Sort by date in descending order
+        tweetsData.sort((a, b) => b.date - a.date);
+
+        return tweetsData;
+    };
+
     const handleLoadMoreTweets = async () => {
         const lastTweet = tweets[tweets.length - 1];
         
@@ -96,10 +108,8 @@ const NewsFeed = () => {
             // Extract the tweet IDs from the document snapshots
             const tweetIds = userTweetBucketSnapshot.docs.map((doc) => doc.data().tweetID);
       
-            // Use the tweet IDs to query the tweets collection to retrieve the actual tweet documents
-            const subscribedTweetsQuery = query(tweetsRef, where('__name__', 'in', tweetIds));
-            const tweetsSnapshot = await getDocs(subscribedTweetsQuery);
-            const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
+            // Retrieve and sort the tweets usiong tweet IDs
+            const tweetsData = await retrieveAndSortTweets(tweetIds); 
 
             tweetsData.forEach((tweet) => {
                 const isDuplicate = subscribedTweets.some((existingTweet) => existingTweet.tweetID === tweet.tweetID);
@@ -108,8 +118,6 @@ const NewsFeed = () => {
                 }
             });
       
-            // Update the subscribedTweets state for the current user
-            // subscribedTweets.push(...tweetsData);
           }
       
           subscribedTweets.sort((a, b) => b.date - a.date);
@@ -133,14 +141,21 @@ const NewsFeed = () => {
         // Extract the tweet IDs from the document snapshots
         const tweetIds = userTweetBucketSnapshot.docs.map((doc) => doc.data().tweetID);
 
-        // Use the tweet IDs to query the tweets collection to retrieve the actual tweet documents
-        const tweetsQuery = query(tweetsRef, where('__name__', 'in', tweetIds));
-        const tweetsSnapshot = await getDocs(tweetsQuery);
-        const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
-        // Sort by date in descending order
-        tweetsData.sort((a, b) => b.date - a.date);
+        // Retrieve and sort the tweets usiong tweet IDs
+        const tweetsData = await retrieveAndSortTweets(tweetIds);
+
         setUserTweets(tweetsData);
+
+        // Fetch user liked tweets
+        const userLikedTweetsRef = collection(db, 'users', uid, 'likes');
+        const userLikedTweetsQuery = query(userLikedTweetsRef);
+        const userLikedTweetsSnapshot = await getDocs(userLikedTweetsQuery);
+
+        const userLikedTweetsIDs = userLikedTweetsSnapshot.docs.map((doc) => doc.data().tweetID);
+        const userLikedTweetsData = await retrieveAndSortTweets(userLikedTweetsIDs);
+        setUserLikedTweets(userLikedTweetsData);
     };
+
 
     useEffect(() => {
         if (!currentUser) {
@@ -160,21 +175,6 @@ const NewsFeed = () => {
         }
     }, [currentUser, activeFilter]);
 
-    // useEffect(() => {
-    //     // Fetch all tweets for explore page
-    //     const fetchTweets = async () => {
-    //         let tweetsQuery = query(tweetsRef, orderBy('date', 'desc'), limit(100));
-    //         if (tweets.length > 0) {
-    //             const lastTweet = tweets[tweets.length - 1];
-    //             tweetsQuery = query(tweetsRef, orderBy('date', 'desc'), startAfter(lastTweet.date), limit(50));
-    //         }
-    //         const tweetsSnapshot = await getDocs(tweetsQuery);
-    //         const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
-    //         console.log(tweetsData);
-    //         setTweets(tweetsData);
-    //     };
-    //     fetchTweets();
-    // }, []);
 
     useEffect(() => {
         const intitialPaginationParams = {
@@ -213,7 +213,7 @@ const NewsFeed = () => {
         switch (activeFilter) {
             case 'profile':
             case 'viewUser':
-                tweetArray = userTweets;
+                tweetArray = showLikes ? userLikedTweets : userTweets;
                 break;
             case 'explore':
                 tweetArray = tweets;
