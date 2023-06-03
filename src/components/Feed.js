@@ -53,7 +53,7 @@ const FeedContainer = styled.div`
 const Feed = () => {
 
     const { activeFilter, viewedUser, isUserLoaded, currentUser, setCurrentUser, setFollowingList } = useContext(AppContext);
-    
+    const [showLikes, setShowLikes] = useState(false);
 
     useEffect(() => {
       console.log('Feed Mounted!')
@@ -107,10 +107,10 @@ const Feed = () => {
       default:
         return <Compose user={currentUser} />;
       case 'profile':
-        return <UserProfile user={currentUser} isCurrentUser={true} />
+        return <UserProfile user={currentUser} isCurrentUser={true} showLikes={setShowLikes} />
       case 'viewUser':
         return isUserLoaded ? (
-          <UserProfile user={viewedUser} isCurrentUser={auth.currentUser.uid === viewedUser.uid} />
+          <UserProfile user={viewedUser} isCurrentUser={auth.currentUser.uid === viewedUser.uid} showLikes={setShowLikes} />
         ) : (
           <Loading />
         )
@@ -120,7 +120,7 @@ const Feed = () => {
   return (
     <FeedContainer>
         {renderByFilter()}
-        <NewsFeed />
+        <NewsFeed showLikes={showLikes} />
     </FeedContainer>
   )
 }

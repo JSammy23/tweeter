@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { AppContext } from 'services/appContext';
 
 import styled from 'styled-components';
 
@@ -15,13 +16,24 @@ const StyledTab = styled.button`
 
 // TODO: Render liked tweets when activeTab is 'likes'.
 
-const UserProfileControls = () => {
+const UserProfileControls = ({ showLikes }) => {
     const [activeTab, setActiveTab] = useState('userTweets');
+    const { setActiveFilter } = useContext(AppContext);
 
     const navItems = [
         {id: 'userTweets', text: 'Tweets'},
         {id: 'userLikes', text: 'Likes'},
     ];
+
+    const handleClick = (itemId) => {
+        setActiveTab(itemId);
+    
+        if (itemId === 'userLikes') {
+          showLikes(true);
+        } else {
+          showLikes(false); 
+        }
+    };
 
   return (
     <div className='flex around'>
@@ -29,7 +41,7 @@ const UserProfileControls = () => {
             <StyledTab
             key={item.id}
             active={item.id === activeTab}
-            onClick={() => setActiveTab(item.id)}
+            onClick={() => handleClick(item.id)}
             >
                 {item.text}
             </StyledTab>

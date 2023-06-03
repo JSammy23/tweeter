@@ -44,7 +44,7 @@ const CountsDiv = styled.div`
 // Pass follower & FOllowing array down to follow button
 
 
-const UserProfile = ({user, isCurrentUser }) => {
+const UserProfile = ({user, isCurrentUser, showLikes }) => {
 
     const [editProfile, setEditProfile] = useState(false);
     const [followers, setFollowers] = useState([]);
@@ -114,7 +114,7 @@ const UserProfile = ({user, isCurrentUser }) => {
             <CountsDiv>
                 <span>{following.length}</span> Following <span>{followers.length}</span> Followers
             </CountsDiv>
-            <UserProfileControls />
+            <UserProfileControls showLikes={showLikes} />
         </div>
         {editProfile && (
         <EditProfile onUpdateUser={handleUpdateUser} 
