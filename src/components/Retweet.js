@@ -55,7 +55,7 @@ const Retweet = ({ tweet }) => {
           const tweetRef = doc(db, 'tweets', tweet.tweetID);
           await updateDoc(tweetRef, {
             retweets: newRetweetCount,
-            rewteetedBy: arrayRemove(currentUser.uid),
+            retweetedBy: arrayRemove(currentUser.uid),
           });
     
           // Remove tweet from user tweetBucket
