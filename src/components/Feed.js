@@ -1,8 +1,6 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { AppContext } from 'services/appContext';
 import UserProfile from './UserProfile';
-import { collection, doc, getDoc, getDocs, onSnapshot } from 'firebase/firestore';
-import db from 'services/storage';
 import auth from 'services/auth';
 import NewsFeed from './NewsFeed';
 import Compose from './Compose';
@@ -10,6 +8,7 @@ import Loading from './Loading/Loading';
 
 
 import styled from 'styled-components';
+import useUserData from 'hooks/useUserData';
 
 
 const FeedContainer = styled.div`
@@ -52,60 +51,16 @@ const FeedContainer = styled.div`
 
 const Feed = () => {
 
-    const { activeFilter, viewedUser, isUserLoaded, currentUser, setCurrentUser, setFollowingList } = useContext(AppContext);
-    const [showLikes, setShowLikes] = useState(false);
+  const { activeFilter, viewedUser, isUserLoaded, currentUser } = useContext(AppContext);
+  const [showLikes, setShowLikes] = useState(false);
 
-    useEffect(() => {
-      console.log('Feed Mounted!')
-    },[]);
+  const { loading } = useUserData(auth.currentUser.uid);
 
-    const getUserData = async (userUid) => {
-      try {
-        const userDocRef = doc(db, "users", userUid);
-        const userDocSnap = await getDoc(userDocRef);
-        
-        if (userDocSnap.exists()) {
-          setCurrentUser(userDocSnap.data());
-
-          // Fetch user 'following' sub-collection
-          const followingRef = collection(db, 'users', userUid, 'following');
-          const followingSnapshot = await getDocs(followingRef);
-          const followingData = followingSnapshot.docs.map((doc) => doc.data());
-          setFollowingList(followingData);
-          
-        } else {
-          console.log("No such document!");
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    useEffect(() => {
-      getUserData(auth.currentUser.uid);
-    }, []);
-
-  
-
-  // useEffect(() => {
-  //     if (user) {
-  //       const userRef = doc(db, 'users', user.uid);
-  //       const unsubscribe = onSnapshot(userRef, (doc) => {
-  //         if (doc.exists()) {
-  //           setUser(doc.data());
-  //         }
-  //         else {
-  //           setUser(null);
-  //         }
-  //       });
-  //       return unsubscribe;
-  //     }
-  // }, [user]);
-
+    
   const renderByFilter = () => {
     switch (activeFilter) {
       default:
-        return <Compose user={currentUser} />;
+        return <Compose user={currentUser} />
       case 'profile':
         return <UserProfile user={currentUser} isCurrentUser={true} showLikes={setShowLikes} />
       case 'viewUser':
@@ -113,8 +68,12 @@ const Feed = () => {
           <UserProfile user={viewedUser} isCurrentUser={auth.currentUser.uid === viewedUser.uid} showLikes={setShowLikes} />
         ) : (
           <Loading />
-        )
+        );
     }
+  }
+
+  if (loading) {
+    return <Loading />;
   }
 
   return (
