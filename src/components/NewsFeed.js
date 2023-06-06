@@ -188,7 +188,7 @@ const NewsFeed = ({showLikes }) => {
         };
 
         fetchInitialTweets();
-    }, []);
+    }, [tweetsRef]);
 
     useEffect(() => {
         if (activeFilter !== 'viewUser') {
@@ -219,7 +219,7 @@ const NewsFeed = ({showLikes }) => {
                 tweetArray = tweets;
                 break;
             case 'home':
-                tweetArray = subscribedTweets;
+                tweetArray = [...subscribedTweets, ...userTweets].sort((a, b) => b.date - a.date);
                 break;
             default:
                 tweetArray = [];
