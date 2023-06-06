@@ -53,6 +53,7 @@ const Feed = () => {
 
   const { activeFilter, viewedUser, isUserLoaded, currentUser } = useContext(AppContext);
   const [showLikes, setShowLikes] = useState(false);
+  const [showNewsFeed, setShowNewsFeed] = useState(true);
 
   const { loading } = useUserData(auth.currentUser.uid);
 
@@ -62,10 +63,22 @@ const Feed = () => {
       default:
         return <Compose user={currentUser} />
       case 'profile':
-        return <UserProfile user={currentUser} isCurrentUser={true} showLikes={setShowLikes} />
+        return (
+          <UserProfile 
+          user={currentUser} 
+          isCurrentUser={true} 
+          showLikes={setShowLikes}
+          showNewsFeed={setShowNewsFeed} 
+          />
+          );
       case 'viewUser':
         return isUserLoaded ? (
-          <UserProfile user={viewedUser} isCurrentUser={auth.currentUser.uid === viewedUser.uid} showLikes={setShowLikes} />
+          <UserProfile 
+          user={viewedUser} 
+          isCurrentUser={auth.currentUser.uid === viewedUser.uid} 
+          showLikes={setShowLikes} 
+          showNewsFeed={setShowNewsFeed} 
+          />
         ) : (
           <Loading />
         );
@@ -79,7 +92,7 @@ const Feed = () => {
   return (
     <FeedContainer>
         {renderByFilter()}
-        <NewsFeed showLikes={showLikes} />
+        {showNewsFeed && <NewsFeed showLikes={showLikes} />}
     </FeedContainer>
   )
 }

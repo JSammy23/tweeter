@@ -4,6 +4,7 @@ import { doc, getDocs, getDoc, setDoc, collection } from 'firebase/firestore';
 import db from 'services/storage';
 import FollowButton from './FollowButton';
 import UserProfileControls from './UserProfileControls';
+import FollowList from './FollowList';
 
 
 import styled from 'styled-components';
@@ -34,6 +35,11 @@ const CountsDiv = styled.div`
  span {
     color: ${props => props.theme.colors.primary};
     margin: 0 .3em;
+
+    &:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
  }
 `;
 
@@ -44,12 +50,13 @@ const CountsDiv = styled.div`
 // Pass follower & FOllowing array down to follow button
 
 
-const UserProfile = ({user, isCurrentUser, showLikes }) => {
+const UserProfile = ({user, isCurrentUser, showLikes, showNewsFeed }) => {
 
     const [editProfile, setEditProfile] = useState(false);
     const [followers, setFollowers] = useState([]);
     const [following, setFollowing] = useState([]);
     const [userProfileImg, setUserProfileImg] = useState(user?.profileImg);
+    const [showFollowList, setShowFollowList] = useState(false);
 
     const userRef = doc(db, 'users', user?.uid);
 
@@ -83,35 +90,55 @@ const UserProfile = ({user, isCurrentUser, showLikes }) => {
         await setDoc(userRef, updatedUser);
     };
 
+    const handleFollowCountClick = () => {
+        setShowFollowList(true);
+        showNewsFeed(false);
+    };
+
+    const handleBackClick = () => {
+        setShowFollowList(false);
+        showNewsFeed(true);
+    };
+
 
   return (
-    <ProfileCard>
-        <div className="flex spacer">
-            <div>
-                <UserImage src={userProfileImg} />
-            </div>
-            <div>
-                {isCurrentUser ? (
-                    <Button onClick={toggleEditProfile} >Edit profile</Button>
-                ) : (
-                    <FollowButton />
-                )}
-            </div>
-        </div>
-        <div className="flex column">
-            <Title>{user?.displayName}</Title>
-            <UserHandle>{user?.userHandle}</UserHandle>
-            <CountsDiv>
-                <span>{following.length}</span> Following <span>{followers.length}</span> Followers
-            </CountsDiv>
-            <UserProfileControls showLikes={showLikes} />
-        </div>
-        {editProfile && (
-        <EditProfile onUpdateUser={handleUpdateUser} 
-        toggleClose={toggleEditProfile}
-        user={user}
-        updateUserProfileImg={setUserProfileImg} />)}
-    </ProfileCard>
+    <>
+        {showFollowList ? (
+            <FollowList
+              followers={followers}
+              following={following}
+              onBackClick={handleBackClick}
+            />
+        ) : (
+            <ProfileCard>
+                <div className="flex spacer">
+                    <div>
+                        <UserImage src={userProfileImg} />
+                    </div>
+                    <div>
+                    {isCurrentUser ? (
+                        <Button onClick={toggleEditProfile} >Edit profile</Button>
+                     ) : (
+                          <FollowButton />
+                     )}
+                    </div>
+                </div>
+                <div className="flex column">
+                    <Title>{user?.displayName}</Title>
+                    <UserHandle>{user?.userHandle}</UserHandle>
+                    <CountsDiv>
+                        <span onClick={handleFollowCountClick}>{following.length}</span> Following <span>{followers.length}</span> Followers
+                    </CountsDiv>
+                    <UserProfileControls showLikes={showLikes} />
+                </div>
+                {editProfile && (
+                <EditProfile onUpdateUser={handleUpdateUser} 
+                toggleClose={toggleEditProfile}
+                user={user}
+                updateUserProfileImg={setUserProfileImg} />)}
+            </ProfileCard>
+        )}
+    </>
   )
 }
 
