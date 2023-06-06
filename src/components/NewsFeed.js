@@ -96,39 +96,46 @@ const NewsFeed = ({showLikes }) => {
     // Fetch subscribed tweets
     const fetchSubscribedTweets = async () => {
         try {
-          setLoading(true); // Set loading state to true before fetching
+          setLoading(true);
       
           const subscribedTweets = [];
       
-          for (const user of followingList) {
-            const userTweetBucketRef = collection(db, 'users', user.user, 'tweetBucket');
-            const userTweetBucketQuery = query(userTweetBucketRef, orderBy('date', 'desc'));
+          const fetchUserTweetsPromises = followingList.map(async (user) => {
+            const userTweetBucketRef = collection(
+              db,
+              "users",
+              user.user,
+              "tweetBucket"
+            );
+            const userTweetBucketQuery = query(userTweetBucketRef, orderBy("date", "desc"));
             const userTweetBucketSnapshot = await getDocs(userTweetBucketQuery);
       
-            // Extract the tweet IDs from the document snapshots
-            const tweetIds = userTweetBucketSnapshot.docs.map((doc) => doc.data().tweetID);
+            const tweetIds = userTweetBucketSnapshot.docs.map((doc) =>
+              doc.data().tweetID
+            );
       
-            // Retrieve and sort the tweets usiong tweet IDs
-            const tweetsData = await retrieveAndSortTweets(tweetIds); 
-
+            const tweetsData = await retrieveAndSortTweets(tweetIds);
+      
             tweetsData.forEach((tweet) => {
-                const isDuplicate = subscribedTweets.some((existingTweet) => existingTweet.tweetID === tweet.tweetID);
-                if (!isDuplicate) {
-                    subscribedTweets.push(tweet);
-                }
+              const isDuplicate = subscribedTweets.some(
+                (existingTweet) => existingTweet.tweetID === tweet.tweetID
+              );
+              if (!isDuplicate) {
+                subscribedTweets.push(tweet);
+              }
             });
+          });
       
-          }
+          await Promise.all(fetchUserTweetsPromises);
       
           subscribedTweets.sort((a, b) => b.date - a.date);
       
-          // Set the subscribedTweets state with all the fetched tweet data
           setSubscribedTweets(subscribedTweets);
         } catch (error) {
-          console.error('Error fetching subscribed tweets:', error);
+          console.error("Error fetching subscribed tweets:", error);
           // Handle the error if needed
         } finally {
-          setLoading(false); // Set loading state to false after fetching
+          setLoading(false);
         }
     };
 
@@ -188,7 +195,7 @@ const NewsFeed = ({showLikes }) => {
         };
 
         fetchInitialTweets();
-    }, [tweetsRef]);
+    }, []);
 
     useEffect(() => {
         if (activeFilter !== 'viewUser') {
