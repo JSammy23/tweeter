@@ -54,36 +54,26 @@ const UserProfile = ({user, isCurrentUser, showLikes }) => {
     const userRef = doc(db, 'users', user?.uid);
 
     useEffect(() => {
+        const fetchFollowers = async () => {
+            const followersRef = collection(userRef, 'followers');
+            const querySnapshot = await getDocs(followersRef);
+            const followers = querySnapshot.docs.map(doc => doc.data().user);
+            setFollowers(followers);
+        };
+
+        const fetchFollowing = async () => {
+            const followingRef = collection(userRef, 'following');
+            const querySnapshot = await getDocs(followingRef);
+            const following = querySnapshot.docs.map(doc => doc.data().user);
+            setFollowing(following);
+        };
+
         fetchFollowers();
         fetchFollowing();
         setUserProfileImg(user.profileImg)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
-    const fetchFollowers = async () => {
-        const followersRef = collection(userRef, 'followers');
-        const querySnapshot = await getDocs(followersRef);
-        const followers = querySnapshot.docs.map(doc => doc.data().user);
-        setFollowers(followers);
-    };
-
-    const fetchFollowing = async () => {
-        const followingRef = collection(userRef, 'following');
-        const querySnapshot = await getDocs(followingRef);
-        const following = querySnapshot.docs.map(doc => doc.data().user);
-        setFollowing(following);
-    };
-
-    // const fetchUser = async (uid) => {
-    //     try {
-    //         const userDoc = await getDoc(userRef);
-    //         const userData = userDoc.data();
-    //         localStorage.setItem(uid, JSON.stringify(userData));
-    //     } catch (error) {
-    //         console.error('Error fetching user', error)
-    //     };
-    // };    
-
-    
     const toggleEditProfile = () => {
         setEditProfile(!editProfile);
     };
