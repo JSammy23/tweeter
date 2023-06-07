@@ -226,7 +226,7 @@ const NewsFeed = ({showLikes }) => {
                 tweetArray = tweets;
                 break;
             case 'home':
-                tweetArray = [...subscribedTweets, ...userTweets].sort((a, b) => b.date - a.date);
+                tweetArray = subscribedTweets
                 break;
             default:
                 tweetArray = [];
