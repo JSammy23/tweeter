@@ -41,6 +41,7 @@ const CountsDiv = styled.div`
         cursor: pointer;
     }
  }
+
 `;
 
 
@@ -57,6 +58,7 @@ const UserProfile = ({user, isCurrentUser, showLikes, showNewsFeed }) => {
     const [following, setFollowing] = useState([]);
     const [userProfileImg, setUserProfileImg] = useState(user?.profileImg);
     const [showFollowList, setShowFollowList] = useState(false);
+    const [listType, setListType] = useState(null);
 
     const userRef = doc(db, 'users', user?.uid);
 
@@ -90,7 +92,9 @@ const UserProfile = ({user, isCurrentUser, showLikes, showNewsFeed }) => {
         await setDoc(userRef, updatedUser);
     };
 
-    const handleFollowCountClick = () => {
+    const handleFollowCountClick = (event) => {
+        const LinkId = event.target.id;
+        setListType(LinkId);
         setShowFollowList(true);
         showNewsFeed(false);
     };
@@ -107,6 +111,8 @@ const UserProfile = ({user, isCurrentUser, showLikes, showNewsFeed }) => {
             <FollowList
               followers={followers}
               following={following}
+              listType={listType}
+              user={user}
               onBackClick={handleBackClick}
             />
         ) : (
@@ -127,7 +133,14 @@ const UserProfile = ({user, isCurrentUser, showLikes, showNewsFeed }) => {
                     <Title>{user?.displayName}</Title>
                     <UserHandle>{user?.userHandle}</UserHandle>
                     <CountsDiv>
-                        <span onClick={handleFollowCountClick}>{following.length}</span> Following <span>{followers.length}</span> Followers
+                        <span
+                         id='following' 
+                         onClick={handleFollowCountClick}
+                         >{following.length}</span> Following 
+                        <span 
+                         id='followers'
+                         onClick={handleFollowCountClick}
+                         >{followers.length}</span> Followers
                     </CountsDiv>
                     <UserProfileControls showLikes={showLikes} />
                 </div>
