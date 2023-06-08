@@ -31,6 +31,7 @@ const UserImage = styled.img`
 const CountsDiv = styled.div`
  color: ${props => props.theme.colors.secondary};
  margin-left: .7em;
+ margin-top: .3em;
 
  span {
     color: ${props => props.theme.colors.primary};
@@ -39,6 +40,20 @@ const CountsDiv = styled.div`
     &:hover {
         text-decoration: underline;
         cursor: pointer;
+    }
+ }
+
+ button {
+    color: ${props => props.theme.colors.secondary};
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: 1em;
+
+    &:hover {
+        color: ${props => props.theme.colors.primary};
+        text-decoration: underline;
     }
  }
 
@@ -133,14 +148,12 @@ const UserProfile = ({user, isCurrentUser, showLikes, showNewsFeed }) => {
                     <Title>{user?.displayName}</Title>
                     <UserHandle>{user?.userHandle}</UserHandle>
                     <CountsDiv>
-                        <span
-                         id='following' 
-                         onClick={handleFollowCountClick}
-                         >{following.length}</span> Following 
-                        <span 
-                         id='followers'
-                         onClick={handleFollowCountClick}
-                         >{followers.length}</span> Followers
+                        <button id='following' onClick={handleFollowCountClick} >
+                            <span>{following.length}</span>Following
+                        </button>
+                        <button id='followers' onClick={handleFollowCountClick} >
+                            <span>{followers.length}</span>Followers
+                        </button>
                     </CountsDiv>
                     <UserProfileControls showLikes={showLikes} />
                 </div>
