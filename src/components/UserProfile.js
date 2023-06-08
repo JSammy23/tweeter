@@ -61,9 +61,7 @@ const CountsDiv = styled.div`
 
 
 // TODO:
-// Add followers & following state array
-// Add followers & following count to user profile
-// Pass follower & FOllowing array down to follow button
+// Pass follower & Following array down to follow button?
 
 
 const UserProfile = ({user, isCurrentUser, showLikes, showNewsFeed }) => {
