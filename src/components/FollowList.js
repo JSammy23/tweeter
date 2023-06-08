@@ -9,13 +9,15 @@ const Header = styled.div`
  background-color: rgba(0, 0, 0, .6);
  color: ${props => props.theme.colors.accent};
  width: 100%;
- height: 5em;
+ height: 5.6em;
  padding: .3em;
 `;
 
 const StyledIcon = styled(FontAwesomeIcon)`
  cursor: pointer;
  color: inherit;
+ font-size: 1.4em;
+ margin: .3em 0;
 
  &:hover {
   color: ${props => props.theme.colors.primary};
@@ -34,7 +36,8 @@ const FollowList = ({ user, followers, following, onBackClick, listType }) => {
   return (
     <div>
         <Header>
-          <h2>{user.displayName}'s {listType}</h2>
+          <h2>{user.displayName}</h2>
+          <h2>{user.userHandle}</h2>
           <StyledIcon icon={faArrowLeft} onClick={onBackClick} />
         </Header>
         {userList.map(uid => (
