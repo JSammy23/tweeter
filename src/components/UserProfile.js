@@ -140,7 +140,7 @@ const UserProfile = ({user, isCurrentUser, showLikes, showNewsFeed }) => {
                     {isCurrentUser ? (
                         <Button onClick={toggleEditProfile} >Edit profile</Button>
                      ) : (
-                          <FollowButton />
+                          <FollowButton user={user.uid} />
                      )}
                     </div>
                 </div>
