@@ -1,4 +1,5 @@
 import React from 'react';
+import FollowButton from './FollowButton';
 
 import styled from 'styled-components';
 import { UserImage, Name, Handle } from './Tweet';
@@ -10,6 +11,11 @@ const UserCard = styled.div`
  padding: .3em;
  display: flex;
  border-bottom: 1px solid ${props => props.theme.colors.secondary};
+`;
+
+const Container = styled.div`
+ margin-left: auto;
+ width: 40%;
 `;
 
 const UserInfoCard = ({uid}) => {
@@ -26,6 +32,9 @@ const UserInfoCard = ({uid}) => {
         <Name>{userInfo?.displayName}</Name>
         <Handle>{userInfo?.userHandle}</Handle>
       </div>
+      <Container>
+        <FollowButton user={uid} />
+      </Container>
     </UserCard>
   )
 }
