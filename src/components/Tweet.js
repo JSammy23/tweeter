@@ -39,12 +39,12 @@ export const UserImage = styled.img`
  cursor: pointer;
 `;
 
-const Name = styled.h2`
+export const Name = styled.h2`
  color: ${props => props.theme.colors.primary};
  margin-right: .3em;
 `;
 
-const Handle = styled.h3`
+export const Handle = styled.h3`
  color: ${props => props.theme.colors.secondary};
 `;
 
