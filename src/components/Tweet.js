@@ -1,4 +1,4 @@
-import { doc, getDoc } from 'firebase/firestore';
+import { deleteDoc, doc, getDoc } from 'firebase/firestore';
 import React, {useContext, useEffect, useState} from 'react';
 import db from 'services/storage';
 import { format } from 'date-fns';
@@ -7,8 +7,11 @@ import { convertFromRaw, Editor, EditorState } from 'draft-js';
 import Retweet from './Retweet';
 import LikeButton from './LikeButton';
 import RetweetList from './RetweetList';
+import DeleteTweetButton from './DeleteTweetButton';
 
 import styled from 'styled-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEllipsisH } from '@fortawesome/fontawesome-free-solid';
 
 
 
@@ -69,6 +72,30 @@ const TweetReactions = styled.div`
  gap: .3em;
 `;
 
+const StyledIcon = styled(FontAwesomeIcon)`
+ color: ${props => props.theme.colors.secondary};
+ cursor: pointer;
+
+ &:hover {
+  color: ${props => props.theme.colors.accent};
+ }
+`;
+
+const MenuContainer = styled.div`
+ position: relative;
+`;
+
+const MenuOptions = styled.div`
+ position: absolute;
+ top: 100%;
+ right: 0;
+ width: 6em;
+ background-color: ${props => props.theme.colors.bgDark};
+ border: 1px solid ${props => props.theme.colors.secondary};
+ padding: .3em;
+ box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
 
 // TODO:
 // User handle needs to link to that user profile
@@ -77,6 +104,8 @@ const Tweet = ({ tweet }) => {
 
     const [author, setAuthor] = useState(null);
     const {setActiveFilter, setViewedUser, setIsUserLoaded, currentUser, activeFilter} = useContext(AppContext);
+    // const [isDeleting, setIsDeleting] = useState(false);
+    const [isTweetMenuOpen, setIsTweetMenuOpen] = useState(false);
 
     const contentState = convertFromRaw(JSON.parse(tweet.body));
     const editorState = EditorState.createWithContent(contentState);
@@ -124,6 +153,10 @@ const Tweet = ({ tweet }) => {
       setActiveFilter('viewUser');
     };
 
+    const toggleTweetMenu = () => {
+      setIsTweetMenuOpen(!isTweetMenuOpen)
+    };
+
     
     // Format dueDate
     let formattedDate;
@@ -150,6 +183,17 @@ const Tweet = ({ tweet }) => {
                         <Handle>{author?.userHandle}</Handle>
                     </div>
                     <TweetDate>{formattedDate}</TweetDate>
+                    {tweet.authorID === currentUser.uid && activeFilter === 'profile' && (
+                      <MenuContainer>
+                        <StyledIcon icon={faEllipsisH} onClick={toggleTweetMenu} />
+
+                        {isTweetMenuOpen && (
+                          <MenuOptions>
+                            <DeleteTweetButton tweetID={tweet.tweetID} />
+                          </MenuOptions>
+                        )}
+                      </MenuContainer>
+                    )}
                 </Div>
             </TweetHeader>
             <TweetBody>
