@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTwitter } from '@fortawesome/fontawesome-free-brands';
 import { faHome, faHashtag, faUser } from '@fortawesome/fontawesome-free-solid';
 import { AppContext } from 'services/appContext';
+import LogoutButton from './LogoutButton';
 
 
 const Header = styled.header`
@@ -48,20 +49,6 @@ const Nav = styled.nav`
 
 const UserControls = styled.div`
  margin: 1em 0;
-
- button {
-    background-color: ${props => props.theme.colors.primary};
-    font-size: 1em;
-    padding: .5em;
-    border-radius: 10px;
-    border: none;
-    outline: none;
-    cursor: pointer;
-
-    &:hover {
-        background-color: ${props => props.theme.colors.accent};
-    }
- }
 `;
 
 const Sidebar = () => {
@@ -78,10 +65,6 @@ const Sidebar = () => {
         setActiveFilter(filter);
     };
 
-    const handleLogout = () => {
-        localStorage.clear();
-        logout();
-    };
 
   return (
     <Header>
@@ -102,7 +85,7 @@ const Sidebar = () => {
             </Nav>
         </div>
         <UserControls>
-            <button onClick={handleLogout} >Log Out</button>
+            <LogoutButton />
         </UserControls>
     </Header>
   )
