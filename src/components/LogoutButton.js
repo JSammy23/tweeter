@@ -24,20 +24,22 @@ const LogoutButton = () => {
     const { currentUser } = useContext(AppContext);
 
     const userLikedTweetsRef = collection(db, 'users', currentUser.uid, 'likes');
-    const tweetsCollectionRef = collection(db, 'tweets');
+    const userRetweetTweetsRef = collection(db, 'users', currentUser.uid, 'retweets');
+    
 
-    const cleanupLikedTweets = async (likedTweetsRef, tweetsRef) => {
-        const likedTweetsQuery = query(likedTweetsRef);
-        const likedTweetsSnapshot = await getDocs(likedTweetsQuery);
-        const likedTweetsDocs = likedTweetsSnapshot.docs;
+    const cleanupDeletedTweets = async (userTweetsRef) => {
+        const tweetsRef = collection(db, 'tweets');
+        const tweetsQuery = query(userTweetsRef);
+        const tweetsSnapshot = await getDocs(tweetsQuery);
+        const tweetsDocs = tweetsSnapshot.docs;
       
-        const cleanupTasks = likedTweetsDocs.map(async (likedTweetDoc) => {
-          const tweetID = likedTweetDoc.data().tweetID;
+        const cleanupTasks = tweetsDocs.map(async (tweetDoc) => {
+          const tweetID = tweetDoc.data().tweetID;
           const tweetDocRef = doc(tweetsRef, tweetID);
           const tweetDocSnapshot = await getDoc(tweetDocRef);
           if (!tweetDocSnapshot.exists()) {
             // Delete the reference to the deleted tweet from the user's liked tweets list
-            await deleteDoc(likedTweetDoc.ref);
+            await deleteDoc(tweetDoc.ref);
           }
         });
       
@@ -46,7 +48,8 @@ const LogoutButton = () => {
 
     const handleLogout = async () => {
         localStorage.clear();
-        cleanupLikedTweets(userLikedTweetsRef, tweetsCollectionRef);
+        cleanupDeletedTweets(userLikedTweetsRef);
+        cleanupDeletedTweets(userRetweetTweetsRef);
         logout();
     };
 
