@@ -25,6 +25,7 @@ const LogoutButton = () => {
 
     const userLikedTweetsRef = currentUser ? collection(db, 'users', currentUser.uid, 'likes') : null;
     const userRetweetTweetsRef = currentUser ? collection(db, 'users', currentUser.uid, 'retweets') : null;
+    const userTweetBucketRef = currentUser ? collection(db, 'users', currentUser.uid, 'tweetBucket') : null;
     
 
     const cleanupDeletedTweets = async (userTweetsRef) => {
@@ -48,8 +49,9 @@ const LogoutButton = () => {
 
     const handleLogout = async () => {
         localStorage.clear();
-        cleanupDeletedTweets(userLikedTweetsRef);
-        cleanupDeletedTweets(userRetweetTweetsRef);
+        await cleanupDeletedTweets(userLikedTweetsRef);
+        await cleanupDeletedTweets(userRetweetTweetsRef);
+        await cleanupDeletedTweets(userTweetBucketRef);
         logout();
     };
 
