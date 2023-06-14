@@ -23,8 +23,8 @@ const StyledButton = styled.button`
 const LogoutButton = () => {
     const { currentUser } = useContext(AppContext);
 
-    const userLikedTweetsRef = collection(db, 'users', currentUser.uid, 'likes');
-    const userRetweetTweetsRef = collection(db, 'users', currentUser.uid, 'retweets');
+    const userLikedTweetsRef = currentUser ? collection(db, 'users', currentUser.uid, 'likes') : null;
+    const userRetweetTweetsRef = currentUser ? collection(db, 'users', currentUser.uid, 'retweets') : null;
     
 
     const cleanupDeletedTweets = async (userTweetsRef) => {
