@@ -76,20 +76,27 @@ const RetweetList = ({ tweet }) => {
     };
 
     const renderRetweetUsers = () => {
-        if (subscribedRetweetedBy.length === 1) {
+      const count = subscribedRetweetedBy.length;
+  
+      if (count === 1) {
           return <StyledText>{subscribedRetweetedBy[0]} retweeted</StyledText>;
-        } else if (subscribedRetweetedBy.length > 1) {
-          const displayedUsers = subscribedRetweetedBy.slice(0, 2).join(", ");
-          const remainingCount = subscribedRetweetedBy.length - 2;
-          const othersText = remainingCount === 1 ? "other" : "others";
-          const text = `${displayedUsers}, and ${remainingCount} ${othersText} retweeted`;
-          return <StyledText>{text}</StyledText>;
-        } else {
+      } else if (count > 1) {
+          if (count === 2) {
+              const text = `${subscribedRetweetedBy[0]} and ${subscribedRetweetedBy[1]} retweeted`;
+              return <StyledText>{text}</StyledText>;
+          } else {
+              const displayedUsers = subscribedRetweetedBy.slice(0, 2).join(", ");
+              const remainingCount = count - 2;
+              const othersText = remainingCount === 1 ? "other" : "others";
+              const text = `${displayedUsers}, and ${remainingCount} ${othersText} retweeted`;
+              return <StyledText>{text}</StyledText>;
+          }
+      } else {
           return null;
-        }
-    };
-
- 
+      }
+  };
+  
+  
 
   return (
     <div>
