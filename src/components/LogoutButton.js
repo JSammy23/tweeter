@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { AppContext } from 'services/appContext';
 import { logout } from 'services/auth';
 import db from 'services/storage';
 import { query, getDoc, collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import Loading from './Loading/Loading';
 
 import styled from 'styled-components';
 
@@ -22,6 +23,7 @@ const StyledButton = styled.button`
 
 const LogoutButton = () => {
     const { currentUser } = useContext(AppContext);
+    const [isLoading, setIsLoading] = useState(false);
 
     const userLikedTweetsRef = currentUser ? collection(db, 'users', currentUser.uid, 'likes') : null;
     const userRetweetTweetsRef = currentUser ? collection(db, 'users', currentUser.uid, 'retweets') : null;
@@ -48,17 +50,25 @@ const LogoutButton = () => {
     };
 
     const handleLogout = async () => {
+        setIsLoading(true);
         localStorage.clear();
         await cleanupDeletedTweets(userLikedTweetsRef);
         await cleanupDeletedTweets(userRetweetTweetsRef);
         await cleanupDeletedTweets(userTweetBucketRef);
         logout();
+        setIsLoading(false);
     };
 
   return (
-    <StyledButton onClick={handleLogout}>
+    <>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <StyledButton onClick={handleLogout}>
         Log Out
-    </StyledButton>
+        </StyledButton>
+      )}
+    </>
   )
 }
 
