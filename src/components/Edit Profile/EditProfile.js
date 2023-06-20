@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import db, { storage } from 'services/storage';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { doc, updateDoc } from 'firebase/firestore';
+import { checkUserHandleAvailability } from 'utilities/firebaseUtils';
 
 
 import styled from 'styled-components';
@@ -40,11 +41,18 @@ const EditProfile = ({ toggleClose, user, onUpdateUser, updateUserProfileImg }) 
 
     const [displayName, setDisplayName] = useState(user.displayName);
     const [userHandle, setUserHandle] = useState(user.userHandle);
-    const [profileImg, setProfileImg] = useState(user.profileImg)
+    const [profileImg, setProfileImg] = useState(user.profileImg);
+    const [error, setError] = useState('');
     
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+
+        const handleAvailable = await checkUserHandleAvailability(userHandle);
+        if (!handleAvailable) {
+            setError('User handle is already taken!');
+            return;
+        }
     
         const updatedUser = {
           ...user,
@@ -117,6 +125,7 @@ const EditProfile = ({ toggleClose, user, onUpdateUser, updateUserProfileImg }) 
                 <input type="text" name='userHandle' id='userHandle' required onChange={(e) => setUserHandle(e.target.value)} onBlur={handleInputChange} onFocus={handleInputChange} value={userHandle} />
                 <label htmlFor="userHandle">User Handle</label>
             </div>
+            {error && <div className='error'>{error}</div>}
         </form>
     </Module>
   )
