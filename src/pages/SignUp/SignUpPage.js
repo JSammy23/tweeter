@@ -5,10 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import db from 'services/storage.js';
 import { storage } from 'services/storage.js';
 import { getDownloadURL, ref } from 'firebase/storage';
+import Loading from 'components/Loading/Loading';
+import { checkUserHandleAvailability } from 'utilities/firebaseUtils';
+
 import styled from 'styled-components';
 import { Background } from 'styles/styledComponents';
 import 'pages/LoginPage/LoginPage.Styles.css';
-import Loading from 'components/Loading/Loading';
+
 
 
 const SignUpPage = () => {
@@ -33,6 +36,13 @@ const SignUpPage = () => {
             return;
         }
 
+        const handleAvailable = await checkUserHandleAvailability(userHandle);
+        if (!handleAvailable) {
+            setError('User handle is already taken!');
+            setIsLoading(false);
+            return;
+        }
+
         try {
             const { user } = await createUser(email, password);
             console.log('User created successfully!');
@@ -54,25 +64,25 @@ const SignUpPage = () => {
             });
 
             // Create user first tweet
-            const tweetsRef = collection(db, 'tweets');
-            const newTweetRef = await addDoc(tweetsRef, {
-                authorID: user.uid,
-                body: '{"blocks":[{"key":"1mrjt","text":"I just joined the twitter clone Tweeter!","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',
-                date: Timestamp.fromDate(date),
-                displayName: displayName,
-                profileImg: imageURL,
-                userHandle: `@${userHandle}`,
+            // const tweetsRef = collection(db, 'tweets');
+            // const newTweetRef = await addDoc(tweetsRef, {
+            //     authorID: user.uid,
+            //     body: '{"blocks":[{"key":"1mrjt","text":"I just joined the twitter clone Tweeter!","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',
+            //     date: Timestamp.fromDate(date),
+            //     displayName: displayName,
+            //     profileImg: imageURL,
+            //     userHandle: `@${userHandle}`,
 
-            });
+            // });
 
-            const tweetID = newTweetRef.id;
+            // const tweetID = newTweetRef.id;
 
-            // Create user sub-collection tweetBucket
-            const tweetBucketRef = collection(userRef, 'tweetBucket');
-            await addDoc(tweetBucketRef, {
-                tweetID: tweetID,
-                date: Timestamp.fromDate(date),
-            });
+            // // Create user sub-collection tweetBucket
+            // const tweetBucketRef = collection(userRef, 'tweetBucket');
+            // await addDoc(tweetBucketRef, {
+            //     tweetID: tweetID,
+            //     date: Timestamp.fromDate(date),
+            // });
 
             // // Create user sub-collection followers
             // const followersRef = collection(userRef, 'followers');
