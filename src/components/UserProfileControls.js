@@ -14,7 +14,6 @@ const StyledTab = styled.button`
  cursor: pointer;
 `;
 
-// TODO: Render liked tweets when activeTab is 'likes'.
 
 const UserProfileControls = ({ showLikes }) => {
     const [activeTab, setActiveTab] = useState('userTweets');
