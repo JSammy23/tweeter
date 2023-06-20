@@ -64,25 +64,24 @@ const SignUpPage = () => {
             });
 
             // Create user first tweet
-            // const tweetsRef = collection(db, 'tweets');
-            // const newTweetRef = await addDoc(tweetsRef, {
-            //     authorID: user.uid,
-            //     body: '{"blocks":[{"key":"1mrjt","text":"I just joined the twitter clone Tweeter!","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',
-            //     date: Timestamp.fromDate(date),
-            //     displayName: displayName,
-            //     profileImg: imageURL,
-            //     userHandle: `@${userHandle}`,
+            const tweetsRef = collection(db, 'tweets');
+            const newTweetRef = await addDoc(tweetsRef, {
+                authorID: user.uid,
+                body: '{"blocks":[{"key":"1mrjt","text":"I just joined the twitter clone Tweeter!","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',
+                date: Timestamp.fromDate(date),
+                displayName: displayName,
+                profileImg: imageURL,
+                userHandle: `@${userHandle}`,
+            });
 
-            // });
-
-            // const tweetID = newTweetRef.id;
+            const tweetID = newTweetRef.id;
 
             // // Create user sub-collection tweetBucket
-            // const tweetBucketRef = collection(userRef, 'tweetBucket');
-            // await addDoc(tweetBucketRef, {
-            //     tweetID: tweetID,
-            //     date: Timestamp.fromDate(date),
-            // });
+            const tweetBucketRef = collection(userRef, 'tweetBucket');
+            await addDoc(tweetBucketRef, {
+                tweetID: tweetID,
+                date: Timestamp.fromDate(date),
+            });
 
             // // Create user sub-collection followers
             // const followersRef = collection(userRef, 'followers');
