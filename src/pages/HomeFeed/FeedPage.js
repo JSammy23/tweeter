@@ -16,6 +16,10 @@ const Grid = styled.div`
   @media (max-width: 1200px) {
     grid-template-columns: 1fr 600px;
   }
+
+  @media (max-width: 683px) {
+    grid-template-columns: 1fr 100%;
+  }
 `;
 
 const FeedPage = () => {
