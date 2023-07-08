@@ -1,4 +1,4 @@
-import React, {  useContext } from 'react';
+import {  useContext } from 'react';
 import { AppContext } from 'services/appContext';
 import { doc, getDoc } from 'firebase/firestore';
 import db from 'services/storage';

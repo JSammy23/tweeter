@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import EditProfile from './Edit Profile/EditProfile';
-import { doc, getDocs, getDoc, setDoc, collection } from 'firebase/firestore';
+import { doc, getDocs, setDoc, collection } from 'firebase/firestore';
 import db from 'services/storage';
 import FollowButton from './FollowButton';
 import UserProfileControls from './UserProfileControls';

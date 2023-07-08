@@ -1,4 +1,4 @@
-import { deleteDoc, doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import React, {useContext, useEffect, useState} from 'react';
 import db from 'services/storage';
 import { format } from 'date-fns';
