@@ -8,6 +8,7 @@ import Retweet from './Retweet';
 import LikeButton from './LikeButton';
 import RetweetList from './RetweetList';
 import DeleteTweetButton from './DeleteTweetButton';
+import { useUserProfileClick } from 'hooks/useUserProfileClick';
 
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -49,6 +50,12 @@ export const Name = styled.h2`
 
 export const Handle = styled.h3`
  color: ${props => props.theme.colors.secondary};
+ cursor: pointer;
+
+ &:hover {
+  color: ${props => props.theme.colors.primary};
+  text-decoration: underline;
+ }
 `;
 
 const TweetDate = styled.div`
@@ -98,12 +105,11 @@ const MenuOptions = styled.div`
 
 
 // TODO:
-// User handle needs to link to that user profile
 
 const Tweet = ({ tweet }) => {
 
     const [author, setAuthor] = useState(null);
-    const {setActiveFilter, setViewedUser, setIsUserLoaded, currentUser, activeFilter} = useContext(AppContext);
+    const { currentUser, activeFilter} = useContext(AppContext);
     // const [isDeleting, setIsDeleting] = useState(false);
     const [isTweetMenuOpen, setIsTweetMenuOpen] = useState(false);
 
@@ -129,29 +135,9 @@ const Tweet = ({ tweet }) => {
       fetchAuthor();
     },[tweet.authorID]);
 
-    
 
-    const getUserData = async (userUid) => {
-      try {
-        const userDocRef = doc(db, "users", userUid);
-        const userDocSnap = await getDoc(userDocRef);
-        
-        if (userDocSnap.exists()) {
-          setViewedUser(userDocSnap.data());
-          setIsUserLoaded(true);
-        } else {
-          console.log("No such document!");
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
+    const handleUserProfileClick = useUserProfileClick();
 
-
-    const handleUserProfileClick = () => {
-      getUserData(tweet.authorID);
-      setActiveFilter('viewUser');
-    };
 
     const toggleTweetMenu = () => {
       setIsTweetMenuOpen(!isTweetMenuOpen)
@@ -174,13 +160,13 @@ const Tweet = ({ tweet }) => {
     <>
       {tweet.retweets > 0 && activeFilter === 'home' && <RetweetList tweet={tweet} />}
       <TweetCard>
-        <UserImage src={author?.profileImg}  onClick={handleUserProfileClick}/>
+        <UserImage src={author?.profileImg}  onClick={() => handleUserProfileClick(tweet.authorID)}/>
         <div className="flex column">
             <TweetHeader>
                 <Div>
                     <div className="flex align">
                         <Name>{author?.displayName}</Name>
-                        <Handle>{author?.userHandle}</Handle>
+                        <Handle onClick={() => handleUserProfileClick(tweet.authorID)}>{author?.userHandle}</Handle>
                     </div>
                     <TweetDate>{formattedDate}</TweetDate>
                     {tweet.authorID === currentUser.uid && activeFilter === 'profile' && (
