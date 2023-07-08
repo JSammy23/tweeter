@@ -41,7 +41,7 @@ const FollowList = ({ user, followers, following, onBackClick, listType }) => {
           <StyledIcon icon={faArrowLeft} onClick={onBackClick} />
         </Header>
         {userList.map(uid => (
-        <UserInfoCard key={uid} uid={uid} />
+        <UserInfoCard key={uid} uid={uid} onBackClick={onBackClick} />
       ))}
     </div>
   )
