@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { AppContext } from 'services/appContext';
 import { logout } from 'services/auth';
 import db from 'services/storage';
@@ -9,19 +9,7 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignOutAlt } from '@fortawesome/fontawesome-free-solid';
 
-// const StyledButton = styled.button`
-//  background-color: ${props => props.theme.colors.primary};
-//  font-size: 1em;
-//  padding: .5em;
-//  border-radius: 10px;
-//  border: none;
-//  outline: none;
-//  cursor: pointer;
 
-//  &:hover {
-//      background-color: ${props => props.theme.colors.accent};
-//  }
-// `;
 
 const StyledIcon = styled(FontAwesomeIcon)`
  color: ${props => props.theme.colors.primary};
@@ -72,13 +60,15 @@ const LogoutButton = () => {
         setIsLoading(false);
     };
 
-    const isMobileView = window.innerWidth <= 748;
 
   return (
     <>
       {isLoading ? (
         <Loading />
-      ) : ( <StyledIcon icon={faSignOutAlt} onClick={handleLogout} />
+      ) : ( 
+      <StyledIcon 
+        icon={faSignOutAlt} 
+        onClick={handleLogout}/>
       )}
     </>
   )
