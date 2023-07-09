@@ -57,7 +57,7 @@ export const Module = styled.div`
  position: absolute;
  top: 30%;
  left: 50%;
- width: 600px;
+ width: min(50vw, 600px);
  transform: translate(-50%, -50%);
  box-shadow: 0 15px 25px rgba(0,0,0,.6);
  border-radius: 10px;
