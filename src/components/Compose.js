@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { TweetCard, UserImage } from './Tweet';
 
 
+
 const ImgDiv = styled.div`
  width: auto;
  height: 100%;
@@ -23,9 +24,10 @@ const ComposeBody = styled.div`
 `;
 
 
-const Compose = ({ user }) => {
+const Compose = ({ user, activeThread, action }) => {
+
     
-    const composeTweet = async (text) => {
+    const createTweet = async (text) => {
         const date =  new Date();
         const tweetDate = Timestamp.fromDate(date)
         const tweetsRef = collection(db, 'tweets');
@@ -40,6 +42,17 @@ const Compose = ({ user }) => {
         });
 
         const tweetID = newTweetRef.id;
+        await updateDoc(newTweetRef, {
+            tweetID: tweetID,
+        });
+
+        return {
+            tweetID: tweetID,
+            tweetDate: tweetDate,
+        };
+    };
+
+    const addToUserTweetBucket = async (tweetID, tweetDate) => {
         const userRef = doc(db, 'users', user.uid);
         const tweetBucketRef = collection(userRef, 'tweetBucket');
         await addDoc(tweetBucketRef, {
@@ -47,10 +60,58 @@ const Compose = ({ user }) => {
             date: tweetDate,
         });
         console.log('Tweeted!');
+    };
 
-        await updateDoc(newTweetRef, {
-            tweetID: tweetID,
+    const composeTweet =  async (text) => {
+        try {
+            const { tweetID, tweetDate } = await createTweet(text);
+            await addToUserTweetBucket(tweetID, tweetDate);
+            console.log('Tweeted!');
+        } catch (error) {
+            console.error('Error composing tweet:', error);
+        }
+    };
+
+    const createComment = async (text) => {
+        const date = new Date();
+        const commentDate = Timestamp.fromDate(date);
+        const commentsRef = collection(db, 'comments');
+        const newCommentRef = await addDoc(commentsRef, {
+            authorID: user.uid,
+            body: text,
+            date: commentDate,
+            threadID: activeThread,
         });
+
+        const commentID = newCommentRef.id;
+        await updateDoc(newCommentRef, {
+            commentID: commentID,
+        });
+
+        return {
+            commentID: commentID,
+            date: commentDate, 
+            threadID: activeThread,
+        };
+    };
+
+    const addCommentToTweetDoc = async (commentID, tweetID, commentDate) => {
+        const tweetRef = doc(db, 'tweets', tweetID);
+        const repliesRef = collection(tweetRef, 'replies');
+        await addDoc(repliesRef, {
+            commentID: commentID,
+            date: commentDate,
+        });
+    };
+
+    const composeComment = async (text) => {
+        try {
+            const { commentID, date, threadID } = await createComment(text);
+            await addCommentToTweetDoc(commentID, threadID, date);
+            console.log('Reply Tweeted!');
+        } catch (error) {
+            console.error('Error composing comment:', error);
+        }
     };
 
   return (
@@ -59,7 +120,10 @@ const Compose = ({ user }) => {
             <UserImage src={user?.profileImg} />
         </ImgDiv>
         <ComposeBody>
-            <TextEditor  onTweet={composeTweet} />
+            <TextEditor  
+             onTweet={composeTweet} 
+             onReply={composeComment}
+             action={action} />
             
         </ComposeBody>
     </TweetCard>
