@@ -62,7 +62,9 @@ const Feed = () => {
   const renderByFilter = () => {
     switch (activeFilter) {
       default:
-        return <Compose user={currentUser} />
+        return <Compose 
+         user={currentUser}
+         action='tweet' />
       case 'profile':
         return (
           <UserProfile 
