@@ -2,16 +2,10 @@ import React from 'react';
 import UserInfoCard from './UserInfoCard';
 
 import styled from 'styled-components';
+import { Header } from 'styles/styledComponents';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/fontawesome-free-solid';
 
-const Header = styled.div`
- background-color: rgba(0, 0, 0, .6);
- color: ${props => props.theme.colors.accent};
- width: 100%;
- height: 5.6em;
- padding: .3em;
-`;
 
 const StyledIcon = styled(FontAwesomeIcon)`
  cursor: pointer;

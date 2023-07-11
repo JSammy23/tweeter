@@ -7,6 +7,14 @@ width: 100vw;
 height: 100vh;
 `;
 
+ export const Header = styled.div`
+ background-color: rgba(0, 0, 0, .6);
+ color: ${props => props.theme.colors.accent};
+ width: 100%;
+ height: 5.6em;
+ padding: .3em;
+`;
+
 export const Logo = styled.h1`
 color: ${props => props.theme.colors.primary};
 font-size: 2em;
