@@ -80,7 +80,7 @@ const Compose = ({ user, activeThread, action }) => {
             authorID: user.uid,
             body: text,
             date: commentDate,
-            threadID: activeThread,
+            threadID: activeThread.tweetID,
         });
 
         const commentID = newCommentRef.id;
@@ -91,7 +91,7 @@ const Compose = ({ user, activeThread, action }) => {
         return {
             commentID: commentID,
             date: commentDate, 
-            threadID: activeThread,
+            threadID: activeThread.tweetID,
         };
     };
 
