@@ -22,6 +22,7 @@ const StyledIcon = styled(FontAwesomeIcon)`
 
 // TODO:
 // Back click is not working, prevFilter in Feedpage not working.
+// Load comments below compose component.
 
 const Thread = ({ onBackClick }) => {
     const { activeThread, setActiveThread, setActiveFilter, currentUser } = useContext(AppContext);
