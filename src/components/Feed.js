@@ -5,6 +5,7 @@ import auth from 'services/auth';
 import NewsFeed from './NewsFeed';
 import Compose from './Compose';
 import Loading from './Loading/Loading';
+import Thread from './Thread';
 
 
 import styled from 'styled-components';
@@ -82,6 +83,8 @@ const Feed = () => {
         ) : (
           <Loading />
         );
+      case 'thread':
+        return <Thread showNewsFeed={setShowNewsFeed} />
     }
   }
 
