@@ -15,7 +15,7 @@ export const StyledIcon = styled(FontAwesomeIcon)`
 
 export const RetweetCount = styled.span`
  color: ${props => props.theme.colors.primary};
- margin-right: .3em;
+ /* margin-right: .3em; */
  margin-left: .3em;
 `;
 

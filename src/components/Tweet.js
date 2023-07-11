@@ -9,10 +9,12 @@ import LikeButton from './LikeButton';
 import RetweetList from './RetweetList';
 import DeleteTweetButton from './DeleteTweetButton';
 import { useUserProfileClick } from 'hooks/useUserProfileClick';
+import CommentsButton from './CommentsButton';
 
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisH } from '@fortawesome/fontawesome-free-solid';
+
 
 
 
@@ -76,7 +78,7 @@ const TweetBody = styled.div`
 const TweetReactions = styled.div`
  display: flex;
  margin-top: .3em;
- gap: .3em;
+ gap: 1em;
 `;
 
 const StyledIcon = styled(FontAwesomeIcon)`
@@ -109,7 +111,7 @@ const MenuOptions = styled.div`
 const Tweet = ({ tweet }) => {
 
     const [author, setAuthor] = useState(null);
-    const { currentUser, activeFilter} = useContext(AppContext);
+    const { currentUser, activeFilter, setActiveFilter, setActiveThread} = useContext(AppContext);
     // const [isDeleting, setIsDeleting] = useState(false);
     const [isTweetMenuOpen, setIsTweetMenuOpen] = useState(false);
 
@@ -141,6 +143,11 @@ const Tweet = ({ tweet }) => {
 
     const toggleTweetMenu = () => {
       setIsTweetMenuOpen(!isTweetMenuOpen)
+    };
+
+    const handleTweetThreadClick = () => {
+      setActiveThread(tweet);
+      setActiveFilter('thread');
     };
 
     
@@ -186,6 +193,7 @@ const Tweet = ({ tweet }) => {
                 <Editor editorState={editorState} readOnly />
             </TweetBody>
             <TweetReactions>
+              <CommentsButton tweet={tweet} onClick={handleTweetThreadClick} />
               <Retweet tweet={tweet} />
               <LikeButton tweet={tweet} />
             </TweetReactions>
