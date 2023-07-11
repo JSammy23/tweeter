@@ -9,6 +9,7 @@ export const AppProvider = ({ children }) => {
     const [isUserLoaded, setIsUserLoaded] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
     const [followingList, setFollowingList] = useState([]);
+    const [activeThread, setActiveThread] = useState(null);
 
     const contextValue = {
         activeFilter,
@@ -21,6 +22,8 @@ export const AppProvider = ({ children }) => {
         setCurrentUser,
         followingList,
         setFollowingList,
+        activeThread,
+        setActiveThread
     }
 
 
