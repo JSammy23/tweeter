@@ -158,9 +158,13 @@ const NewsFeed = ({showLikes }) => {
         const userLikedTweetsQuery = query(userLikedTweetsRef);
         const userLikedTweetsSnapshot = await getDocs(userLikedTweetsQuery);
 
-        const userLikedTweetsIDs = userLikedTweetsSnapshot.docs.map((doc) => doc.data().tweetID);
-        const userLikedTweetsData = await retrieveAndSortTweets(userLikedTweetsIDs);
-        setUserLikedTweets(userLikedTweetsData);
+        if (!userLikedTweetsSnapshot.empty) {
+          const userLikedTweetsIDs = userLikedTweetsSnapshot.docs.map((doc) => doc.data().tweetID);
+          const userLikedTweetsData = await retrieveAndSortTweets(userLikedTweetsIDs);
+          setUserLikedTweets(userLikedTweetsData);
+        } else {
+          return;
+        };
     };
 
 
