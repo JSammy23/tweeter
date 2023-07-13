@@ -29,6 +29,7 @@ const StyledIcon = styled(FontAwesomeIcon)`
 const Thread = ({ onBackClick }) => {
   const { activeThread, setActiveThread, setActiveFilter, currentUser } = useContext(AppContext);
   const [replies, setReplies] = useState([]);
+  const [localReplyCount, setLocalReplyCount] = useState(activeThread?.replies || 0);
 
   useEffect(() => {
     const fecthReplies = async () => {
@@ -66,6 +67,7 @@ const Thread = ({ onBackClick }) => {
 
   const handleAddReply = (newReply) => {
     setReplies((prevReplies) => [newReply, ...prevReplies]);
+    setLocalReplyCount((prevLocalReplyCount) => prevLocalReplyCount + 1);
   };
 
   return (
@@ -74,7 +76,10 @@ const Thread = ({ onBackClick }) => {
             <h2>Tweet</h2>
             <StyledIcon icon={faArrowLeft} onClick={onBackClick} />
         </Header>    
-        <Tweet key={activeThread} tweet={activeThread} />
+        <Tweet 
+         key={activeThread} 
+         tweet={activeThread}
+         localReplyCount={localReplyCount} />
         <Compose 
          user={currentUser}
          action='reply'

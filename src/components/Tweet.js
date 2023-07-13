@@ -108,7 +108,7 @@ const MenuOptions = styled.div`
 
 // TODO:
 
-const Tweet = ({ tweet, isReply }) => {
+const Tweet = ({ tweet, isReply, localReplyCount }) => {
 
     const [author, setAuthor] = useState(null);
     const { currentUser, activeFilter, setActiveFilter, setActiveThread} = useContext(AppContext);
@@ -194,7 +194,7 @@ const Tweet = ({ tweet, isReply }) => {
             </TweetBody>
             <TweetReactions>
               {!isReply ? (
-                <CommentsButton tweet={tweet} onClick={handleTweetThreadClick} />
+                <CommentsButton tweet={tweet} onClick={handleTweetThreadClick} count={localReplyCount} />
               ) : null}
               <Retweet tweet={tweet} />
               <LikeButton tweet={tweet} />
