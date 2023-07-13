@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from 'services/appContext'
 import Tweet from './Tweet';
 import Compose from './Compose';
@@ -7,6 +7,8 @@ import styled from 'styled-components';
 import { Header } from 'styles/styledComponents';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/fontawesome-free-solid';
+import { collection, query, getDocs, where } from 'firebase/firestore';
+import db from 'services/storage';
 
 
 const StyledIcon = styled(FontAwesomeIcon)`
@@ -25,8 +27,38 @@ const StyledIcon = styled(FontAwesomeIcon)`
 // Load comments below compose component.
 
 const Thread = ({ onBackClick }) => {
-    const { activeThread, setActiveThread, setActiveFilter, currentUser } = useContext(AppContext);
-    
+  const { activeThread, setActiveThread, setActiveFilter, currentUser } = useContext(AppContext);
+  const [replies, setReplies] = useState([]);
+
+  useEffect(() => {
+    const fecthReplies = async () => {
+      const threadID = activeThread?.tweetID;
+      const tweetRepliesRef = collection(db, 'tweets', threadID, 'replies');
+      const tweetRepliesQuery = query(tweetRepliesRef);
+      const tweetRepliesSnapshot = await getDocs(tweetRepliesQuery);
+
+      const repliesIDs = tweetRepliesSnapshot.docs.map((doc) => doc.data().replyID);
+
+      const repliesData = await retrieveAndSortReplies(repliesIDs);
+
+      setReplies(repliesData);
+    }
+    fecthReplies();
+  }, []);
+
+  const retrieveAndSortReplies = async (repliesIDs) => {
+    const repliesRef = collection(db, 'replies');
+    const repliesQuery = query(repliesRef, where('__name__', 'in', repliesIDs));
+    const repliesSnapshot = await getDocs(repliesQuery);
+    const repliesData = repliesSnapshot.docs.map((doc) => doc.data());
+    repliesData.sort((a, b) => b.date - a.date);
+
+    return repliesData;
+  };
+
+  const mapRepliesToTweetComponents = (replies) => {
+    return replies.map((reply) => <Tweet key={reply.replyID} tweet={reply} />)
+  }
 
   return (
     <>
@@ -39,6 +71,7 @@ const Thread = ({ onBackClick }) => {
          user={currentUser}
          action='reply'
          activeThread={activeThread} />
+        {mapRepliesToTweetComponents(replies)}
     </>
   )
 }
