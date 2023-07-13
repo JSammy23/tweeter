@@ -50,7 +50,7 @@ const FeedContainer = styled.div`
 
 
 
-const Feed = () => {
+const Feed = ({ onBackClick }) => {
 
   const { activeFilter, viewedUser, isUserLoaded, currentUser } = useContext(AppContext);
   const [showLikes, setShowLikes] = useState(false);
@@ -86,7 +86,9 @@ const Feed = () => {
           <Loading />
         );
       case 'thread':
-        return <Thread showNewsFeed={setShowNewsFeed} />
+        return <Thread 
+         showNewsFeed={setShowNewsFeed}
+         onBackClick={onBackClick} />
     }
   }
 
