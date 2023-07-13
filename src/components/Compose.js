@@ -1,6 +1,6 @@
 import React from 'react';
 import db from 'services/storage';
-import { collection, addDoc, Timestamp,doc, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, Timestamp,doc, updateDoc, increment } from 'firebase/firestore';
 import TextEditor from './TextEditor';
 
 import styled from 'styled-components';
@@ -24,7 +24,7 @@ const ComposeBody = styled.div`
 `;
 
 
-const Compose = ({ user, activeThread, action }) => {
+const Compose = ({ user, activeThread, action, addReply }) => {
 
     
     const createTweet = async (text) => {
@@ -72,45 +72,52 @@ const Compose = ({ user, activeThread, action }) => {
         }
     };
 
-    const createComment = async (text) => {
+    const createReply = async (text) => {
         const date = new Date();
-        const commentDate = Timestamp.fromDate(date);
-        const commentsRef = collection(db, 'comments');
-        const newCommentRef = await addDoc(commentsRef, {
+        const replyDate = Timestamp.fromDate(date);
+        const repliesRef = collection(db, 'replies');
+        const newReplyRef = await addDoc(repliesRef, {
             authorID: user.uid,
             body: text,
-            date: commentDate,
+            date: replyDate,
             threadID: activeThread.tweetID,
         });
 
-        const commentID = newCommentRef.id;
-        await updateDoc(newCommentRef, {
-            commentID: commentID,
+        const replyID = newReplyRef.id;
+        await updateDoc(newReplyRef, {
+            replyID: replyID,
         });
 
         return {
-            commentID: commentID,
-            date: commentDate, 
+            authorID: user.uid,
+            replyID: replyID,
+            date: replyDate, 
             threadID: activeThread.tweetID,
+            body: text,
         };
     };
 
-    const addCommentToTweetDoc = async (commentID, tweetID, commentDate) => {
+    const addReplyToTweetDoc = async (replyID, tweetID, replyDate) => {
         const tweetRef = doc(db, 'tweets', tweetID);
         const repliesRef = collection(tweetRef, 'replies');
         await addDoc(repliesRef, {
-            commentID: commentID,
-            date: commentDate,
+            replyID: replyID,
+            date: replyDate,
+        });
+
+        await updateDoc(tweetRef, {
+            replies: increment(1),
         });
     };
 
-    const composeComment = async (text) => {
+    const composeReply = async (text) => {
         try {
-            const { commentID, date, threadID } = await createComment(text);
-            await addCommentToTweetDoc(commentID, threadID, date);
+            const newReply = await createReply(text);
+            await addReplyToTweetDoc(newReply.replyID, newReply.threadID, newReply.date);
+            addReply(newReply);
             console.log('Reply Tweeted!');
         } catch (error) {
-            console.error('Error composing comment:', error);
+            console.error('Error composing reply:', error);
         }
     };
 
@@ -122,7 +129,7 @@ const Compose = ({ user, activeThread, action }) => {
         <ComposeBody>
             <TextEditor  
              onTweet={composeTweet} 
-             onReply={composeComment}
+             onReply={composeReply}
              action={action} />
             
         </ComposeBody>
