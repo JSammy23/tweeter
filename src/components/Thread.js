@@ -37,12 +37,14 @@ const Thread = ({ onBackClick }) => {
       const tweetRepliesQuery = query(tweetRepliesRef);
       const tweetRepliesSnapshot = await getDocs(tweetRepliesQuery);
 
-      const repliesIDs = tweetRepliesSnapshot.docs.map((doc) => doc.data().replyID);
-
-      const repliesData = await retrieveAndSortReplies(repliesIDs);
-
-      setReplies(repliesData);
-    }
+      if (!tweetRepliesSnapshot.empty) {
+        const repliesIDs = tweetRepliesSnapshot.docs.map((doc) => doc.data().replyID);
+        const repliesData = await retrieveAndSortReplies(repliesIDs);
+        setReplies(repliesData);
+      } else {
+        return;
+      }
+    };
     fecthReplies();
   }, []);
 
@@ -57,8 +59,14 @@ const Thread = ({ onBackClick }) => {
   };
 
   const mapRepliesToTweetComponents = (replies) => {
-    return replies.map((reply) => <Tweet key={reply.replyID} tweet={reply} />)
-  }
+    return replies.map((reply) => (
+      <Tweet key={reply.replyID} tweet={reply} isReply />
+    ));
+  };
+
+  const handleAddReply = (newReply) => {
+    setReplies((prevReplies) => [newReply, ...prevReplies]);
+  };
 
   return (
     <>
@@ -70,7 +78,8 @@ const Thread = ({ onBackClick }) => {
         <Compose 
          user={currentUser}
          action='reply'
-         activeThread={activeThread} />
+         activeThread={activeThread}
+         addReply={handleAddReply} />
         {mapRepliesToTweetComponents(replies)}
     </>
   )
