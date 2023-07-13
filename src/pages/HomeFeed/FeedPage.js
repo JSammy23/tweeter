@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Sidebar from 'components/Sidebar';
 import Feed from 'components/Feed';
 
 
 import styled from 'styled-components';
 import { Background, Wrapper } from 'styles/styledComponents';
+import { AppContext } from 'services/appContext';
 
 
 
@@ -23,17 +24,24 @@ const Grid = styled.div`
 `;
 
 const FeedPage = () => {
+  const { activeFilter, setActiveFilter } = useContext(AppContext);
+  const [prevFilter, setPrevFilter] = useState('');
 
   useEffect(() => {
     console.log('FeedPage mounted!');
+    setPrevFilter(activeFilter);
   }, []);
+
+  const handleBackClick = () => {
+    setActiveFilter(prevFilter);
+  };
 
   return (
     <Background>
       <Wrapper>
         <Grid>
         <Sidebar />
-        <Feed />
+        <Feed onBackClick={handleBackClick} />
         </Grid>
       </Wrapper>
     </Background>
