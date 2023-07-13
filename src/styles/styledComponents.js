@@ -73,3 +73,9 @@ export const Module = styled.div`
  z-index: 999;
  background-color: ${props => props.theme.colors.bgDark};
 `;
+
+export const TweetReactionsCount = styled.span`
+ color: ${props => props.theme.colors.primary};
+ /* margin-right: .3em; */
+ margin-left: .3em;
+`;

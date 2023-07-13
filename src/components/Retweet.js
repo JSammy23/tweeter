@@ -6,6 +6,7 @@ import db from 'services/storage';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRetweet } from '@fortawesome/fontawesome-free-solid';
+import { TweetReactionsCount } from 'styles/styledComponents';
 
 
 export const StyledIcon = styled(FontAwesomeIcon)`
@@ -13,11 +14,6 @@ export const StyledIcon = styled(FontAwesomeIcon)`
  cursor: pointer;
 `;
 
-export const RetweetCount = styled.span`
- color: ${props => props.theme.colors.primary};
- /* margin-right: .3em; */
- margin-left: .3em;
-`;
 
 const Retweet = ({ tweet }) => {
     const [retweets, setRetweets] = useState(tweet.retweets || 0);
@@ -114,7 +110,7 @@ const Retweet = ({ tweet }) => {
   return (
     <div>
         <StyledIcon icon={faRetweet} active={retweeted}  onClick={handleRetweet} />
-        {retweets > 0 && <RetweetCount>{retweets}</RetweetCount>}
+        {retweets > 0 && <TweetReactionsCount>{retweets}</TweetReactionsCount>}
     </div>
   )
 }

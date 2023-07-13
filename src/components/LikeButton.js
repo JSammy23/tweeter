@@ -6,7 +6,8 @@ import { collection, doc, updateDoc, query, getDocs, addDoc, deleteDoc, where } 
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/fontawesome-free-regular';
-import { RetweetCount, StyledIcon } from './Retweet';
+import { StyledIcon } from './Retweet';
+import { TweetReactionsCount } from 'styles/styledComponents';
 
 const LikeButton = ({ tweet }) => {
     const [likes, setLikes] = useState(tweet.likes || 0);
@@ -81,7 +82,7 @@ const LikeButton = ({ tweet }) => {
   return (
     <div>
         <StyledIcon icon={faHeart} active={isLiked} onClick={handleLike} />
-        {likes > 0 && <RetweetCount>{likes}</RetweetCount>}
+        {likes > 0 && <TweetReactionsCount>{likes}</TweetReactionsCount>}
     </div>
   )
 }
