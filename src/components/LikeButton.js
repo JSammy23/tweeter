@@ -9,74 +9,63 @@ import { faHeart } from '@fortawesome/fontawesome-free-regular';
 import { StyledIcon } from './Retweet';
 import { TweetReactionsCount } from 'styles/styledComponents';
 
-const LikeButton = ({ tweet }) => {
+const LikeButton = ({ tweet, isReply }) => {
     const [likes, setLikes] = useState(tweet.likes || 0);
     const [isLiked, setIsLiked] = useState(false);
     const { currentUser } = useContext(AppContext);
+    const subCollectionName = isReply ? 'likedReplies' : 'likes';
 
     useEffect(() => {
         checkIfLiked();
-    }, [tweet.tweetID]);
+    }, [tweet.ID]);
 
     const checkIfLiked = async () => {
         if (!currentUser) {
           return;
         }
-        const userLikesRef = collection(db, 'users', currentUser.uid, 'likes');
-        const userLikesQuery =  query(userLikesRef);
-        const userLikesSnapshot = await getDocs(userLikesQuery);
-  
-        const tweetIds = userLikesSnapshot.docs.map((doc) => doc.data().tweetID);
-  
-        const isLiked = tweetIds.includes(tweet.tweetID);
-        setIsLiked(isLiked);
+
+        try {
+          const userLikesRef = collection(db, 'users', currentUser.uid, subCollectionName);
+          const userLikesQuery =  query(userLikesRef, where('tweetID', '==', tweet.ID));
+          const userLikesSnapshot = await getDocs(userLikesQuery);
+          const isLiked = !userLikesSnapshot.empty;
+          setIsLiked(isLiked);
+        } catch (error) {
+          console.error('Error checking if tweet/reply was liked by user', error);
+        };
+        
     };
 
     const handleLike = async () => {
+      const newLikesCount = isLiked ? likes - 1 : likes + 1;
+      setLikes(newLikesCount);
+      setIsLiked(!isLiked);
+  
+      try {
+        const documentRef = doc(db, isReply ? 'replies' : 'tweets', tweet.ID);
+        await updateDoc(documentRef, {
+          likes: newLikesCount,
+        });
+  
+        const userLikesRef = collection(db, 'users', currentUser.uid, subCollectionName);
         if (isLiked) {
-          const newLikesCount = likes - 1;
-          setLikes(newLikesCount);
-          setIsLiked(false);
-  
-          try {
-            const tweetRef = doc(db, 'tweets', tweet.tweetID);
-            await updateDoc(tweetRef, {
-              likes: newLikesCount,
-            });
-  
-            // Remove tweet from user likes
-            const userLikesRef = collection(db, 'users', currentUser.uid, 'likes');
-            const userLikesQuery = query(userLikesRef, where('tweetID', '==', tweet.tweetID));
-            const userLikesSnapshot = await getDocs(userLikesQuery);
-            const userLikesDoc = userLikesSnapshot.docs[0];
-            if (userLikesDoc) {
-              const userLikesDocRef = doc(db, 'users', currentUser.uid, 'likes', userLikesDoc.id);
-              await deleteDoc(userLikesDocRef);
-            }
-          } catch (error) {
-            console.error('Error removing like or tweet from user likes', error);
+          const userLikesQuery = query(userLikesRef, where('tweetID', '==', tweet.ID));
+          const userLikesSnapshot = await getDocs(userLikesQuery);
+          const userLikesDoc = userLikesSnapshot.docs[0];
+          if (userLikesDoc) {
+            const userLikesDocRef = doc(userLikesRef, userLikesDoc.id);
+            await deleteDoc(userLikesDocRef);
           }
         } else {
-          const newLikesCount = likes + 1;
-          setLikes(newLikesCount);
-          setIsLiked(true);
-  
-          try {
-            const tweetRef = doc(db, 'tweets', tweet.tweetID);
-            await updateDoc(tweetRef, {
-              likes: newLikesCount,
-            });
-  
-            const userLikesRef = collection(db, 'users', currentUser.uid, 'likes');
-            await addDoc(userLikesRef, {
-              tweetID: tweet.tweetID,
-              date: new Date(),
-            })
-          } catch (error) {
-            console.error('Error liking tweet or adding to user likes', error);
-          }
-        };
-      };
+          await addDoc(userLikesRef, {
+            tweetID: tweet.ID,
+            date: new Date(),
+          });
+        }
+      } catch (error) {
+        console.error('Error liking tweet/reply or updating user likes', error);
+      }
+    };
 
 
   return (
