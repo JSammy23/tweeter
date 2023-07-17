@@ -38,16 +38,16 @@ const Compose = ({ user, activeThread, action, addReply }) => {
             userHandle: user.userHandle,
             profileImg: user.profileImg,
             displayName: user.displayName,
-            tweetID: '',
+            ID: '',
         });
 
         const tweetID = newTweetRef.id;
         await updateDoc(newTweetRef, {
-            tweetID: tweetID,
+            ID: tweetID,
         });
 
         return {
-            tweetID: tweetID,
+            ID: tweetID,
             tweetDate: tweetDate,
         };
     };
@@ -64,8 +64,8 @@ const Compose = ({ user, activeThread, action, addReply }) => {
 
     const composeTweet =  async (text) => {
         try {
-            const { tweetID, tweetDate } = await createTweet(text);
-            await addToUserTweetBucket(tweetID, tweetDate);
+            const { ID, tweetDate } = await createTweet(text);
+            await addToUserTweetBucket(ID, tweetDate);
             console.log('Tweeted!');
         } catch (error) {
             console.error('Error composing tweet:', error);
@@ -85,12 +85,12 @@ const Compose = ({ user, activeThread, action, addReply }) => {
 
         const replyID = newReplyRef.id;
         await updateDoc(newReplyRef, {
-            replyID: replyID,
+            ID: replyID,
         });
 
         return {
             authorID: user.uid,
-            replyID: replyID,
+            ID: replyID,
             date: replyDate, 
             threadID: activeThread.tweetID,
             body: text,
@@ -113,7 +113,7 @@ const Compose = ({ user, activeThread, action, addReply }) => {
     const composeReply = async (text) => {
         try {
             const newReply = await createReply(text);
-            await addReplyToTweetDoc(newReply.replyID, newReply.threadID, newReply.date);
+            await addReplyToTweetDoc(newReply.ID, newReply.threadID, newReply.date);
             addReply(newReply);
             console.log('Reply Tweeted!');
         } catch (error) {

@@ -182,7 +182,7 @@ const Tweet = ({ tweet, isReply, localReplyCount }) => {
 
                         {isTweetMenuOpen && (
                           <MenuOptions>
-                            <DeleteTweetButton tweetID={tweet.tweetID} />
+                            <DeleteTweetButton tweetID={tweet.ID} />
                           </MenuOptions>
                         )}
                       </MenuContainer>
@@ -193,11 +193,11 @@ const Tweet = ({ tweet, isReply, localReplyCount }) => {
                 <Editor editorState={editorState} readOnly />
             </TweetBody>
             <TweetReactions>
+              <CommentsButton tweet={tweet} onClick={handleTweetThreadClick} count={localReplyCount} />
               {!isReply ? (
-                <CommentsButton tweet={tweet} onClick={handleTweetThreadClick} count={localReplyCount} />
-              ) : null}
-              <Retweet tweet={tweet} />
-              <LikeButton tweet={tweet} />
+                <Retweet tweet={tweet} />
+             ) : null}
+              <LikeButton tweet={tweet} isReply={isReply} />
             </TweetReactions>
         </div>
       </TweetCard>

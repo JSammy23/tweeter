@@ -118,7 +118,7 @@ const NewsFeed = ({showLikes }) => {
       
             tweetsData.forEach((tweet) => {
               const isDuplicate = subscribedTweets.some(
-                (existingTweet) => existingTweet.tweetID === tweet.tweetID
+                (existingTweet) => existingTweet.ID === tweet.ID
               );
               if (!isDuplicate) {
                 subscribedTweets.push(tweet);
@@ -213,7 +213,7 @@ const NewsFeed = ({showLikes }) => {
     };
 
     const mapTweetsToComponents = (tweets) => {
-        return tweets.map((tweet) => <Tweet key={tweet.tweetID} tweet={tweet} />);
+        return tweets.map((tweet) => <Tweet key={tweet.ID} tweet={tweet} />);
     };
 
 

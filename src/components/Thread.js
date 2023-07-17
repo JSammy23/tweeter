@@ -33,7 +33,7 @@ const Thread = ({ onBackClick }) => {
 
   useEffect(() => {
     const fecthReplies = async () => {
-      const threadID = activeThread?.tweetID;
+      const threadID = activeThread?.ID;
       const tweetRepliesRef = collection(db, 'tweets', threadID, 'replies');
       const tweetRepliesQuery = query(tweetRepliesRef);
       const tweetRepliesSnapshot = await getDocs(tweetRepliesQuery);
@@ -43,11 +43,12 @@ const Thread = ({ onBackClick }) => {
         const repliesData = await retrieveAndSortReplies(repliesIDs);
         setReplies(repliesData);
       } else {
+        setReplies([]);
         return;
       }
     };
     fecthReplies();
-  }, []);
+  }, [activeThread]);
 
   const retrieveAndSortReplies = async (repliesIDs) => {
     const repliesRef = collection(db, 'replies');
