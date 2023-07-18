@@ -176,13 +176,13 @@ const Tweet = ({ tweet, isReply, localReplyCount }) => {
                         <Handle onClick={() => handleUserProfileClick(tweet.authorID)}>{author?.userHandle}</Handle>
                     </div>
                     <TweetDate>{formattedDate}</TweetDate>
-                    {tweet.authorID === currentUser.uid && activeFilter === 'profile' && (
+                    {tweet.authorID === currentUser.uid && (activeFilter === 'profile' || activeFilter === 'thread') && (
                       <MenuContainer>
                         <StyledIcon icon={faEllipsisH} onClick={toggleTweetMenu} />
 
                         {isTweetMenuOpen && (
                           <MenuOptions>
-                            <DeleteTweetButton tweetID={tweet.ID} />
+                            <DeleteTweetButton tweet={tweet} isReply={isReply} />
                           </MenuOptions>
                         )}
                       </MenuContainer>
