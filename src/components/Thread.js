@@ -29,12 +29,13 @@ const StyledIcon = styled(FontAwesomeIcon)`
 const Thread = ({ onBackClick }) => {
   const { activeThread, setActiveThread, setActiveFilter, currentUser } = useContext(AppContext);
   const [replies, setReplies] = useState([]);
-  const [localReplyCount, setLocalReplyCount] = useState(activeThread?.replies || 0);
+  const [localReplyCount, setLocalReplyCount] = useState(activeThread?.replies || replies.length);
+  const isActiveThreadReply = activeThread?.isReply || false;
 
   useEffect(() => {
     const fecthReplies = async () => {
       const threadID = activeThread?.ID;
-      const tweetRepliesRef = collection(db, 'tweets', threadID, 'replies');
+      const tweetRepliesRef = collection(db, isActiveThreadReply ? 'replies' : 'tweets', threadID, 'replies');
       const tweetRepliesQuery = query(tweetRepliesRef);
       const tweetRepliesSnapshot = await getDocs(tweetRepliesQuery);
 

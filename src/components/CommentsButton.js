@@ -15,13 +15,13 @@ const StyledIcon = styled(FontAwesomeIcon)`
 `;
 
 const CommentsButton = ({ tweet, onClick, count }) => {
-  const [replyCount, setReplyCount] = useState(tweet.replies || 0);
-  const updatedCount = count > replyCount ? count : replyCount;
+  const [replyCount, setReplyCount] = useState(tweet.replies || count);
+  // const updatedCount = count > replyCount ? count : replyCount;
 
   return (
     <div onClick={onClick}>
         <StyledIcon icon={faComment} />
-        {replyCount > 0 && <TweetReactionsCount>{updatedCount}</TweetReactionsCount>}
+        {replyCount > 0 && <TweetReactionsCount>{replyCount}</TweetReactionsCount>}
     </div>
   )
 }
