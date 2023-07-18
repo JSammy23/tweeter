@@ -25,6 +25,7 @@ const ComposeBody = styled.div`
 
 
 const Compose = ({ user, activeThread, action, addReply }) => {
+    const isActiveThreadReply = activeThread?.isReply || false;
 
     
     const createTweet = async (text) => {
@@ -80,7 +81,9 @@ const Compose = ({ user, activeThread, action, addReply }) => {
             authorID: user.uid,
             body: text,
             date: replyDate,
-            threadID: activeThread.tweetID,
+            threadID: activeThread.ID,
+            threadType: isActiveThreadReply ? 'reply' : 'tweet',
+            isReply: true,
         });
 
         const replyID = newReplyRef.id;
@@ -92,22 +95,46 @@ const Compose = ({ user, activeThread, action, addReply }) => {
             authorID: user.uid,
             ID: replyID,
             date: replyDate, 
-            threadID: activeThread.tweetID,
+            threadID: activeThread.ID,
+            threadType: isActiveThreadReply ? 'reply' : 'tweet',
             body: text,
+            isReply: true,
         };
     };
 
     const addReplyToTweetDoc = async (replyID, tweetID, replyDate) => {
-        const tweetRef = doc(db, 'tweets', tweetID);
-        const repliesRef = collection(tweetRef, 'replies');
-        await addDoc(repliesRef, {
-            replyID: replyID,
-            date: replyDate,
-        });
+        if (isActiveThreadReply) {
+            try {
+                const threadRef = doc(db, 'replies', tweetID);
+                const repliesRef = collection(threadRef, 'replies');
+                await addDoc(repliesRef, {
+                    replyID: replyID,
+                    date: replyDate
+                });
+                await updateDoc(threadRef, {
+                    replies: increment(1),
+                });
+            } catch (error) {
+                console.error('Error adding reply to activeThread/Reply:', error);
+            };
+        } else {
+            try {
+                const tweetRef = doc(db, 'tweets', tweetID);
+                const repliesRef = collection(tweetRef, 'replies');
+                await addDoc(repliesRef, {
+                    replyID: replyID,
+                    date: replyDate,
+                });
+                await updateDoc(tweetRef, {
+                    replies: increment(1),
+                });
+            } catch (error) {
+                console.error('Error adding reply to activeThread/Tweet:', error);
+            };
+        };
 
-        await updateDoc(tweetRef, {
-            replies: increment(1),
-        });
+
+        
     };
 
     const composeReply = async (text) => {
