@@ -24,7 +24,7 @@ const StyledIcon = styled(FontAwesomeIcon)`
 
 // TODO:
 // Back click is not working, prevFilter in Feedpage not working.
-// Load comments below compose component.
+// When thread changes, tweet interactions are not updating.
 
 const Thread = ({ onBackClick }) => {
   const { activeThread, setActiveThread, setActiveFilter, currentUser } = useContext(AppContext);
@@ -62,7 +62,7 @@ const Thread = ({ onBackClick }) => {
 
   const mapRepliesToTweetComponents = (replies) => {
     return replies.map((reply) => (
-      <Tweet key={reply.replyID} tweet={reply} isReply />
+      <Tweet key={reply.ID} tweet={reply} isReply />
     ));
   };
 
@@ -78,9 +78,10 @@ const Thread = ({ onBackClick }) => {
             <StyledIcon icon={faArrowLeft} onClick={onBackClick} />
         </Header>    
         <Tweet 
-         key={activeThread} 
+         key={activeThread.ID} 
          tweet={activeThread}
-         localReplyCount={localReplyCount} />
+         localReplyCount={localReplyCount}
+         isReply={activeThread.isReply || false } />
         <Compose 
          user={currentUser}
          action='reply'
