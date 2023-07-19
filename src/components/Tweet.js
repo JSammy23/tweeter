@@ -108,7 +108,7 @@ const MenuOptions = styled.div`
 
 // TODO:
 
-const Tweet = ({ tweet, isReply, localReplyCount }) => {
+const Tweet = ({ tweet, isReply, localReplyCount, setReplies }) => {
 
     const [author, setAuthor] = useState(null);
     const { currentUser, activeFilter, setActiveFilter, setActiveThread} = useContext(AppContext);
@@ -182,7 +182,7 @@ const Tweet = ({ tweet, isReply, localReplyCount }) => {
 
                         {isTweetMenuOpen && (
                           <MenuOptions>
-                            <DeleteTweetButton tweet={tweet} isReply={isReply} />
+                            <DeleteTweetButton tweet={tweet} isReply={isReply} setReplies={setReplies} />
                           </MenuOptions>
                         )}
                       </MenuContainer>

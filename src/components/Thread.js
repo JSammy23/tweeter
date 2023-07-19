@@ -63,7 +63,11 @@ const Thread = ({ onBackClick }) => {
 
   const mapRepliesToTweetComponents = (replies) => {
     return replies.map((reply) => (
-      <Tweet key={reply.ID} tweet={reply} isReply />
+      <Tweet 
+        key={reply.ID} 
+        tweet={reply}
+        setReplies={setReplies} 
+        isReply />
     ));
   };
 
