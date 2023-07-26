@@ -14,6 +14,7 @@ import CommentsButton from './CommentsButton';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisH } from '@fortawesome/fontawesome-free-solid';
+import { ThreadContext } from 'services/ThreadContext';
 
 
 
@@ -108,11 +109,11 @@ const MenuOptions = styled.div`
 
 // TODO:
 
-const Tweet = ({ tweet, isReply, localReplyCount, setReplies }) => {
+const Tweet = ({ tweet, localReplyCount, setReplies }) => {
 
     const [author, setAuthor] = useState(null);
-    const { currentUser, activeFilter, setActiveFilter, setActiveThread} = useContext(AppContext);
-    // const [isDeleting, setIsDeleting] = useState(false);
+    const { currentUser, activeFilter, setActiveFilter} = useContext(AppContext);
+    const { setActiveThread } = useContext(ThreadContext);
     const [isTweetMenuOpen, setIsTweetMenuOpen] = useState(false);
 
     const contentState = convertFromRaw(JSON.parse(tweet.body));
@@ -121,25 +122,23 @@ const Tweet = ({ tweet, isReply, localReplyCount, setReplies }) => {
     useEffect(() => {
       const fetchAuthor = async () => {
         // Check if author is already cached in memory
-        const cachedAuthor = localStorage.getItem(tweet.authorID);
+        const cachedAuthor = localStorage.getItem(tweet.author);
         if (cachedAuthor) {
           setAuthor(JSON.parse(cachedAuthor));
         } else {
           // Fetch author from Firestore and cache in memory
-          const authorRef = doc(db, "users", tweet.authorID);
+          const authorRef = doc(db, "users", tweet.author);
           const authorDoc = await getDoc(authorRef);
           const authorData = authorDoc.data();
-          localStorage.setItem(tweet.authorID, JSON.stringify(authorData));
+          localStorage.setItem(tweet.author, JSON.stringify(authorData));
           setAuthor(authorData);
         }
       };
 
       fetchAuthor();
-    },[tweet.authorID]);
-
+    },[tweet.author]);
 
     const handleUserProfileClick = useUserProfileClick();
-
 
     const toggleTweetMenu = () => {
       setIsTweetMenuOpen(!isTweetMenuOpen)
@@ -150,7 +149,6 @@ const Tweet = ({ tweet, isReply, localReplyCount, setReplies }) => {
       setActiveFilter('thread');
     };
 
-    
     // Format dueDate
     let formattedDate;
     let date;
@@ -167,22 +165,22 @@ const Tweet = ({ tweet, isReply, localReplyCount, setReplies }) => {
     <>
       {tweet.retweets > 0 && activeFilter === 'home' && <RetweetList tweet={tweet} />}
       <TweetCard>
-        <UserImage src={author?.profileImg}  onClick={() => handleUserProfileClick(tweet.authorID)}/>
+        <UserImage src={author?.profileImg}  onClick={() => handleUserProfileClick(tweet.author)}/>
         <div className="flex column">
             <TweetHeader>
                 <Div>
                     <div className="flex align">
                         <Name>{author?.displayName}</Name>
-                        <Handle onClick={() => handleUserProfileClick(tweet.authorID)}>{author?.userHandle}</Handle>
+                        <Handle onClick={() => handleUserProfileClick(tweet.author)}>{author?.userHandle}</Handle>
                     </div>
                     <TweetDate>{formattedDate}</TweetDate>
-                    {tweet.authorID === currentUser.uid && (activeFilter === 'profile' || activeFilter === 'thread') && (
+                    {tweet.author === currentUser.uid && (activeFilter === 'profile' || activeFilter === 'thread') && (
                       <MenuContainer>
                         <StyledIcon icon={faEllipsisH} onClick={toggleTweetMenu} />
 
                         {isTweetMenuOpen && (
                           <MenuOptions>
-                            <DeleteTweetButton tweet={tweet} isReply={isReply} setReplies={setReplies} />
+                            <DeleteTweetButton tweet={tweet} setReplies={setReplies} />
                           </MenuOptions>
                         )}
                       </MenuContainer>
@@ -194,10 +192,8 @@ const Tweet = ({ tweet, isReply, localReplyCount, setReplies }) => {
             </TweetBody>
             <TweetReactions>
               <CommentsButton tweet={tweet} onClick={handleTweetThreadClick} count={localReplyCount} />
-              {!isReply ? (
-                <Retweet tweet={tweet} />
-             ) : null}
-              <LikeButton tweet={tweet} isReply={isReply} />
+              <Retweet tweet={tweet} />
+              <LikeButton tweet={tweet} />
             </TweetReactions>
         </div>
       </TweetCard>
