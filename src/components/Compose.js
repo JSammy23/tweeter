@@ -64,7 +64,7 @@ const Compose = ({ user, activeThread, isReply, addReply, action }) => {
             const userRef = doc(db, 'users', user.uid);
         const tweetBucketRef = collection(userRef, 'tweetBucket');
         await addDoc(tweetBucketRef, {
-            tweet: tweetId,
+            tweetID: tweetId,
             date: tweetDate,
         });
         } catch (error) {
