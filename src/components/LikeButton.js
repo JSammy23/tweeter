@@ -9,15 +9,16 @@ import { faHeart } from '@fortawesome/fontawesome-free-regular';
 import { StyledIcon } from './Retweet';
 import { TweetReactionsCount } from 'styles/styledComponents';
 
-const LikeButton = ({ tweet, isReply }) => {
+const LikeButton = ({ tweet }) => {
     const [likes, setLikes] = useState(tweet.likes || 0);
     const [isLiked, setIsLiked] = useState(false);
     const { currentUser } = useContext(AppContext);
-    const subCollectionName = isReply ? 'likedReplies' : 'likes';
+
+    const userLikesRef = collection(db, 'users', currentUser.uid, 'likes');
 
     useEffect(() => {
         checkIfLiked();
-    }, [tweet.ID]);
+    }, [tweet.id]);
 
     const checkIfLiked = async () => {
         if (!currentUser) {
@@ -25,8 +26,7 @@ const LikeButton = ({ tweet, isReply }) => {
         }
 
         try {
-          const userLikesRef = collection(db, 'users', currentUser.uid, subCollectionName);
-          const userLikesQuery =  query(userLikesRef, where('tweetID', '==', tweet.ID));
+          const userLikesQuery =  query(userLikesRef, where('tweetID', '==', tweet.id));
           const userLikesSnapshot = await getDocs(userLikesQuery);
           const isLiked = !userLikesSnapshot.empty;
           setIsLiked(isLiked);
@@ -42,14 +42,13 @@ const LikeButton = ({ tweet, isReply }) => {
       setIsLiked(!isLiked);
   
       try {
-        const documentRef = doc(db, isReply ? 'replies' : 'tweets', tweet.ID);
+        const documentRef = doc(db, 'tweets', tweet.id);
         await updateDoc(documentRef, {
           likes: newLikesCount,
         });
   
-        const userLikesRef = collection(db, 'users', currentUser.uid, subCollectionName);
         if (isLiked) {
-          const userLikesQuery = query(userLikesRef, where('tweetID', '==', tweet.ID));
+          const userLikesQuery = query(userLikesRef, where('tweetID', '==', tweet.id));
           const userLikesSnapshot = await getDocs(userLikesQuery);
           const userLikesDoc = userLikesSnapshot.docs[0];
           if (userLikesDoc) {
@@ -58,7 +57,7 @@ const LikeButton = ({ tweet, isReply }) => {
           }
         } else {
           await addDoc(userLikesRef, {
-            tweetID: tweet.ID,
+            tweetID: tweet.id,
             date: new Date(),
           });
         }
