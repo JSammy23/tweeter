@@ -43,7 +43,7 @@ const Controls = styled.div`
  justify-content: end;
 `;
 
-const TextEditor = ({ onTweet, onReply, action }) => {
+const TextEditor = ({ onTweet, action }) => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [isComposeDisabled, setIsComposeDisabled] = useState(true);
   const maxTweetLength = 180;
@@ -73,18 +73,11 @@ const TextEditor = ({ onTweet, onReply, action }) => {
     return JSON.stringify(rawContentState);
   };
 
-  const handleAction = () => {
-    if (action === 'tweet') {
-      const contentState = editorState.getCurrentContent();
-      const tweetBody = convertEditorStateToPlainText(contentState);
-      onTweet(tweetBody);
-      setEditorState(EditorState.createEmpty());
-    } else if (action === 'reply') {
-      const contentState = editorState.getCurrentContent();
-      const replyBody = convertEditorStateToPlainText(contentState);
-      onReply(replyBody);
-      setEditorState(EditorState.createEmpty());
-    }
+  const handleTweet = () => {
+    const contentState = editorState.getCurrentContent();
+    const tweetBody = convertEditorStateToPlainText(contentState);
+    onTweet(tweetBody);
+    setEditorState(EditorState.createEmpty());
   };
 
   const placeholder = action === 'tweet' ? "What's Happening?" : "Tweet your reply!";
@@ -102,7 +95,7 @@ const TextEditor = ({ onTweet, onReply, action }) => {
         />
         <Controls>
                 <div>
-                    <Button disabled={isComposeDisabled} onClick={handleAction} >
+                    <Button disabled={isComposeDisabled} onClick={handleTweet} >
                       {action === 'tweet' ? 'Tweet' : 'Reply'}
                     </Button>
                 </div>
