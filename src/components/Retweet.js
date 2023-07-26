@@ -22,14 +22,14 @@ const Retweet = ({ tweet }) => {
 
     useEffect(() => {
         checkIfRetweeted();
-    }, [tweet.ID]);
+    }, [tweet.id]);
 
     const checkIfRetweeted = async () => {
       if (!currentUser) {
         return;
       }
       const userRetweetsRef = collection(db, 'users', currentUser.uid, 'retweets');
-      const userRetweetsQuery = query(userRetweetsRef, where('ID', '==', tweet.ID));
+      const userRetweetsQuery = query(userRetweetsRef, where('ID', '==', tweet.id));
       const userRetweetsSnapshot = await getDocs(userRetweetsQuery);
       const isRetweeted = !userRetweetsSnapshot.empty;
       setRetweeted(isRetweeted);
@@ -42,7 +42,7 @@ const Retweet = ({ tweet }) => {
         setRetweeted(false);
     
         try {
-          const tweetRef = doc(db, 'tweets', tweet.ID);
+          const tweetRef = doc(db, 'tweets', tweet.id);
           await updateDoc(tweetRef, {
             retweets: newRetweetCount,
             retweetedBy: arrayRemove(currentUser.uid),
@@ -50,7 +50,7 @@ const Retweet = ({ tweet }) => {
     
           // Remove tweet from user tweetBucket
           const userTweetBucketRef = collection(db, 'users', currentUser.uid, 'tweetBucket');
-          const userTweetQuery = query(userTweetBucketRef, where('tweetID', '==', tweet.ID));
+          const userTweetQuery = query(userTweetBucketRef, where('tweetID', '==', tweet.id));
           const userTweetSnapshot = await getDocs(userTweetQuery);
           const userTweetDoc = userTweetSnapshot.docs[0];
           if (userTweetDoc) {
@@ -60,7 +60,7 @@ const Retweet = ({ tweet }) => {
 
           // Remove tweet from user retweets
           const userRetweetsRef = collection(db, 'users', currentUser.uid, 'retweets');
-          const userRetweetsQuery = query(userRetweetsRef, where('tweetID', '==', tweet.ID));
+          const userRetweetsQuery = query(userRetweetsRef, where('tweetID', '==', tweet.id));
           const userRetweetsSnapshot = await getDocs(userRetweetsQuery);
           const userRetweetsDoc = userRetweetsSnapshot.docs[0];
           if (userRetweetsDoc) {
@@ -76,7 +76,7 @@ const Retweet = ({ tweet }) => {
         setRetweets(newRetweetCount);
         setRetweeted(true);
         try {
-          const tweetRef = doc(db, 'tweets', tweet.ID);
+          const tweetRef = doc(db, 'tweets', tweet.id);
           await updateDoc(tweetRef, {
             retweets: newRetweetCount,
             retweetedBy: arrayUnion(currentUser.uid),
@@ -84,13 +84,13 @@ const Retweet = ({ tweet }) => {
 
           const userTweetBucketRef = collection(db, 'users', currentUser.uid, 'tweetBucket');
           await addDoc(userTweetBucketRef, {
-            tweetID: tweet.ID,
+            tweetID: tweet.id,
             date: new Date(),
           });
 
           const userRetweetsRef = collection(db, 'users', currentUser.uid, 'retweets');
           await addDoc(userRetweetsRef, {
-            tweetID: tweet.ID,
+            tweetID: tweet.id,
             date: new Date(),
           });
 
