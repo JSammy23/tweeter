@@ -1,6 +1,6 @@
 import React from 'react';
 import db from 'services/storage';
-import { collection, addDoc, Timestamp,doc, updateDoc, increment } from 'firebase/firestore';
+import { collection, addDoc, Timestamp,doc, updateDoc, increment, getDoc, runTransaction } from 'firebase/firestore';
 import TextEditor from './TextEditor';
 
 import styled from 'styled-components';
@@ -24,129 +24,81 @@ const ComposeBody = styled.div`
 `;
 
 
-const Compose = ({ user, activeThread, action, addReply }) => {
-    const isActiveThreadReply = activeThread?.isReply || false;
+const Compose = ({ user, activeThread, isReply, addReply, action }) => {
 
-    
     const createTweet = async (text) => {
         const date =  new Date();
         const tweetDate = Timestamp.fromDate(date)
         const tweetsRef = collection(db, 'tweets');
-        const newTweetRef = await addDoc(tweetsRef, {
-            authorID: user.uid,
+        let threadId = null;
+        let replyTo = null;
+
+        if (isReply && activeThread) {
+            replyTo = activeThread.id;
+            threadId = activeThread.isReply ? activeThread.threadId : activeThread.id;
+        };
+
+        const newTweetData = {
+            author: user.uid,
             body: text,
             date: tweetDate,
-            userHandle: user.userHandle,
-            profileImg: user.profileImg,
-            displayName: user.displayName,
-            ID: '',
-        });
+            id: '',
+            isReply: isReply,
+            replyTo: replyTo,
+            threadId: threadId,
+        };
 
-        const tweetID = newTweetRef.id;
-        await updateDoc(newTweetRef, {
-            ID: tweetID,
-        });
+        const newTweetRef = await addDoc(tweetsRef, newTweetData);
+
+        const tweetId = newTweetRef.id;
+        await updateDoc(newTweetRef, { id: tweetId });
 
         return {
-            ID: tweetID,
+            id: tweetId,
             tweetDate: tweetDate,
         };
     };
 
-    const addToUserTweetBucket = async (tweetID, tweetDate) => {
-        const userRef = doc(db, 'users', user.uid);
+    const addToUserTweetBucket = async (tweetId, tweetDate) => {
+        try {
+            const userRef = doc(db, 'users', user.uid);
         const tweetBucketRef = collection(userRef, 'tweetBucket');
         await addDoc(tweetBucketRef, {
-            tweetID: tweetID,
+            tweet: tweetId,
             date: tweetDate,
         });
-        console.log('Tweeted!');
+        } catch (error) {
+            console.error('Error adding tweet ref to user tweetBucket:', error);
+        };
     };
 
     const composeTweet =  async (text) => {
         try {
-            const { ID, tweetDate } = await createTweet(text);
-            await addToUserTweetBucket(ID, tweetDate);
+            const newTweet = await createTweet(text);
+            await addToUserTweetBucket(newTweet.id, newTweet.tweetDate);
+            
+            if (isReply) {
+                // Start a new transaction
+                await runTransaction(db, async (transaction) => {
+                    const tweetRef = doc(db, 'tweets', activeThread.id);
+                    const tweetSnapshot = await transaction.get(tweetRef);
+    
+                    // Ensure the tweet exists before trying to update it
+                    if (!tweetSnapshot.exists()) {
+                        throw new Error("Tweet does not exist!");
+                    };
+    
+                    const newReplyCount = (tweetSnapshot.data().replies || 0) + 1;
+                    transaction.update(tweetRef, { replies: newReplyCount });
+                });
+                addReply(newTweet);
+            };
             console.log('Tweeted!');
         } catch (error) {
             console.error('Error composing tweet:', error);
         }
     };
 
-    const createReply = async (text) => {
-        const date = new Date();
-        const replyDate = Timestamp.fromDate(date);
-        const repliesRef = collection(db, 'replies');
-        const newReplyRef = await addDoc(repliesRef, {
-            authorID: user.uid,
-            body: text,
-            date: replyDate,
-            threadID: activeThread.ID,
-            threadType: isActiveThreadReply ? 'reply' : 'tweet',
-            isReply: true,
-        });
-
-        const replyID = newReplyRef.id;
-        await updateDoc(newReplyRef, {
-            ID: replyID,
-        });
-
-        return {
-            authorID: user.uid,
-            ID: replyID,
-            date: replyDate, 
-            threadID: activeThread.ID,
-            threadType: isActiveThreadReply ? 'reply' : 'tweet',
-            body: text,
-            isReply: true,
-        };
-    };
-
-    const addReplyToTweetDoc = async (replyID, tweetID, replyDate) => {
-        if (isActiveThreadReply) {
-            try {
-                const threadRef = doc(db, 'replies', tweetID);
-                const repliesRef = collection(threadRef, 'replies');
-                await addDoc(repliesRef, {
-                    replyID: replyID,
-                    date: replyDate
-                });
-                await updateDoc(threadRef, {
-                    replies: increment(1),
-                });
-            } catch (error) {
-                console.error('Error adding reply to activeThread/Reply:', error);
-            };
-        } else {
-            try {
-                const tweetRef = doc(db, 'tweets', tweetID);
-                const repliesRef = collection(tweetRef, 'replies');
-                await addDoc(repliesRef, {
-                    replyID: replyID,
-                    date: replyDate,
-                });
-                await updateDoc(tweetRef, {
-                    replies: increment(1),
-                });
-            } catch (error) {
-                console.error('Error adding reply to activeThread/Tweet:', error);
-            };
-        };
-
-
-        
-    };
-
-    const composeReply = async (text) => {
-        try {
-            const newReply = await createReply(text);
-            await addReplyToTweetDoc(newReply.ID, newReply.threadID, newReply.date);
-            addReply(newReply);
-            console.log('Reply Tweeted!');
-        } catch (error) {
-            console.error('Error composing reply:', error);
-        }
-    };
 
   return (
     <TweetCard>
@@ -156,7 +108,6 @@ const Compose = ({ user, activeThread, action, addReply }) => {
         <ComposeBody>
             <TextEditor  
              onTweet={composeTweet} 
-             onReply={composeReply}
              action={action} />
             
         </ComposeBody>
