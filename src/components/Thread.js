@@ -75,10 +75,9 @@ const Thread = ({ onBackClick }) => {
     return replies.map((reply) => (
       // This will be the only place we bypass the tweet comp for a standard tweet for replies
       <Tweet 
-        key={reply.ID} 
+        key={reply.id} 
         tweet={reply}
-        setReplies={setReplies} 
-        isReply />
+        setReplies={setReplies} />
     ));
   };
 
@@ -100,6 +99,7 @@ const Thread = ({ onBackClick }) => {
         <Compose 
          user={currentUser}
          action='reply'
+         isReply
          activeThread={activeThread}
          addReply={handleAddReply} />
         {mapRepliesToTweetComponents(replies)}
