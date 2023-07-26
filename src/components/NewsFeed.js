@@ -68,15 +68,24 @@ const NewsFeed = ({showLikes }) => {
     };
 
     const retrieveAndSortTweets = async (tweetIds) => {
-        // Use the tweet IDs to query the tweets collection to retrieve the actual tweet documents
-        const tweetsQuery = query(tweetsRef, where('__name__', 'in', tweetIds));
-        const tweetsSnapshot = await getDocs(tweetsQuery);
-        const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
-        // Sort by date in descending order
-        tweetsData.sort((a, b) => b.date - a.date);
-
-        return tweetsData;
-    };
+      // Filter out undefined IDs
+      const validTweetIds = tweetIds.filter(id => id !== undefined);
+  
+      // If no valid tweet IDs, return an empty array
+      if (validTweetIds.length === 0) {
+          return [];
+      }
+  
+      // Use the tweet IDs to query the tweets collection to retrieve the actual tweet documents
+      const tweetsQuery = query(tweetsRef, where('__name__', 'in', validTweetIds));
+      const tweetsSnapshot = await getDocs(tweetsQuery);
+      const tweetsData = tweetsSnapshot.docs.map((doc) => doc.data());
+  
+      // Sort by date in descending order
+      tweetsData.sort((a, b) => b.date - a.date);
+  
+      return tweetsData;
+  };
 
     const handleLoadMoreTweets = async () => {
         const lastTweet = tweets[tweets.length - 1];
@@ -118,7 +127,7 @@ const NewsFeed = ({showLikes }) => {
       
             tweetsData.forEach((tweet) => {
               const isDuplicate = subscribedTweets.some(
-                (existingTweet) => existingTweet.ID === tweet.ID
+                (existingTweet) => existingTweet.id === tweet.id
               );
               if (!isDuplicate) {
                 subscribedTweets.push(tweet);
