@@ -7,8 +7,9 @@ import styled from 'styled-components';
 import { Header } from 'styles/styledComponents';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/fontawesome-free-solid';
-import { collection, query, getDocs, where } from 'firebase/firestore';
+import { collection, query, getDocs, where, orderBy } from 'firebase/firestore';
 import db from 'services/storage';
+import { ThreadContext } from 'services/ThreadContext';
 
 
 const StyledIcon = styled(FontAwesomeIcon)`
@@ -27,42 +28,52 @@ const StyledIcon = styled(FontAwesomeIcon)`
 // When thread changes, tweet interactions are not updating.
 
 const Thread = ({ onBackClick }) => {
-  const { activeThread, setActiveThread, setActiveFilter, currentUser } = useContext(AppContext);
+  const { setActiveFilter, currentUser } = useContext(AppContext);
+  const { setActiveThread, activeThread } = useContext(ThreadContext)
   const [replies, setReplies] = useState([]);
   const [localReplyCount, setLocalReplyCount] = useState(activeThread?.replies || replies.length);
-  const isActiveThreadReply = activeThread?.isReply || false;
+  
 
   useEffect(() => {
-    const fecthReplies = async () => {
-      const threadID = activeThread?.ID;
-      const tweetRepliesRef = collection(db, isActiveThreadReply ? 'replies' : 'tweets', threadID, 'replies');
-      const tweetRepliesQuery = query(tweetRepliesRef);
-      const tweetRepliesSnapshot = await getDocs(tweetRepliesQuery);
+    const fetchReplies = async () => {
+        const threadId = activeThread?.id;
 
-      if (!tweetRepliesSnapshot.empty) {
-        const repliesIDs = tweetRepliesSnapshot.docs.map((doc) => doc.data().replyID);
-        const repliesData = await retrieveAndSortReplies(repliesIDs);
-        setReplies(repliesData);
-      } else {
-        setReplies([]);
-        return;
-      }
+        if (activeThread?.replies > 0) {
+            const repliesRef = collection(db, 'tweets');
+            const repliesQuery = query(
+                repliesRef,
+                where("replyTo", "==", threadId),
+                orderBy('date', 'desc')
+            );
+            const repliesSnapshot = await getDocs(repliesQuery);
+
+            if (!repliesSnapshot.empty) {
+                const repliesData = repliesSnapshot.docs.map(doc => doc.data());
+                setReplies(repliesData);
+            } else {
+                setReplies([]);
+            }
+        } else {
+            setReplies([]);
+        }
     };
-    fecthReplies();
-  }, [activeThread]);
 
-  const retrieveAndSortReplies = async (repliesIDs) => {
-    const repliesRef = collection(db, 'replies');
-    const repliesQuery = query(repliesRef, where('__name__', 'in', repliesIDs));
-    const repliesSnapshot = await getDocs(repliesQuery);
-    const repliesData = repliesSnapshot.docs.map((doc) => doc.data());
-    repliesData.sort((a, b) => b.date - a.date);
+    fetchReplies();
+}, [activeThread]);
 
-    return repliesData;
-  };
+  // const retrieveAndSortReplies = async (repliesIDs) => {
+  //   const repliesRef = collection(db, 'replies');
+  //   const repliesQuery = query(repliesRef, where('__name__', 'in', repliesIDs));
+  //   const repliesSnapshot = await getDocs(repliesQuery);
+  //   const repliesData = repliesSnapshot.docs.map((doc) => doc.data());
+  //   repliesData.sort((a, b) => b.date - a.date);
+
+  //   return repliesData;
+  // };
 
   const mapRepliesToTweetComponents = (replies) => {
     return replies.map((reply) => (
+      // This will be the only place we bypass the tweet comp for a standard tweet for replies
       <Tweet 
         key={reply.ID} 
         tweet={reply}
@@ -85,8 +96,7 @@ const Thread = ({ onBackClick }) => {
         <Tweet 
          key={activeThread.ID} 
          tweet={activeThread}
-         localReplyCount={localReplyCount}
-         isReply={activeThread.isReply || false } />
+         localReplyCount={localReplyCount} />
         <Compose 
          user={currentUser}
          action='reply'
