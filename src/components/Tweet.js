@@ -3,12 +3,12 @@ import React, {useContext, useEffect, useState} from 'react';
 import db from 'services/storage';
 import { format } from 'date-fns';
 import { AppContext } from 'services/appContext';
-import { convertFromRaw, Editor, EditorState } from 'draft-js';
+// import { convertFromRaw, Editor, EditorState } from 'draft-js';
 import Retweet from './Retweet';
 import LikeButton from './LikeButton';
 import RetweetList from './RetweetList';
 import DeleteTweetButton from './DeleteTweetButton';
-import { useUserProfileClick } from 'hooks/useUserProfileClick';
+// import { useUserProfileClick } from 'hooks/useUserProfileClick';
 import CommentsButton from './CommentsButton';
 
 import styled from 'styled-components';
@@ -26,12 +26,12 @@ export const TweetCard = styled.div`
  border-bottom: 1px solid ${props => props.theme.colors.secondary};
 `;
 
-const TweetHeader = styled.div`
+export const TweetHeader = styled.div`
  width: 100%;
  display: flex;
 `;
 
-const Div = styled.div`
+export const FlexDiv = styled.div`
  width: 100%;
  display: flex;
  justify-content: space-between;
@@ -61,14 +61,14 @@ export const Handle = styled.h3`
  }
 `;
 
-const TweetDate = styled.div`
+export const TweetDate = styled.div`
  display: flex;
  color: ${props => props.theme.colors.secondary};
  font-size: 1em;
  justify-content: flex-end;
 `;
 
-const TweetBody = styled.div`
+export const TweetBody = styled.div`
  width: 100%;
  text-align: start;
  color: #fff;
@@ -76,13 +76,13 @@ const TweetBody = styled.div`
  margin-top: .3em;
 `;
 
-const TweetReactions = styled.div`
+export const TweetReactions = styled.div`
  display: flex;
  margin-top: .3em;
  gap: 1em;
 `;
 
-const StyledIcon = styled(FontAwesomeIcon)`
+export const StyledIcon = styled(FontAwesomeIcon)`
  color: ${props => props.theme.colors.secondary};
  cursor: pointer;
 
@@ -91,11 +91,11 @@ const StyledIcon = styled(FontAwesomeIcon)`
  }
 `;
 
-const MenuContainer = styled.div`
+export const MenuContainer = styled.div`
  position: relative;
 `;
 
-const MenuOptions = styled.div`
+export const MenuOptions = styled.div`
  position: absolute;
  top: 100%;
  right: 0;
@@ -108,46 +108,48 @@ const MenuOptions = styled.div`
 
 
 // TODO:
+// 1. Assess tweet type ie. isReply, isQoute?
+// 2. Return the appropiate tweet component and pass the tweet object prop
 
 const Tweet = ({ tweet, localReplyCount, setReplies }) => {
 
-    const [author, setAuthor] = useState(null);
+    // const [author, setAuthor] = useState(null);
     const { currentUser, activeFilter, setActiveFilter} = useContext(AppContext);
     const { setActiveThread } = useContext(ThreadContext);
-    const [isTweetMenuOpen, setIsTweetMenuOpen] = useState(false);
+    // const [isTweetMenuOpen, setIsTweetMenuOpen] = useState(false);
 
-    const contentState = convertFromRaw(JSON.parse(tweet.body));
-    const editorState = EditorState.createWithContent(contentState);
+    // const contentState = convertFromRaw(JSON.parse(tweet.body));
+    // const editorState = EditorState.createWithContent(contentState);
 
-    useEffect(() => {
-      const fetchAuthor = async () => {
-        // Check if author is already cached in memory
-        const cachedAuthor = localStorage.getItem(tweet.author);
-        if (cachedAuthor) {
-          setAuthor(JSON.parse(cachedAuthor));
-        } else {
-          // Fetch author from Firestore and cache in memory
-          const authorRef = doc(db, "users", tweet.author);
-          const authorDoc = await getDoc(authorRef);
-          const authorData = authorDoc.data();
-          localStorage.setItem(tweet.author, JSON.stringify(authorData));
-          setAuthor(authorData);
-        }
-      };
+    // useEffect(() => {
+    //   const fetchAuthor = async () => {
+    //     // Check if author is already cached in memory
+    //     const cachedAuthor = localStorage.getItem(tweet.author);
+    //     if (cachedAuthor) {
+    //       setAuthor(JSON.parse(cachedAuthor));
+    //     } else {
+    //       // Fetch author from Firestore and cache in memory
+    //       const authorRef = doc(db, "users", tweet.author);
+    //       const authorDoc = await getDoc(authorRef);
+    //       const authorData = authorDoc.data();
+    //       localStorage.setItem(tweet.author, JSON.stringify(authorData));
+    //       setAuthor(authorData);
+    //     }
+    //   };
 
-      fetchAuthor();
-    },[tweet.author]);
+    //   fetchAuthor();
+    // },[tweet.author]);
 
-    const handleUserProfileClick = useUserProfileClick();
+    // const handleUserProfileClick = useUserProfileClick();
 
-    const toggleTweetMenu = () => {
-      setIsTweetMenuOpen(!isTweetMenuOpen)
-    };
+    // const toggleTweetMenu = () => {
+    //   setIsTweetMenuOpen(!isTweetMenuOpen)
+    // };
 
-    const handleTweetThreadClick = () => {
-      setActiveThread(tweet);
-      setActiveFilter('thread');
-    };
+    // const handleTweetThreadClick = () => {
+    //   setActiveThread(tweet);
+    //   setActiveFilter('thread');
+    // };
 
     // Format dueDate
     let formattedDate;
@@ -163,40 +165,7 @@ const Tweet = ({ tweet, localReplyCount, setReplies }) => {
 
   return (
     <>
-      {tweet.retweets > 0 && activeFilter === 'home' && <RetweetList tweet={tweet} />}
-      <TweetCard>
-        <UserImage src={author?.profileImg}  onClick={() => handleUserProfileClick(tweet.author)}/>
-        <div className="flex column">
-            <TweetHeader>
-                <Div>
-                    <div className="flex align">
-                        <Name>{author?.displayName}</Name>
-                        <Handle onClick={() => handleUserProfileClick(tweet.author)}>{author?.userHandle}</Handle>
-                    </div>
-                    <TweetDate>{formattedDate}</TweetDate>
-                    {tweet.author === currentUser.uid && (activeFilter === 'profile' || activeFilter === 'thread') && (
-                      <MenuContainer>
-                        <StyledIcon icon={faEllipsisH} onClick={toggleTweetMenu} />
-
-                        {isTweetMenuOpen && (
-                          <MenuOptions>
-                            <DeleteTweetButton tweet={tweet} setReplies={setReplies} />
-                          </MenuOptions>
-                        )}
-                      </MenuContainer>
-                    )}
-                </Div>
-            </TweetHeader>
-            <TweetBody>
-                <Editor editorState={editorState} readOnly />
-            </TweetBody>
-            <TweetReactions>
-              <CommentsButton tweet={tweet} onClick={handleTweetThreadClick} count={localReplyCount} />
-              <Retweet tweet={tweet} />
-              <LikeButton tweet={tweet} />
-            </TweetReactions>
-        </div>
-      </TweetCard>
+      
     </>
   )
 }
