@@ -51,12 +51,10 @@ const Compose = ({ user, activeThread, isReply, addReply, action }) => {
         const newTweetRef = await addDoc(tweetsRef, newTweetData);
 
         const tweetId = newTweetRef.id;
+        newTweetData.id = tweetId;
         await updateDoc(newTweetRef, { id: tweetId });
 
-        return {
-            id: tweetId,
-            tweetDate: tweetDate,
-        };
+        return newTweetData;
     };
 
     const addToUserTweetBucket = async (tweetId, tweetDate) => {
@@ -75,7 +73,7 @@ const Compose = ({ user, activeThread, isReply, addReply, action }) => {
     const composeTweet =  async (text) => {
         try {
             const newTweet = await createTweet(text);
-            await addToUserTweetBucket(newTweet.id, newTweet.tweetDate);
+            await addToUserTweetBucket(newTweet.id, newTweet.date);
             
             if (isReply) {
                 // Start a new transaction
