@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from 'services/appContext'
 import Tweet from './Tweet';
+import StandardTweet from './StandardTweet';
 import Compose from './Compose';
 
 import styled from 'styled-components';
@@ -61,20 +62,10 @@ const Thread = ({ onBackClick }) => {
     fetchReplies();
 }, [activeThread]);
 
-  // const retrieveAndSortReplies = async (repliesIDs) => {
-  //   const repliesRef = collection(db, 'replies');
-  //   const repliesQuery = query(repliesRef, where('__name__', 'in', repliesIDs));
-  //   const repliesSnapshot = await getDocs(repliesQuery);
-  //   const repliesData = repliesSnapshot.docs.map((doc) => doc.data());
-  //   repliesData.sort((a, b) => b.date - a.date);
-
-  //   return repliesData;
-  // };
-
   const mapRepliesToTweetComponents = (replies) => {
     return replies.map((reply) => (
       // This will be the only place we bypass the tweet comp for a standard tweet for replies
-      <Tweet 
+      <StandardTweet 
         key={reply.id} 
         tweet={reply}
         setReplies={setReplies} />
