@@ -6,13 +6,23 @@ export const TweetCard = styled.div`
  display: flex;
  padding: .5em;
  border-bottom: 1px solid ${props => props.theme.colors.secondary};
+ 
 
  ${props => props.isMini && `
   width: 90%;
   padding: .3em;
-  margin-left: auto;
+//   margin-left: auto;
   border-bottom: none;
  `}
+`;
+
+export const LeftThreadLine = styled.div`
+ width: 1px;
+ height: 5em;
+ background: ${props => props.theme.colors.secondary};
+ border: 2px solid ${props => props.theme.colors.secondary};
+ margin-left: 2em;
+ margin-right: 2em;
 `;
 
 export const TweetHeader = styled.div`

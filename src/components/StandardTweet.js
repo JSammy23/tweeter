@@ -13,7 +13,7 @@ import CommentsButton from './CommentsButton';
 import { format } from 'date-fns';
 
 import styled from 'styled-components';
-import { TweetCard, TweetHeader, FlexDiv, UserImage, Name, Handle, TweetDate, TweetBody, TweetReactions, StyledIcon, MenuContainer, MenuOptions } from '../styles/tweetStyles';
+import { TweetCard, TweetHeader, FlexDiv, UserImage, Name, Handle, TweetDate, TweetBody, TweetReactions, StyledIcon, MenuContainer, MenuOptions, LeftThreadLine } from '../styles/tweetStyles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisH } from '@fortawesome/fontawesome-free-solid';
 
@@ -73,6 +73,7 @@ const StandardTweet = ({ tweet, isMini, localReplyCount, setReplies }) => {
         <>
           {tweet.retweets > 0 && activeFilter === 'home' && <RetweetList tweet={tweet} />}
           <TweetCard isMini={isMini} >
+          {isMini && <LeftThreadLine />}
             <UserImage 
                 src={author?.profileImg}  
                 onClick={() => handleUserProfileClick(tweet.author)}
