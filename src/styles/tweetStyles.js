@@ -78,6 +78,10 @@ export const TweetDate = styled.div`
  color: ${props => props.theme.colors.secondary};
  font-size: 1em;
  justify-content: flex-end;
+
+ ${props => props.isMini && `
+  font-size: .9em;
+ `}
 `;
 
 export const TweetBody = styled.div`
