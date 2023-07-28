@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { AppContext } from 'services/appContext';
 import { ThreadContext } from 'services/ThreadContext';
 import StandardTweet from './StandardTweet';
+import ReplyTweet from './ReplyTweet';
 
 
 import styled from 'styled-components';
@@ -28,7 +29,14 @@ const Tweet = ({ tweet, localReplyCount, setReplies }) => {
         setReplies={setReplies} 
         localReplyCount={localReplyCount} />
     )
-  };
+  } else if (tweet.isReply) {
+    return (
+      <ReplyTweet 
+        tweet={tweet}
+        setReplies={setReplies} 
+        localReplyCount={localReplyCount}/>
+    )
+  }
 
   return null;
 
