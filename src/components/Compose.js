@@ -38,6 +38,7 @@ const Compose = ({ user, activeThread, isReply, addReply, action }) => {
             threadId = activeThread.isReply ? activeThread.threadId : activeThread.id;
         };
 
+        // Need to include isQoute field
         const newTweetData = {
             author: user.uid,
             body: text,
@@ -46,6 +47,8 @@ const Compose = ({ user, activeThread, isReply, addReply, action }) => {
             isReply: isReply,
             replyTo: replyTo,
             threadId: threadId,
+            likes: 0,
+            retweets: 0,
         };
 
         const newTweetRef = await addDoc(tweetsRef, newTweetData);
