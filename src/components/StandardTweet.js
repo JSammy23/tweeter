@@ -13,12 +13,12 @@ import CommentsButton from './CommentsButton';
 import { format } from 'date-fns';
 
 import styled from 'styled-components';
-import { TweetCard, TweetHeader, FlexDiv, UserImage, Name, Handle, TweetDate, TweetBody, TweetReactions, StyledIcon, MenuContainer, MenuOptions } from './Tweet';
+import { TweetCard, TweetHeader, FlexDiv, UserImage, Name, Handle, TweetDate, TweetBody, TweetReactions, StyledIcon, MenuContainer, MenuOptions } from '../styles/tweetStyles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisH } from '@fortawesome/fontawesome-free-solid';
 
 
-const StandardTweet = ({ tweet, localReplyCount, setReplies }) => {
+const StandardTweet = ({ tweet, isMini, localReplyCount, setReplies }) => {
     const [author, setAuthor] = useState(null);
     const [isTweetMenuOpen, setIsTweetMenuOpen] = useState(false);
     const { currentUser, activeFilter, setActiveFilter } = useContext(AppContext);
@@ -72,14 +72,17 @@ const StandardTweet = ({ tweet, localReplyCount, setReplies }) => {
     return (
         <>
           {tweet.retweets > 0 && activeFilter === 'home' && <RetweetList tweet={tweet} />}
-          <TweetCard>
-            <UserImage src={author?.profileImg}  onClick={() => handleUserProfileClick(tweet.author)}/>
+          <TweetCard isMini={isMini} >
+            <UserImage 
+                src={author?.profileImg}  
+                onClick={() => handleUserProfileClick(tweet.author)}
+                isMini={isMini} />
             <div className="flex column">
                 <TweetHeader>
                     <FlexDiv>
                         <div className="flex align">
-                            <Name>{author?.displayName}</Name>
-                            <Handle onClick={() => handleUserProfileClick(tweet.author)}>{author?.userHandle}</Handle>
+                            <Name isMini={isMini} >{author?.displayName}</Name>
+                            <Handle isMini={isMini} onClick={() => handleUserProfileClick(tweet.author)}>{author?.userHandle}</Handle>
                         </div>
                         <TweetDate>{formattedDate}</TweetDate>
                         {tweet.author === currentUser.uid && (activeFilter === 'profile' || activeFilter === 'thread') && (
@@ -95,7 +98,7 @@ const StandardTweet = ({ tweet, localReplyCount, setReplies }) => {
                         )}
                     </FlexDiv>
                 </TweetHeader>
-                <TweetBody>
+                <TweetBody isMini={isMini} >
                     <Editor editorState={editorState} readOnly />
                 </TweetBody>
                 <TweetReactions>
