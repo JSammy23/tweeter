@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import { Button, Module } from 'styles/styledComponents';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimesCircle } from '@fortawesome/fontawesome-free-regular';
-import '/home/jordan/repos/tweeter/src/components/Edit Profile/EditProfile.styles.css';
+import './EditProfile.styles.css';
 
 
 
