@@ -39,7 +39,7 @@ const ReplyTweet = ({ tweet }) => {
 
   return (
     <div>
-        {replyToTweets.map((tweet, index) => (
+        {replyToTweets.slice().reverse().map((tweet, index) => (
             <StandardTweet key={index} tweet={tweet} isMini />
         ))}
         <StandardTweet key={replyToTweets.length} tweet={tweet} />
