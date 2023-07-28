@@ -4,7 +4,7 @@ import { collection, addDoc, Timestamp,doc, updateDoc, increment, getDoc, runTra
 import TextEditor from './TextEditor';
 
 import styled from 'styled-components';
-import { TweetCard, UserImage } from './Tweet';
+import { TweetCard, UserImage } from '../styles/tweetStyles';
 
 
 

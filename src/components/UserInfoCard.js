@@ -3,7 +3,7 @@ import FollowButton from './FollowButton';
 import { useUserProfileClick } from 'hooks/useUserProfileClick';
 
 import styled from 'styled-components';
-import { UserImage, Name, Handle } from './Tweet';
+import { UserImage, Name, Handle } from '../styles/tweetStyles';
 import useUserInfo from 'hooks/useUserInfo';
 
 const UserCard = styled.div`
