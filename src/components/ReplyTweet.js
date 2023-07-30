@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import StandardTweet from './StandardTweet';
+import MissingTweet from './MissingTweet';
 import { doc, getDoc } from 'firebase/firestore';
 import db from 'services/storage';
 
@@ -10,9 +11,10 @@ const ReplyTweet = ({ tweet }) => {
         const tweetDocRef = doc(db, 'tweets', tweetId);
         const tweetDoc = await getDoc(tweetDocRef);
 
-        if (!tweetDoc.exists) {
+        if (!tweetDoc.exists()) {
             console.log('No such document!');
-            return null;
+            replyToTweets.push({ missing: true, isReply: false, replyTo: null });
+            return replyToTweets;
         }
 
         const tweetData = tweetDoc.data();
@@ -40,6 +42,8 @@ const ReplyTweet = ({ tweet }) => {
   return (
     <div>
         {replyToTweets.slice().reverse().map((tweet, index) => (
+            tweet.missing ? 
+            <MissingTweet key={index} isMini /> :
             <StandardTweet key={index} tweet={tweet} isMini />
         ))}
         <StandardTweet key={replyToTweets.length} tweet={tweet} />
