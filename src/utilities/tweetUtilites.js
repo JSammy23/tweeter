@@ -1,4 +1,4 @@
-import { updateDoc, deleteDoc, getDocs, addDoc, arrayRemove, arrayUnion, collection, doc, where, query, increment } from 'firebase/firestore'; 
+import { updateDoc, deleteDoc, getDocs, addDoc, arrayRemove, arrayUnion, collection, doc, where, query, increment, orderBy } from 'firebase/firestore'; 
 import db from 'services/storage';
 
 // ***********/ Retweet Tweet /**************/
@@ -105,5 +105,25 @@ export const unlikeTweet = async (tweetId, userId) => {
         console.log('Tweet unliked');
     } catch (error) {
         console.error('Error unliking tweet', error);
+    }
+};
+
+// ********** Replies *********** //
+
+export const fetchReplies = async (threadId) => {
+    if (!threadId) return [];
+
+    const repliesRef = collection(db, 'tweets');
+    const repliesQuery = query(
+        repliesRef,
+        where("replyTo", "==", threadId),
+        orderBy('date', 'desc')
+    );
+    const repliesSnapshot = await getDocs(repliesQuery);
+
+    if (!repliesSnapshot.empty) {
+        return repliesSnapshot.docs.map(doc => doc.data());
+    } else {
+        return [];
     }
 };
