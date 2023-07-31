@@ -13,8 +13,6 @@ export const StyledIcon = styled(FontAwesomeIcon)`
  cursor: pointer;
 `;
 
-// TODO:
-// Retweeted status is incorrect on user profile after retweeted. active state wrong.
 const Retweet = ({ tweet }) => {
   const [retweets, setRetweets] = useState(tweet.retweets || 0);
   const [retweeted, setRetweeted] = useState(false);
