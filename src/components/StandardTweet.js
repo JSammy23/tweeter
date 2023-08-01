@@ -3,7 +3,7 @@ import db from 'services/storage';
 import { doc, getDoc } from 'firebase/firestore';
 import { ThreadContext } from 'services/ThreadContext';
 import { AppContext } from 'services/appContext';
-import { convertFromRaw, Editor, EditorState } from 'draft-js';
+import { convertFromRaw, Editor, EditorState, CompositeDecorator, SelectionState, Modifier } from 'draft-js';
 import Retweet from './Retweet';
 import LikeButton from './LikeButton';
 import RetweetList from './RetweetList';
@@ -15,6 +15,7 @@ import { format } from 'date-fns';
 import styled from 'styled-components';
 import { TweetCard, TweetHeader, FlexDiv, UserImage, Name, Handle, TweetDate, TweetBody, TweetReactions, StyledIcon, MenuContainer, MenuOptions, LeftThreadLine } from '../styles/tweetStyles';
 import { faEllipsisH } from '@fortawesome/fontawesome-free-solid';
+import Hashtag from './Hashtag';
 
 
 const StandardTweet = ({ tweet, isMini, localReplyCount, setReplies }) => {
@@ -22,9 +23,49 @@ const StandardTweet = ({ tweet, isMini, localReplyCount, setReplies }) => {
     const [isTweetMenuOpen, setIsTweetMenuOpen] = useState(false);
     const { currentUser, activeFilter, setActiveFilter } = useContext(AppContext);
     const { setActiveThread } = useContext(ThreadContext);
+    const [editorState, setEditorState] = useState(() =>
+    EditorState.createEmpty()
+    );
 
-    const contentState = convertFromRaw(JSON.parse(tweet.body));
-    const editorState = EditorState.createWithContent(contentState);
+    // const contentState = convertFromRaw(JSON.parse(tweet.body));
+    // const editorState = EditorState.createWithContent(contentState);
+
+    useEffect(() => {
+      const hashtagStrategy = (contentBlock, callback, contentState) => {
+        contentBlock.findEntityRanges(
+          character => character.getEntity() && contentState.getEntity(character.getEntity()).getType() === 'HASHTAG',
+          callback
+        );
+      };
+    
+      const compositeDecorator = new CompositeDecorator([
+        {
+          strategy: hashtagStrategy,
+          component: Hashtag,
+        },
+      ]);
+    
+      let contentState = convertFromRaw(JSON.parse(tweet.body));
+    
+      // Search and create hashtag entities
+      contentState.getBlockMap().forEach(block => {
+        block.getText().split(' ').forEach((word, index) => {
+          if (word.startsWith('#')) {
+            contentState = contentState.createEntity('HASHTAG', 'IMMUTABLE', { hashtag: word });
+            const entityKey = contentState.getLastCreatedEntityKey();
+            const selection = SelectionState.createEmpty(block.getKey()).merge({
+              anchorOffset: block.getText().indexOf(word),
+              focusOffset: block.getText().indexOf(word) + word.length,
+            });
+            contentState = Modifier.applyEntity(contentState, selection, entityKey);
+          }
+        });
+      });
+    
+      const newEditorState = EditorState.createWithContent(contentState, compositeDecorator);
+      setEditorState(newEditorState);
+    }, [tweet.body]);
+  
 
     const handleUserProfileClick = useUserProfileClick();
 
