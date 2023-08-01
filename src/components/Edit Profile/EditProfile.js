@@ -48,11 +48,14 @@ const EditProfile = ({ toggleClose, user, onUpdateUser, updateUserProfileImg }) 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const handleAvailable = await checkUserHandleAvailability(userHandle);
-        if (!handleAvailable) {
-            setError('User handle is already taken!');
-            return;
-        }
+        
+        if (user.userHandle !== userHandle) {
+            const handleAvailable = await checkUserHandleAvailability(userHandle);
+            if (!handleAvailable) {
+                setError('User handle is already taken!');
+                return;
+            }
+        };
     
         const updatedUser = {
           ...user,
