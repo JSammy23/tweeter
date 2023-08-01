@@ -37,10 +37,8 @@ const IconBtn = styled.button`
 
 
 
-const EditProfile = ({ toggleClose, user, onUpdateUser, updateUserProfileImg }) => {
+const EditProfile = ({ toggleClose, user, onUpdateUser, updateUserProfileImg, setLocalDisplayName, setLocalHandle, localDisplayName, localHandle }) => {
 
-    const [displayName, setDisplayName] = useState(user.displayName);
-    const [userHandle, setUserHandle] = useState(user.userHandle);
     const [profileImg, setProfileImg] = useState(user.profileImg);
     const [error, setError] = useState('');
     
@@ -49,8 +47,8 @@ const EditProfile = ({ toggleClose, user, onUpdateUser, updateUserProfileImg }) 
         event.preventDefault();
 
         
-        if (user.userHandle !== userHandle) {
-            const handleAvailable = await checkUserHandleAvailability(userHandle);
+        if (user.userHandle !== localHandle) {
+            const handleAvailable = await checkUserHandleAvailability(localHandle);
             if (!handleAvailable) {
                 setError('User handle is already taken!');
                 return;
@@ -59,8 +57,8 @@ const EditProfile = ({ toggleClose, user, onUpdateUser, updateUserProfileImg }) 
     
         const updatedUser = {
           ...user,
-          displayName,
-          userHandle,
+          displayName: localDisplayName,
+          userHandle: localHandle,
           profileImg,
         };
     
@@ -121,11 +119,11 @@ const EditProfile = ({ toggleClose, user, onUpdateUser, updateUserProfileImg }) 
                  />
             </div>
             <div className='float-label has-value' >
-                <input type="text" name='displayName' id='displayName' required  onChange={(e) => setDisplayName(e.target.value)} onBlur={handleInputChange} onFocus={handleInputChange} value={displayName}/>
+                <input type="text" name='displayName' id='displayName' required  onChange={(e) => setLocalDisplayName(e.target.value)} onBlur={handleInputChange} onFocus={handleInputChange} value={localDisplayName}/>
                 <label htmlFor="dislpayName">Display Name</label>
             </div>
             <div className='float-label has-value' >
-                <input type="text" name='userHandle' id='userHandle' required onChange={(e) => setUserHandle(e.target.value)} onBlur={handleInputChange} onFocus={handleInputChange} value={userHandle} />
+                <input type="text" name='userHandle' id='userHandle' required onChange={(e) => setLocalHandle(e.target.value)} onBlur={handleInputChange} onFocus={handleInputChange} value={localHandle} />
                 <label htmlFor="userHandle">User Handle</label>
             </div>
             {error && <div className='error'>{error}</div>}
