@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Editor, EditorState, RichUtils, convertToRaw } from 'draft-js';
+import { Editor, EditorState, RichUtils, convertToRaw, CompositeDecorator } from 'draft-js';
 
 import styled from 'styled-components';
 import { Button } from 'styles/styledComponents';
@@ -43,8 +43,30 @@ const Controls = styled.div`
  justify-content: end;
 `;
 
+const hashtagStrategy = (contentBlock, callback, contentState) => {
+  const text = contentBlock.getText();
+  text.replace(/\#[\w\u0590-\u05ff]+/g, (match, offset) => {
+    callback(offset, offset + match.length);
+  });
+};
+
+const HashtagSpan = (props) => {
+  return (
+    <span style={{color: 'lime', fontWeight: 'bold'}}>
+      {props.children}
+    </span>
+  );
+};
+
+const compositeDecorator = new CompositeDecorator([
+  {
+    strategy: hashtagStrategy,
+    component: HashtagSpan,
+  },
+]);
+
 const TextEditor = ({ onTweet, action }) => {
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [editorState, setEditorState] = useState(EditorState.createEmpty(compositeDecorator));
   const [isComposeDisabled, setIsComposeDisabled] = useState(true);
   const maxTweetLength = 180;
 
