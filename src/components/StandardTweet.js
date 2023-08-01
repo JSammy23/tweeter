@@ -27,9 +27,6 @@ const StandardTweet = ({ tweet, isMini, localReplyCount, setReplies }) => {
     EditorState.createEmpty()
     );
 
-    // const contentState = convertFromRaw(JSON.parse(tweet.body));
-    // const editorState = EditorState.createWithContent(contentState);
-
     useEffect(() => {
       const hashtagStrategy = (contentBlock, callback, contentState) => {
         contentBlock.findEntityRanges(
