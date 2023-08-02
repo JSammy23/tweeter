@@ -1,6 +1,6 @@
 import React from 'react';
 import db from 'services/storage';
-import { collection, addDoc, Timestamp,doc, updateDoc, increment, getDoc, runTransaction } from 'firebase/firestore';
+import { collection, addDoc, Timestamp,doc, updateDoc, runTransaction } from 'firebase/firestore';
 import TextEditor from './TextEditor';
 
 import styled from 'styled-components';
