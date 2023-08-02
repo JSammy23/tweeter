@@ -64,6 +64,17 @@ const EditProfile = ({ toggleClose, user, onUpdateUser, updateUserProfileImg, se
     
         onUpdateUser(updatedUser);
         updateUserProfileImg(profileImg);
+
+        const cachedUser = localStorage.getItem(user.uid);
+        if (cachedUser) {
+            const parsedUser = JSON.parse(cachedUser);
+            parsedUser.displayName = localDisplayName;
+            parsedUser.userHandle = localHandle;
+            parsedUser.profileImg = profileImg;
+            localStorage.setItem(user.uid, JSON.stringify(parsedUser)); 
+        } else {
+            localStorage.setItem(user.uid, JSON.stringify(updatedUser));
+        };
     };
 
     const handleInputChange = (e) => {
