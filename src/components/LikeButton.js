@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import db from 'services/storage';
 import { AppContext } from 'services/appContext';
-import { collection, doc, updateDoc, query, getDocs, addDoc, deleteDoc, where } from 'firebase/firestore';
+import { checkIfLiked, likeTweet, unlikeTweet } from 'utilities/tweetUtilites';
 
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,58 +13,32 @@ const LikeButton = ({ tweet }) => {
     const [isLiked, setIsLiked] = useState(false);
     const { currentUser } = useContext(AppContext);
 
-    const userLikesRef = collection(db, 'users', currentUser.uid, 'likes');
-
     useEffect(() => {
-        checkIfLiked();
-    }, [tweet.id]);
-
-    const checkIfLiked = async () => {
-        if (!currentUser) {
-          return;
-        }
-
-        try {
-          const userLikesQuery =  query(userLikesRef, where('tweetID', '==', tweet.id));
-          const userLikesSnapshot = await getDocs(userLikesQuery);
-          const isLiked = !userLikesSnapshot.empty;
-          setIsLiked(isLiked);
-        } catch (error) {
-          console.error('Error checking if tweet/reply was liked by user', error);
-        };
-        
-    };
+      const fetchCheckIfLiked = async () => {
+          const result = await checkIfLiked(tweet.id, currentUser.uid);
+          setIsLiked(result);
+      }
+      fetchCheckIfLiked();
+    }, [tweet.id, currentUser.uid]);
 
     const handleLike = async () => {
       const newLikesCount = isLiked ? likes - 1 : likes + 1;
       setLikes(newLikesCount);
       setIsLiked(!isLiked);
-  
-      try {
-        const documentRef = doc(db, 'tweets', tweet.id);
-        await updateDoc(documentRef, {
-          likes: newLikesCount,
-        });
-  
-        if (isLiked) {
-          const userLikesQuery = query(userLikesRef, where('tweetID', '==', tweet.id));
-          const userLikesSnapshot = await getDocs(userLikesQuery);
-          const userLikesDoc = userLikesSnapshot.docs[0];
-          if (userLikesDoc) {
-            const userLikesDocRef = doc(userLikesRef, userLikesDoc.id);
-            await deleteDoc(userLikesDocRef);
-          }
-        } else {
-          await addDoc(userLikesRef, {
-            tweetID: tweet.id,
-            date: new Date(),
-          });
-        }
-      } catch (error) {
-        console.error('Error liking tweet/reply or updating user likes', error);
-      }
+      if (isLiked) {
+        try {
+          await unlikeTweet(tweet.id, currentUser.uid);
+        } catch (error) {
+          console.error('Error unliking tweet:', error)
+        };
+      } else {
+        try {
+          await likeTweet(tweet.id, currentUser.uid);
+        } catch (error) {
+          console.error('Error liking tweet:', error)
+        };
+      };
     };
-
 
   return (
     <div>

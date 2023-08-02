@@ -3,14 +3,13 @@ import { AppContext } from 'services/appContext'
 import Tweet from './Tweet';
 import StandardTweet from './StandardTweet';
 import Compose from './Compose';
+import { fetchReplies } from 'utilities/tweetUtilites';
+import { ThreadContext } from 'services/ThreadContext';
 
 import styled from 'styled-components';
 import { Header } from 'styles/styledComponents';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/fontawesome-free-solid';
-import { collection, query, getDocs, where, orderBy } from 'firebase/firestore';
-import db from 'services/storage';
-import { ThreadContext } from 'services/ThreadContext';
 
 
 const StyledIcon = styled(FontAwesomeIcon)`
@@ -29,46 +28,28 @@ const StyledIcon = styled(FontAwesomeIcon)`
 // When thread changes, tweet interactions are not updating.
 
 const Thread = ({ onBackClick }) => {
-  const { setActiveFilter, currentUser } = useContext(AppContext);
-  const { setActiveThread, activeThread } = useContext(ThreadContext)
-  const [replies, setReplies] = useState([]);
-  const [localReplyCount, setLocalReplyCount] = useState(activeThread?.replies || replies.length);
+  const { currentUser } = useContext(AppContext);
+  const { activeThread, setReplies, replies, setLocalReplyCount } = useContext(ThreadContext);
   
-
   useEffect(() => {
-    const fetchReplies = async () => {
+    const getReplies = async () => {
         const threadId = activeThread?.id;
-
         if (activeThread?.replies > 0) {
-            const repliesRef = collection(db, 'tweets');
-            const repliesQuery = query(
-                repliesRef,
-                where("replyTo", "==", threadId),
-                orderBy('date', 'desc')
-            );
-            const repliesSnapshot = await getDocs(repliesQuery);
-
-            if (!repliesSnapshot.empty) {
-                const repliesData = repliesSnapshot.docs.map(doc => doc.data());
-                setReplies(repliesData);
-            } else {
-                setReplies([]);
-            }
+            const repliesData = await fetchReplies(threadId);
+            setReplies(repliesData);
         } else {
             setReplies([]);
         }
     };
-
-    fetchReplies();
-}, [activeThread]);
+    getReplies();
+  }, [activeThread]);
 
   const mapRepliesToTweetComponents = (replies) => {
     return replies.map((reply) => (
       // This will be the only place we bypass the tweet comp for a standard tweet for replies
       <StandardTweet 
         key={reply.id} 
-        tweet={reply}
-        setReplies={setReplies} />
+        tweet={reply} />
     ));
   };
 
@@ -85,8 +66,7 @@ const Thread = ({ onBackClick }) => {
         </Header>    
         <Tweet 
          key={activeThread.ID} 
-         tweet={activeThread}
-         localReplyCount={localReplyCount} />
+         tweet={activeThread} />
         <Compose 
          user={currentUser}
          action='reply'

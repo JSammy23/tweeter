@@ -1,6 +1,6 @@
 import React from 'react';
 import db from 'services/storage';
-import { collection, addDoc, Timestamp,doc, updateDoc, increment, getDoc, runTransaction } from 'firebase/firestore';
+import { collection, addDoc, Timestamp,doc, updateDoc, runTransaction } from 'firebase/firestore';
 import TextEditor from './TextEditor';
 
 import styled from 'styled-components';
@@ -24,7 +24,7 @@ const ComposeBody = styled.div`
 `;
 
 
-const Compose = ({ user, activeThread, isReply, addReply, action }) => {
+const Compose = ({ user, activeThread, isReply = false, addReply, action }) => {
 
     const createTweet = async (text) => {
         const date =  new Date();
@@ -32,6 +32,11 @@ const Compose = ({ user, activeThread, isReply, addReply, action }) => {
         const tweetsRef = collection(db, 'tweets');
         let threadId = null;
         let replyTo = null;
+
+        // Extract hashtags from tweet
+        const rawContent = JSON.parse(text);
+        const tweetText = rawContent.blocks.map(block => block.text).join('\n');
+        const hashtags = tweetText.match(/\#[\w\u0590-\u05ff]+/g) || [];
 
         if (isReply && activeThread) {
             replyTo = activeThread.id;
@@ -49,6 +54,7 @@ const Compose = ({ user, activeThread, isReply, addReply, action }) => {
             threadId: threadId,
             likes: 0,
             retweets: 0,
+            hashtags: hashtags,
         };
 
         const newTweetRef = await addDoc(tweetsRef, newTweetData);
