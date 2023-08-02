@@ -17,7 +17,7 @@ import { TweetCard, TweetHeader, FlexDiv, UserImage, Name, Handle, TweetDate, Tw
 import { faEllipsisH } from '@fortawesome/fontawesome-free-solid';
 
 
-const StandardTweet = ({ tweet, isMini, localReplyCount, setReplies }) => {
+const StandardTweet = ({ tweet, isMini }) => {
     const [author, setAuthor] = useState(null);
     const [isTweetMenuOpen, setIsTweetMenuOpen] = useState(false);
     const { currentUser, activeFilter, setActiveFilter } = useContext(AppContext);
@@ -91,7 +91,7 @@ const StandardTweet = ({ tweet, isMini, localReplyCount, setReplies }) => {
     
                             {isTweetMenuOpen && (
                               <MenuOptions>
-                                <DeleteTweetButton tweet={tweet} setReplies={setReplies} />
+                                <DeleteTweetButton tweet={tweet} />
                               </MenuOptions>
                             )}
                           </MenuContainer>
@@ -102,7 +102,9 @@ const StandardTweet = ({ tweet, isMini, localReplyCount, setReplies }) => {
                     <Editor editorState={editorState} readOnly />
                 </TweetBody>
                 <TweetReactions>
-                  <CommentsButton tweet={tweet} onClick={handleTweetThreadClick} count={localReplyCount} />
+                  <CommentsButton 
+                    tweet={tweet} 
+                    onClick={handleTweetThreadClick}  />
                   <Retweet tweet={tweet} />
                   <LikeButton tweet={tweet} />
                 </TweetReactions>
