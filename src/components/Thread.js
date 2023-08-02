@@ -28,12 +28,9 @@ const StyledIcon = styled(FontAwesomeIcon)`
 // When thread changes, tweet interactions are not updating.
 
 const Thread = ({ onBackClick }) => {
-  const { setActiveFilter, currentUser } = useContext(AppContext);
-  const { setActiveThread, activeThread } = useContext(ThreadContext)
-  const [replies, setReplies] = useState([]);
-  const [localReplyCount, setLocalReplyCount] = useState(activeThread?.replies || replies.length);
+  const { currentUser } = useContext(AppContext);
+  const { activeThread, setReplies, replies, setLocalReplyCount } = useContext(ThreadContext);
   
-
   useEffect(() => {
     const getReplies = async () => {
         const threadId = activeThread?.id;
@@ -52,8 +49,7 @@ const Thread = ({ onBackClick }) => {
       // This will be the only place we bypass the tweet comp for a standard tweet for replies
       <StandardTweet 
         key={reply.id} 
-        tweet={reply}
-        setReplies={setReplies} />
+        tweet={reply} />
     ));
   };
 
@@ -70,8 +66,7 @@ const Thread = ({ onBackClick }) => {
         </Header>    
         <Tweet 
          key={activeThread.ID} 
-         tweet={activeThread}
-         localReplyCount={localReplyCount} />
+         tweet={activeThread} />
         <Compose 
          user={currentUser}
          action='reply'
