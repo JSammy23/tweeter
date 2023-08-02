@@ -69,8 +69,8 @@ const UserProfile = ({user, isCurrentUser, showLikes, showNewsFeed }) => {
     const [editProfile, setEditProfile] = useState(false);
     const [followers, setFollowers] = useState([]);
     const [following, setFollowing] = useState([]);
-    const [localHandle, setLocalHandle] = useState(user.userHandle);
-    const [localDisplayName, setLocalDisplayName] = useState(user.displayName);
+    const [localHandle, setLocalHandle] = useState(user?.userHandle);
+    const [localDisplayName, setLocalDisplayName] = useState(user?.displayName);
     const [userProfileImg, setUserProfileImg] = useState(user?.profileImg);
     const [showFollowList, setShowFollowList] = useState(false);
     const [listType, setListType] = useState(null);
