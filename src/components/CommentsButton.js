@@ -19,7 +19,7 @@ const StyledIcon = styled(FontAwesomeIcon)`
 const CommentsButton = ({ tweet, onClick }) => {
   const { localReplyCount, activeThread } = useContext(ThreadContext);
   const { activeFilter } = useContext(AppContext);
-  const [repliesCount, setRepliesCount] = useState(tweet.replies);
+  const [repliesCount, setRepliesCount] = useState(tweet.replies || 0);
 
   useEffect(() => {
     if (activeFilter === 'thread' && activeThread?.id === tweet.id && localReplyCount > repliesCount) {
