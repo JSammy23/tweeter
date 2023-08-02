@@ -1,4 +1,4 @@
-import { updateDoc, deleteDoc, getDocs, addDoc, arrayRemove, arrayUnion, collection, doc, where, query, increment, orderBy } from 'firebase/firestore'; 
+import { updateDoc, deleteDoc, getDocs, addDoc, arrayRemove, arrayUnion, collection, doc, where, query, increment, orderBy, runTransaction } from 'firebase/firestore'; 
 import db from 'services/storage';
 
 // ***********/ Retweet Tweet /**************/
@@ -126,4 +126,22 @@ export const fetchReplies = async (threadId) => {
     } else {
         return [];
     }
+};
+
+export const reduceReplyCount = async (tweetId) => {
+    const tweetRef = doc(db, 'tweets', tweetId);
+    // Start a new transaction
+    await runTransaction(db, async (transaction) => {
+        const tweetDoc = await transaction.get(tweetRef);
+        if (!tweetDoc.exists()) {
+            throw new Error("Tweet does not exist!");
+        }
+
+        let currentReplyCount = tweetDoc.data().replies || 0;
+
+        if (currentReplyCount > 0) {
+            currentReplyCount--;
+        }
+        transaction.update(tweetRef, { replies: currentReplyCount });
+    });
 };
