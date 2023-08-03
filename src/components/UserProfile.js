@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import EditProfile from './Edit Profile/EditProfile';
-import { doc, getDocs, setDoc, collection } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import db from 'services/storage';
 import FollowButton from './FollowButton';
 import UserProfileControls from './UserProfileControls';
 import FollowList from './FollowList';
-
+import useUserInfo from 'hooks/useUserInfo';
+import { AppContext } from 'services/appContext';
 
 import styled from 'styled-components';
 import { Title, UserHandle, Button } from 'styles/styledComponents';
-
 
 
 const ProfileCard = styled.div`
@@ -64,45 +64,37 @@ const CountsDiv = styled.div`
 // Pass follower & Following array down to follow button?
 
 
-const UserProfile = ({user, isCurrentUser, showLikes, showNewsFeed }) => {
+const UserProfile = ({userUid, showLikes, showNewsFeed }) => {
 
+    const [isCurrentUser, setIsCurrentUser] = useState(false);
     const [editProfile, setEditProfile] = useState(false);
-    const [followers, setFollowers] = useState([]);
-    const [following, setFollowing] = useState([]);
-    const [localHandle, setLocalHandle] = useState(user?.userHandle);
-    const [localDisplayName, setLocalDisplayName] = useState(user?.displayName);
-    const [userProfileImg, setUserProfileImg] = useState(user?.profileImg);
+    const [localHandle, setLocalHandle] = useState('');
+    const [localDisplayName, setLocalDisplayName] = useState('');
+    const [userProfileImg, setUserProfileImg] = useState('');
     const [showFollowList, setShowFollowList] = useState(false);
     const [listType, setListType] = useState(null);
+    const { currentUser } = useContext(AppContext);
 
-    const userRef = doc(db, 'users', user?.uid);
+    const { userInfo, loading } = useUserInfo(userUid);
 
     useEffect(() => {
-        const fetchFollowers = async () => {
-            const followersRef = collection(userRef, 'followers');
-            const querySnapshot = await getDocs(followersRef);
-            const followers = querySnapshot.docs.map(doc => doc.data().user);
-            setFollowers(followers);
+        if (currentUser.uid === userUid) {
+            setIsCurrentUser(true);
         };
-
-        const fetchFollowing = async () => {
-            const followingRef = collection(userRef, 'following');
-            const querySnapshot = await getDocs(followingRef);
-            const following = querySnapshot.docs.map(doc => doc.data().user);
-            setFollowing(following);
-        };
-
-        fetchFollowers();
-        fetchFollowing();
-        setUserProfileImg(user.profileImg)
+        if (userInfo && !loading) {
+            setLocalDisplayName(userInfo.displayName);
+            setLocalHandle(userInfo.userHandle);
+            setUserProfileImg(userInfo.profileImg);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user]);
+    }, [userUid, userInfo, loading]);
 
     const toggleEditProfile = () => {
         setEditProfile(!editProfile);
     };
     
     const handleUpdateUser = async (updatedUser) => {
+        const userRef = doc(db, 'users', userUid);
         setEditProfile(false);
         await setDoc(userRef, updatedUser);
     };
@@ -124,10 +116,10 @@ const UserProfile = ({user, isCurrentUser, showLikes, showNewsFeed }) => {
     <>
         {showFollowList ? (
             <FollowList
-              followers={followers}
-              following={following}
+              followers={userInfo?.followers}
+              following={userInfo?.following}
               listType={listType}
-              user={user}
+              user={userInfo}
               onBackClick={handleBackClick}
             />
         ) : (
@@ -140,7 +132,7 @@ const UserProfile = ({user, isCurrentUser, showLikes, showNewsFeed }) => {
                     {isCurrentUser ? (
                         <Button onClick={toggleEditProfile} >Edit profile</Button>
                      ) : (
-                          <FollowButton user={user.uid} />
+                          <FollowButton user={userInfo?.uid} />
                      )}
                     </div>
                 </div>
@@ -149,10 +141,10 @@ const UserProfile = ({user, isCurrentUser, showLikes, showNewsFeed }) => {
                     <UserHandle>{localHandle}</UserHandle>
                     <CountsDiv>
                         <button id='following' onClick={handleFollowCountClick} >
-                            <span>{following.length}</span>Following
+                            <span>{userInfo?.following.length}</span>Following
                         </button>
                         <button id='followers' onClick={handleFollowCountClick} >
-                            <span>{followers.length}</span>Followers
+                            <span>{userInfo?.followers.length}</span>Followers
                         </button>
                     </CountsDiv>
                     <UserProfileControls showLikes={showLikes} />
@@ -160,7 +152,7 @@ const UserProfile = ({user, isCurrentUser, showLikes, showNewsFeed }) => {
                 {editProfile && (
                 <EditProfile onUpdateUser={handleUpdateUser} 
                 toggleClose={toggleEditProfile}
-                user={user}
+                user={userInfo}
                 setLocalHandle={setLocalHandle}
                 localHandle={localHandle}
                 setLocalDisplayName={setLocalDisplayName}

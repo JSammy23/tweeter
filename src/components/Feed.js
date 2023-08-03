@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'services/appContext';
 import UserProfile from './UserProfile';
 import auth from 'services/auth';
@@ -6,10 +6,9 @@ import NewsFeed from './NewsFeed';
 import Compose from './Compose';
 import Loading from './Loading/Loading';
 import Thread from './Thread';
-
+import useUserInfo from 'hooks/useUserInfo';
 
 import styled from 'styled-components';
-import useUserData from 'hooks/useUserData';
 
 
 const FeedContainer = styled.div`
@@ -52,11 +51,20 @@ const FeedContainer = styled.div`
 
 const Feed = ({ onBackClick }) => {
 
-  const { activeFilter, viewedUser, isUserLoaded, currentUser } = useContext(AppContext);
+  const { activeFilter, viewedUser, isUserLoaded, currentUser, setCurrentUser } = useContext(AppContext);
   const [showLikes, setShowLikes] = useState(false);
   const [showNewsFeed, setShowNewsFeed] = useState(true);
 
-  const { loading } = useUserData(auth.currentUser.uid);
+  const { loading, userInfo } = useUserInfo(auth.currentUser.uid);
+
+  useEffect(() => {
+    const setCurrentUserAsync = async () => {
+      if (userInfo && !loading) {
+        setCurrentUser(userInfo);
+      }
+    }
+    setCurrentUserAsync();
+  }, [userInfo, loading, setCurrentUser]);
 
     
   const renderByFilter = () => {
@@ -68,8 +76,7 @@ const Feed = ({ onBackClick }) => {
       case 'profile':
         return (
           <UserProfile 
-          user={currentUser} 
-          isCurrentUser={true} 
+          userUid={currentUser?.uid}  
           showLikes={setShowLikes}
           showNewsFeed={setShowNewsFeed} 
           />
@@ -77,8 +84,7 @@ const Feed = ({ onBackClick }) => {
       case 'viewUser':
         return isUserLoaded ? (
           <UserProfile 
-          user={viewedUser} 
-          isCurrentUser={auth.currentUser.uid === viewedUser.uid} 
+          userUid={viewedUser?.uid}  
           showLikes={setShowLikes} 
           showNewsFeed={setShowNewsFeed} 
           />

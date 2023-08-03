@@ -22,7 +22,7 @@ const FollowButton = ({ user }) => {
     }, [currentUser, user]);
   
     const checkIsFollowing = () => {
-      const isFollowing = followingList.some((followingUser) => followingUser.user === user);
+      const isFollowing = currentUser.following.some((followingUser) => followingUser === user);
       setIsFollowing(isFollowing);
     };
 
