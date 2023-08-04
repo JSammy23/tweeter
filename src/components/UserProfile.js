@@ -82,9 +82,15 @@ const UserProfile = ({userUid, showLikes, showNewsFeed }) => {
             setIsCurrentUser(true);
         };
         if (userInfo && !loading) {
-            setLocalDisplayName(userInfo.displayName);
-            setLocalHandle(userInfo.userHandle);
-            setUserProfileImg(userInfo.profileImg);
+            if (localDisplayName !== userInfo.displayName) {
+                setLocalDisplayName(userInfo.displayName);
+            }
+            if (localHandle !== userInfo.userHandle) {
+                setLocalHandle(userInfo.userHandle);
+            }
+            if (userProfileImg !== userInfo.profileImg) {
+                setUserProfileImg(userInfo.profileImg);
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userUid, userInfo, loading]);
@@ -111,6 +117,9 @@ const UserProfile = ({userUid, showLikes, showNewsFeed }) => {
         showNewsFeed(true);
     };
 
+    useEffect(() => {
+        console.log('UserProfile rendered')
+      });
 
   return (
     <>
