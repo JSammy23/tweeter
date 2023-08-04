@@ -95,6 +95,8 @@ const UserProfile = ({user, isCurrentUser, showLikes, showNewsFeed }) => {
         fetchFollowers();
         fetchFollowing();
         setUserProfileImg(user.profileImg)
+        setLocalDisplayName(user.displayName);
+        setLocalHandle(user.userHandle);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
