@@ -14,6 +14,7 @@ const useUserInfo = (userUid) => {
 
         if (userDocSnap.exists()) {
           const userData = userDocSnap.data();
+          console.log('User data fetched:', userData);
           setUserInfo(userData);
         } else {
           console.log('No such document!');
