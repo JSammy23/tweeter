@@ -109,11 +109,11 @@ const NewsFeed = ({showLikes }) => {
       
           const subscribedTweets = [];
       
-          const fetchUserTweetsPromises = followingList.map(async (user) => {
+          const fetchUserTweetsPromises = currentUser.following.map(async (user) => {
             const userTweetBucketRef = collection(
               db,
               "users",
-              user.user,
+              user,
               "tweetBucket"
             );
             const userTweetBucketQuery = query(userTweetBucketRef, orderBy("date", "desc"));
