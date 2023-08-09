@@ -15,21 +15,20 @@ const Checkmark = styled.span`
 
 const FollowButton = ({ user }) => {
     const [isFollowing, setIsFollowing] = useState(false);
-    const { currentUser, followingList, setFollowingList } = useContext(AppContext);
+    const { currentUser } = useContext(AppContext);
   
     useEffect(() => {
       checkIsFollowing();
     }, [currentUser, user]);
   
     const checkIsFollowing = () => {
-      const isFollowing = followingList.some((followingUser) => followingUser.user === user);
+      const isFollowing = currentUser.following.some((followingUser) => followingUser === user);
       setIsFollowing(isFollowing);
     };
 
     const handleFollow = async () => {
       if (isFollowing) {
         try {
-          setFollowingList((prevFollowingList) => prevFollowingList.filter((item) => item.user !== user));
           setIsFollowing(false);
           await unfollowUser(currentUser.uid, user);
         } catch (error) {
@@ -37,11 +36,8 @@ const FollowButton = ({ user }) => {
         }
       } else {
         try {
-          if (!followingList.some(followingUser => followingUser.user === user)) {
-            setFollowingList((prevFollowingList) => [...prevFollowingList, { user }]);
-            setIsFollowing(true);
-            await followUser(currentUser.uid, user);
-          }
+          setIsFollowing(true);
+          await followUser(currentUser.uid, user);
         } catch (error) {
           console.error('Error following user', error);
         }
