@@ -15,7 +15,14 @@ const Header = styled.header`
  flex-direction: column;
  height: 100vh;
  justify-content: space-between;
-`
+
+ @media (max-width: 683px) {
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    padding: 0%.5em 1em;
+ }
+`;
 
 const Nav = styled.nav`
   ul {
@@ -44,11 +51,27 @@ const Nav = styled.nav`
             display: none;
         }
     }
+
+    @media (max-width: 683px) {
+        ul {
+            display: flex;
+            justify-content: space-between;
+            padding: 0;
+        }
+
+        li {
+            margin-right: 0.5em;
+        }
+    }
  }
 `;
 
 const UserControls = styled.div`
  margin: 1em 0;
+
+ @media (max-width: 683px) {
+    margin: 0 0.5em;
+ }
 `;
 
 const Sidebar = () => {

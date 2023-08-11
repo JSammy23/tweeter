@@ -11,15 +11,16 @@ import { AppContext } from 'services/appContext';
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 600px 1fr;
+  grid-template-columns: minmax(100px, 1fr) minmax(auto, 600px) minmax(100px, 1fr); 
   grid-template-rows: 100vh;
 
   @media (max-width: 1200px) {
-    grid-template-columns: 1fr 600px;
+    grid-template-columns: minmax(50px, 1fr) minmax(auto, 600px);
   }
 
   @media (max-width: 683px) {
-    grid-template-columns: 1fr 100%;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr min-content;
   }
 `;
 
