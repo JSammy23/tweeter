@@ -19,10 +19,15 @@ const Header = styled.header`
 
  @media (max-width: 683px) {
     height: 5em;
+    width: 100%;
     order: 2;
     flex-direction: row;
     align-items: center;
     padding: 0.5em 1em;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    justify-content: center;
  }
 `;
 
@@ -33,6 +38,7 @@ const NavContainer = styled.div`
         display: flex;
         flex-direction: row;
         align-items: center;
+        width: 80%;
     }
 `;
 
@@ -68,6 +74,9 @@ const Nav = styled.nav`
  }
 
  @media (max-width: 683px) {
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
     ul {
         display: flex;
         flex-direction: row;
@@ -85,6 +94,7 @@ const UserControls = styled.div`
 
  @media (max-width: 683px) {
     margin: 0 0.5em;
+    display: none;
  }
 `;
 
