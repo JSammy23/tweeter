@@ -18,7 +18,7 @@ const Header = styled.header`
  flex: 1;
 
  @media (max-width: 683px) {
-    height: 5em;
+    height: auto;
     width: 100%;
     order: 2;
     flex-direction: row;
@@ -28,6 +28,7 @@ const Header = styled.header`
     bottom: 0;
     left: 0;
     justify-content: center;
+    background-color: rgba(0, 0, 0, .8);
  }
 `;
 
@@ -85,6 +86,7 @@ const Nav = styled.nav`
     }
     li {
         margin-right: 0.5em;
+        margin-bottom: 0;
     }
     }
 `;
