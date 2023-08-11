@@ -22,6 +22,10 @@ const FeedContainer = styled.div`
  border-left: 1px solid;
  border-color: ${props => props.theme.colors.secondary};
 
+ @media (max-width: 683px) {
+  padding-bottom: 3.5em;
+ }
+
  /* Hide the scrollbar */
  &::-webkit-scrollbar {
     width: 0em;
