@@ -15,17 +15,31 @@ const Header = styled.header`
  flex-direction: column;
  height: 100vh;
  justify-content: space-between;
+ flex: 1;
 
  @media (max-width: 683px) {
-    height: auto;
+    height: 5em;
+    order: 2;
     flex-direction: row;
     align-items: center;
-    padding: 0%.5em 1em;
+    padding: 0.5em 1em;
  }
+`;
+
+const NavContainer = styled.div`
+ display: flex;
+ flex-direction: column;
+    @media (max-width: 683px) {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
 `;
 
 const Nav = styled.nav`
   ul {
+    display: flex;
+    flex-direction: column;
     list-style: none;
  }
  li {
@@ -51,19 +65,19 @@ const Nav = styled.nav`
             display: none;
         }
     }
-
-    @media (max-width: 683px) {
-        ul {
-            display: flex;
-            justify-content: space-between;
-            padding: 0;
-        }
-
-        li {
-            margin-right: 0.5em;
-        }
-    }
  }
+
+ @media (max-width: 683px) {
+    ul {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 0;
+    }
+    li {
+        margin-right: 0.5em;
+    }
+    }
 `;
 
 const UserControls = styled.div`
@@ -91,7 +105,7 @@ const Sidebar = () => {
 
   return (
     <Header>
-        <div>
+        <NavContainer>
             <Logo><FontAwesomeIcon icon={faTwitter} /></Logo>
             <Nav>
                 <ul>
@@ -106,7 +120,7 @@ const Sidebar = () => {
                     ))}
                 </ul>
             </Nav>
-        </div>
+        </NavContainer>
         <UserControls>
             <LogoutButton />
         </UserControls>
