@@ -10,7 +10,7 @@ import { AppContext } from 'services/appContext';
 
 
 const Grid = styled.div`
-  display: grid;
+  /* display: grid;
   grid-template-columns: minmax(100px, 1fr) minmax(auto, 600px) minmax(100px, 1fr); 
   grid-template-rows: 100vh;
 
@@ -21,6 +21,12 @@ const Grid = styled.div`
   @media (max-width: 683px) {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr min-content;
+  } */
+
+  display: flex;
+  
+  @media (max-width: 683px) {
+    flex-direction: column;
   }
 `;
 

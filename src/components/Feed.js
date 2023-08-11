@@ -13,8 +13,10 @@ import styled from 'styled-components';
 
 const FeedContainer = styled.div`
  width: 100%;
- height: 100%;
- grid-column: 2 / 3;
+ height: 100vh;
+ /* grid-column: 2 / 3; */
+ flex: 3;
+ order: 1;
  overflow-y: scroll;
  border-right: 1px solid;
  border-left: 1px solid;
