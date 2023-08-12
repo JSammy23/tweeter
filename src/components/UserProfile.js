@@ -14,18 +14,23 @@ import { Title, UserHandle, Button } from 'styles/styledComponents';
 
 const ProfileCard = styled.div`
  width: 100%;
- height: 17.5em;
+ height: auto;
  border-top: 1px solid;
  border-bottom: 1px solid;
  border-color: ${props => props.theme.colors.secondary};
 `;
 
 const UserImage = styled.img`
- width: 133px;
- height: 133px;
+ width: 8em;
+ height: 8em;
  border: 2px solid black;
  border-radius: 50%;
  margin: .7em;
+
+ @media (max-width: 599px) {
+    width: 7em;
+    height: 7em;
+ }
 `;
 
 const CountsDiv = styled.div`
