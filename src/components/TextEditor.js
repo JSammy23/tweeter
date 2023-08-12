@@ -14,26 +14,37 @@ const EditorWrapper = styled.div`
 
 const StyledEditor = styled.div`
   .DraftEditor-root {
-    height: 100px;
-    padding: 10px;
+    height: 6.25em;
+    padding: .6em;
+    border: 1px solid red;
   }
 
   .DraftEditor-editorContainer {
     height: 100%;
+    border: 1px solid blue;
   }
 
   .public-DraftEditorPlaceholder-root {
     position: absolute;
     color: ${props => props.theme.colors.secondary};
     pointer-events: none;
-    font-size: 1.4em;
+    font-size: 1.4rem;
+
+    @media (max-width: 683px) {
+      font-size: 1.2em;
+    }
   }
 
   .public-DraftEditor-content {
     color: #fff;
-    font-size: 1.4em;
+    font-size: 1.4rem;
     max-height: 158px;
     overflow: auto;
+    border: 1px solid yellow;
+
+    @media (max-width: 683px) {
+      font-size: 1.2rem;
+    }
   }
 `;
 

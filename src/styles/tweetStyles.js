@@ -57,6 +57,10 @@ export const Name = styled.h2`
  ${props => props.isMini && `
   font-size: 1.2em;
  `}
+
+@media (max-width: 600px) {
+  font-size: 1.2em;
+ }
 `;
 
 export const Handle = styled.h3`
@@ -71,6 +75,10 @@ export const Handle = styled.h3`
  ${props => props.isMini && `
   font-size: 1.2em;
  `}
+
+@media (max-width: 600px) {
+  font-size: 1.2em;
+ }
 `;
 
 export const TweetDate = styled.div`
@@ -94,6 +102,11 @@ export const TweetBody = styled.div`
  ${props => props.isMini && `
   font-size: 1.2em;
  `}
+
+ @media (max-width: 600px) {
+  font-size: 1.2em;
+  margin-top: .1em
+ }
 `;
 
 export const TweetReactions = styled.div`
