@@ -16,12 +16,13 @@ const StyledEditor = styled.div`
   .DraftEditor-root {
     height: 6.25em;
     padding: .6em;
-    border: 1px solid red;
+    /* border: 1px solid red; */
+    word-wrap: break-word;
   }
 
   .DraftEditor-editorContainer {
     height: 100%;
-    border: 1px solid blue;
+    /* border: 1px solid blue; */
   }
 
   .public-DraftEditorPlaceholder-root {
@@ -40,7 +41,7 @@ const StyledEditor = styled.div`
     font-size: 1.4rem;
     max-height: 158px;
     overflow: auto;
-    border: 1px solid yellow;
+    /* border: 1px solid yellow; */
 
     @media (max-width: 683px) {
       font-size: 1.2rem;
