@@ -14,7 +14,7 @@ import styled from 'styled-components';
 const FeedContainer = styled.div`
  width: 100%;
  height: 100vh;
- max-width: 600px;
+ max-width: 683px;
  /* grid-column: 2 / 3; */
  flex: 3;
  order: 1;
