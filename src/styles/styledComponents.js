@@ -72,13 +72,17 @@ export const Module = styled.div`
  position: absolute;
  top: 30%;
  left: 50%;
- width: min(50vw, 600px);
+ width: min(100vw, 683px);
  transform: translate(-50%, -50%);
  box-shadow: 0 15px 25px rgba(0,0,0,.6);
  border-radius: 10px;
- padding: 35px;
+ padding: 2em;
  z-index: 999;
  background-color: ${props => props.theme.colors.bgDark};
+
+ @media (max-width: 400px) {
+    padding: 1.3em;
+ }
 `;
 
 export const TweetReactionsCount = styled.span`
