@@ -37,8 +37,8 @@ export const FlexDiv = styled.div`
 `;
 
 export const UserImage = styled.img`
- width: 60px;
- height: 60px;
+ width: 3.7em;
+ height: 3.7em;
  border-radius: 50%;
  border: 1px solid black;
  margin-right: .5em;
@@ -48,6 +48,11 @@ export const UserImage = styled.img`
   width: 50px;
   height: 50px;
  `}
+
+ @media (max-width: 599px) {
+  width: 3em;
+  height: 3em;
+ }
 `;
 
 export const Name = styled.h2`
