@@ -26,7 +26,9 @@ padding: .5em 0;
 `;
 
 export const Wrapper = styled.div`
-width: 90%;
+width: 95%;
+display: flex;
+justify-content: center;
 background-color: transparent;
 margin-right: auto;
 margin-left: auto;
