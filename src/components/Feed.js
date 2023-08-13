@@ -17,6 +17,7 @@ const FeedContainer = styled.div`
  max-width: 683px;
  /* grid-column: 2 / 3; */
  flex: 3;
+ flex-shrink: 0;
  order: 1;
  overflow-y: scroll;
  border-right: 1px solid;
