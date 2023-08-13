@@ -30,6 +30,7 @@ const FeedContainer = styled.div`
 
  @media (max-width: 683px) {
   padding-bottom: 3.5em;
+  width: 100vw;
  }
 
  /* Hide the scrollbar */
