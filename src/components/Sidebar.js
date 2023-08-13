@@ -15,7 +15,8 @@ const Header = styled.header`
  flex-direction: column;
  height: 100vh;
  justify-content: space-between;
- flex: 1;
+ /* flex: 1; */
+ margin-right: 1em;
 
  @media (max-width: 683px) {
     height: auto;
