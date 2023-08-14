@@ -6,6 +6,7 @@ import auth from 'services/auth';
 import styled from 'styled-components';
 import { Background, Wrapper } from 'styles/styledComponents';
 import { AppContext } from 'services/appContext';
+import Loading from 'components/Loading/Loading';
 
 
 const Flex = styled.div`
@@ -66,7 +67,7 @@ const FeedContainer = styled.div`
 `;
 
 const FeedPage = ({ children }) => {
-  const { setCurrentUser } = useContext(AppContext);
+  const { setCurrentUser, currentUser } = useContext(AppContext);
 
   const { loading, userInfo } = useUserInfo(auth.currentUser.uid);
 
@@ -78,12 +79,16 @@ const FeedPage = ({ children }) => {
     }
     setCurrentUserAsync();
   }, [userInfo, loading, setCurrentUser]);
+
+  if (loading) {
+    return <Loading/>
+  }
   
   return (
     <Background>
       <Wrapper>
         <Flex>
-        <Sidebar />
+        <Sidebar/>
         <FeedContainer>{children}</FeedContainer>
         </Flex>
       </Wrapper>
