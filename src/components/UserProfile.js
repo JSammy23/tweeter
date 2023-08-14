@@ -10,6 +10,7 @@ import { AppContext } from 'services/appContext';
 
 import styled from 'styled-components';
 import { Title, UserHandle, Button } from 'styles/styledComponents';
+import { useParams } from 'react-router-dom';
 
 
 const ProfileCard = styled.div`
@@ -69,7 +70,7 @@ const CountsDiv = styled.div`
 // Pass follower & Following array down to follow button?
 
 
-const UserProfile = ({userUid, showLikes, showNewsFeed }) => {
+const UserProfile = () => {
 
     const [isCurrentUser, setIsCurrentUser] = useState(false);
     const [editProfile, setEditProfile] = useState(false);
@@ -80,10 +81,12 @@ const UserProfile = ({userUid, showLikes, showNewsFeed }) => {
     const [listType, setListType] = useState(null);
     const { currentUser } = useContext(AppContext);
 
-    const { userInfo, loading } = useUserInfo(userUid);
+    const { userId } = useParams();
+
+    const { userInfo, loading } = useUserInfo(userId);
 
     useEffect(() => {
-        if (currentUser.uid === userUid) {
+        if (currentUser.uid === userId) {
             setIsCurrentUser(true);
         };
         if (userInfo && !loading) {
@@ -98,14 +101,14 @@ const UserProfile = ({userUid, showLikes, showNewsFeed }) => {
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [userUid, userInfo, loading]);
+    }, [userId, userInfo, loading]);
 
     const toggleEditProfile = () => {
         setEditProfile(!editProfile);
     };
     
     const handleUpdateUser = async (updatedUser) => {
-        const userRef = doc(db, 'users', userUid);
+        const userRef = doc(db, 'users', userId);
         setEditProfile(false);
         await setDoc(userRef, updatedUser);
     };
@@ -114,12 +117,12 @@ const UserProfile = ({userUid, showLikes, showNewsFeed }) => {
         const LinkId = event.target.id;
         setListType(LinkId);
         setShowFollowList(true);
-        showNewsFeed(false);
+        // showNewsFeed(false);
     };
 
     const handleBackClick = () => {
         setShowFollowList(false);
-        showNewsFeed(true);
+        // showNewsFeed(true);
     };
 
     useEffect(() => {
@@ -161,7 +164,7 @@ const UserProfile = ({userUid, showLikes, showNewsFeed }) => {
                             <span>{userInfo?.followers.length}</span>Followers
                         </button>
                     </CountsDiv>
-                    <UserProfileControls showLikes={showLikes} />
+                    <UserProfileControls/>
                 </div>
                 {editProfile && (
                 <EditProfile onUpdateUser={handleUpdateUser} 
