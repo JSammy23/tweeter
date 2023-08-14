@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { logout } from 'services/auth';
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import { Logo } from 'styles/styledComponents';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -47,32 +47,9 @@ const NavContainer = styled.div`
 const Nav = styled.nav`
   ul {
     display: flex;
+    gap: .5em;
     flex-direction: column;
     list-style: none;
- }
- li {
-    color: ${props => props.theme.colors.primary};
-    font-size: 2em;
-    margin-bottom: .5em;
-    cursor: pointer;
-
-    &:hover {
-        color: ${props => props.theme.colors.accent};
-    }
-
-    &.active {
-        color: ${props => props.theme.colors.accent};
-    }
-
-    span {
-        margin-left: .3em;
-    }
-
-    @media (max-width: 868px) {
-        span {
-            display: none;
-        }
-    }
  }
 
  @media (max-width: 683px) {
@@ -92,6 +69,29 @@ const Nav = styled.nav`
     }
 `;
 
+const StyledNavLink = styled(NavLink)`
+ color: ${props => props.theme.colors.primary};
+ margin-bottom: .5em;
+ font-size: 2em;
+ cursor: pointer; 
+ text-decoration: none;
+
+ &:hover {
+     color: ${props => props.theme.colors.accent};
+ } 
+ &.active {
+     color: ${props => props.theme.colors.accent};
+ } 
+ span {
+     margin-left: .3em;
+ } 
+ @media (max-width: 868px) {
+     span {
+         display: none;
+     }
+ }
+`;
+
 const UserControls = styled.div`
  margin: 1em 0;
 
@@ -106,9 +106,9 @@ const Sidebar = () => {
     const { activeFilter, setActiveFilter } = useContext(AppContext);
 
     const navItems = [
-        {id: 'home', icon: faHome, text: 'Home'},
-        {id: 'explore', icon: faHashtag, text: 'Explore'},
-        {id: 'profile', icon: faUser, text: 'Profile'},
+        {id: 'home', icon: faHome, text: 'Home', route: '/home'},
+        {id: 'explore', icon: faHashtag, text: 'Explore', route: '/explore'},
+        {id: 'profile', icon: faUser, text: 'Profile', route: '/profile'},
     ];
 
     const handleNavClick = (filter) => {
@@ -123,12 +123,13 @@ const Sidebar = () => {
             <Nav>
                 <ul>
                     {navItems.map((item) => (
-                        <li
-                        key={item.id}
-                        onClick={() => handleNavClick(item.id)}
-                        className={activeFilter === item.id ? 'active' : ''} >
-                            <FontAwesomeIcon icon={item.icon} />
-                            <span>{item.text}</span>
+                        <li key={item.id} >
+                            <StyledNavLink
+                                to={item.route}
+                                activeClassName='active'>
+                                    <FontAwesomeIcon icon={item.icon} />
+                                    <span>{item.text}</span>
+                            </StyledNavLink>
                         </li>
                     ))}
                 </ul>
