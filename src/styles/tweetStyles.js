@@ -37,8 +37,8 @@ export const FlexDiv = styled.div`
 `;
 
 export const UserImage = styled.img`
- width: 60px;
- height: 60px;
+ width: 3.7em;
+ height: 3.7em;
  border-radius: 50%;
  border: 1px solid black;
  margin-right: .5em;
@@ -48,6 +48,11 @@ export const UserImage = styled.img`
   width: 50px;
   height: 50px;
  `}
+
+ @media (max-width: 599px) {
+  width: 3em;
+  height: 3em;
+ }
 `;
 
 export const Name = styled.h2`
@@ -57,6 +62,10 @@ export const Name = styled.h2`
  ${props => props.isMini && `
   font-size: 1.2em;
  `}
+
+@media (max-width: 600px) {
+  font-size: 1.2em;
+ }
 `;
 
 export const Handle = styled.h3`
@@ -71,6 +80,10 @@ export const Handle = styled.h3`
  ${props => props.isMini && `
   font-size: 1.2em;
  `}
+
+@media (max-width: 600px) {
+  font-size: 1.2em;
+ }
 `;
 
 export const TweetDate = styled.div`
@@ -94,6 +107,11 @@ export const TweetBody = styled.div`
  ${props => props.isMini && `
   font-size: 1.2em;
  `}
+
+ @media (max-width: 600px) {
+  font-size: 1.2em;
+  margin-top: .1em
+ }
 `;
 
 export const TweetReactions = styled.div`

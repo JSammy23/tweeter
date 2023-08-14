@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'services/appContext';
 import UserProfile from './UserProfile';
 import auth from 'services/auth';
@@ -6,20 +6,32 @@ import NewsFeed from './NewsFeed';
 import Compose from './Compose';
 import Loading from './Loading/Loading';
 import Thread from './Thread';
-
+import useUserInfo from 'hooks/useUserInfo';
 
 import styled from 'styled-components';
-import useUserData from 'hooks/useUserData';
 
 
 const FeedContainer = styled.div`
  width: 100%;
- height: 100%;
- grid-column: 2 / 3;
+ height: 100vh;
+ max-width: 683px;
+ /* grid-column: 2 / 3; */
+ flex: 3;
+ flex-shrink: 1;
+ order: 1;
  overflow-y: scroll;
  border-right: 1px solid;
  border-left: 1px solid;
  border-color: ${props => props.theme.colors.secondary};
+
+ @media (min-width: 838px) {
+  min-width: 683px;
+ }
+
+ @media (max-width: 683px) {
+  padding-bottom: 3.5em;
+  width: 100vw;
+ }
 
  /* Hide the scrollbar */
  &::-webkit-scrollbar {
@@ -52,11 +64,20 @@ const FeedContainer = styled.div`
 
 const Feed = ({ onBackClick }) => {
 
-  const { activeFilter, viewedUser, isUserLoaded, currentUser } = useContext(AppContext);
+  const { activeFilter, viewedUser, isUserLoaded, currentUser, setCurrentUser } = useContext(AppContext);
   const [showLikes, setShowLikes] = useState(false);
   const [showNewsFeed, setShowNewsFeed] = useState(true);
 
-  const { loading } = useUserData(auth.currentUser.uid);
+  const { loading, userInfo } = useUserInfo(auth.currentUser.uid);
+
+  useEffect(() => {
+    const setCurrentUserAsync = async () => {
+      if (userInfo && !loading) {
+        setCurrentUser(userInfo);
+      }
+    }
+    setCurrentUserAsync();
+  }, [userInfo, loading, setCurrentUser]);
 
     
   const renderByFilter = () => {
@@ -68,8 +89,7 @@ const Feed = ({ onBackClick }) => {
       case 'profile':
         return (
           <UserProfile 
-          user={currentUser} 
-          isCurrentUser={true} 
+          userUid={currentUser?.uid}  
           showLikes={setShowLikes}
           showNewsFeed={setShowNewsFeed} 
           />
@@ -77,8 +97,7 @@ const Feed = ({ onBackClick }) => {
       case 'viewUser':
         return isUserLoaded ? (
           <UserProfile 
-          user={viewedUser} 
-          isCurrentUser={auth.currentUser.uid === viewedUser.uid} 
+          userUid={viewedUser?.uid}  
           showLikes={setShowLikes} 
           showNewsFeed={setShowNewsFeed} 
           />

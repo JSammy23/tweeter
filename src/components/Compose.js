@@ -21,6 +21,7 @@ const ComposeBody = styled.div`
  flex-direction: column;
  width: 100%;
  height: fit-content;
+ /* border: 1px solid violet; */
 `;
 
 

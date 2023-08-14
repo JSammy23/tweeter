@@ -12,7 +12,7 @@ const StyledText = styled.p`
 `;
 
 const RetweetList = ({ tweet }) => {
-    const { currentUser, followingList } = useContext(AppContext);
+    const { currentUser } = useContext(AppContext);
     const [isAuthorFollowed, setIsAuthorFollowed] = useState(null);
     const [subscribedRetweetedBy, setSubscribedRetweetedBy] = useState([]);
 
@@ -29,7 +29,7 @@ const RetweetList = ({ tweet }) => {
     
 
     const checkIsFollowing = () => {
-        const isFollowing = followingList.some((user) => user.user === tweet.authorID);
+        const isFollowing = currentUser.following.some((user) => user === tweet.authorID);
         setIsAuthorFollowed(isFollowing);
     };
 

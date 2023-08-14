@@ -14,6 +14,7 @@ const useUserInfo = (userUid) => {
 
         if (userDocSnap.exists()) {
           const userData = userDocSnap.data();
+          console.log('UserInfo retrieved data:', userData);
           setUserInfo(userData);
         } else {
           console.log('No such document!');
@@ -25,7 +26,9 @@ const useUserInfo = (userUid) => {
       }
     };
 
-    fetchUserInfo();
+    if (userUid) {
+      fetchUserInfo();
+    }
   }, [userUid]);
 
   return { userInfo, loading };
