@@ -7,6 +7,7 @@ import { faTwitter } from '@fortawesome/fontawesome-free-brands';
 import { faHome, faHashtag, faUser } from '@fortawesome/fontawesome-free-solid';
 import { AppContext } from 'services/appContext';
 import LogoutButton from './LogoutButton';
+import auth from 'services/auth';
 
 
 const Header = styled.header`
@@ -103,18 +104,13 @@ const UserControls = styled.div`
 
 const Sidebar = () => {
 
-    const { activeFilter, setActiveFilter } = useContext(AppContext);
+    const { currentUser } = useContext(AppContext);
 
     const navItems = [
         {id: 'home', icon: faHome, text: 'Home', route: '/home'},
         {id: 'explore', icon: faHashtag, text: 'Explore', route: '/explore'},
-        {id: 'profile', icon: faUser, text: 'Profile', route: '/profile'},
+        {id: 'profile', icon: faUser, text: 'Profile', route: `/profile/${auth.currentUser.uid}`},
     ];
-
-    const handleNavClick = (filter) => {
-        setActiveFilter(filter);
-    };
-
 
   return (
     <Header>

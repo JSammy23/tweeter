@@ -9,7 +9,6 @@ import { useContext } from "react";
 import { AppContext } from "services/appContext";
 
 function App() {
-  const { currentUser } = useContext(AppContext);
 
   return (
     <div className="App">
@@ -23,7 +22,7 @@ function App() {
               <FeedPage>
                 <Routes>
                 <Route path="/home" element={<Compose/>} />
-                <Route path="/profile" element={<UserProfile userUid={currentUser.uid} />} />
+                <Route path="/profile/:userId" element={<UserProfile/>} />
                 </Routes>
               </FeedPage>
             </PrivateRoute>

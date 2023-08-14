@@ -5,6 +5,7 @@ import { useUserProfileClick } from 'hooks/useUserProfileClick';
 import styled from 'styled-components';
 import { UserImage, Name, Handle } from '../styles/tweetStyles';
 import useUserInfo from 'hooks/useUserInfo';
+import { useNavigate } from 'react-router-dom';
 
 const UserCard = styled.div`
  width: 100%;
@@ -21,12 +22,12 @@ const Container = styled.div`
 
 const UserInfoCard = ({ uid, onBackClick }) => {
   const { userInfo, loading } = useUserInfo(uid);
-
-  const handleUserProfileClick = useUserProfileClick();
+  const navigate = useNavigate();
+  // const handleUserProfileClick = useUserProfileClick();
 
   const handleUserProfileClickWithBackClick = () => {
-    onBackClick();
-    handleUserProfileClick(uid);
+    // onBackClick();
+    navigate(`/profile/${uid}`);
   };
 
   if (loading) {
