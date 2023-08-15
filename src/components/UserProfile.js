@@ -80,8 +80,6 @@ const UserProfile = () => {
     const { userInfo, loading } = useUserInfo(userId);
 
     useEffect(() => {
-        console.log("currentUser:", currentUser);
-        console.log("userId:", userId);
         if (currentUser.uid === userId) {
             setIsCurrentUser(true);
         } else {
@@ -121,12 +119,6 @@ const UserProfile = () => {
         setEditProfile(false);
         await setDoc(userRef, updatedUser);
     };
-
-    
-
-    useEffect(() => {
-        console.log(userInfo?.following)
-      }, [userInfo]);
 
   return (
     <>
