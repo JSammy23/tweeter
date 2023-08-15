@@ -22,7 +22,7 @@ function App() {
               <FeedPage>
                 <Routes>
                 <Route path="/home" element={<Compose/>} />
-                <Route path="/profile/:userId" element={<UserProfile/>} />
+                <Route path="/profile/:userId/*" element={<UserProfile/>} />
                 </Routes>
               </FeedPage>
             </PrivateRoute>
