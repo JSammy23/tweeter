@@ -73,8 +73,6 @@ const UserProfile = () => {
     const [localHandle, setLocalHandle] = useState('');
     const [localDisplayName, setLocalDisplayName] = useState('');
     const [userProfileImg, setUserProfileImg] = useState('');
-    // const [showFollowList, setShowFollowList] = useState(false);
-    // const [listType, setListType] = useState(null);
     const { currentUser } = useContext(AppContext);
 
     const { userId } = useParams();
@@ -82,8 +80,12 @@ const UserProfile = () => {
     const { userInfo, loading } = useUserInfo(userId);
 
     useEffect(() => {
+        console.log("currentUser:", currentUser);
+        console.log("userId:", userId);
         if (currentUser.uid === userId) {
             setIsCurrentUser(true);
+        } else {
+            setIsCurrentUser(false);
         };
         if (userInfo && !loading) {
             if (localDisplayName !== userInfo.displayName) {
