@@ -23,6 +23,7 @@ function App() {
                 <Routes>
                 <Route path="/home" element={<Compose/>} />
                 <Route path="/profile/:userId/*" element={<UserProfile/>} />
+                <Route exact path="/profile/:userId/likes" element={<UserProfile/>} />
                 </Routes>
               </FeedPage>
             </PrivateRoute>

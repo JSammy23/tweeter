@@ -10,7 +10,8 @@ import { AppContext } from 'services/appContext';
 
 import styled from 'styled-components';
 import { Title, UserHandle, Button } from 'styles/styledComponents';
-import { useParams, Outlet, Link, useRoutes } from 'react-router-dom';
+import { useParams, Outlet, Link, useRoutes, useLocation } from 'react-router-dom';
+import TweetFetcher from './TweetFetcher';
 
 
 const ProfileCard = styled.div`
@@ -76,7 +77,8 @@ const UserProfile = () => {
     const { currentUser } = useContext(AppContext);
 
     const { userId } = useParams();
-
+    const location = useLocation();
+    const showLikes = location.pathname.endsWith('/likes');
     const { userInfo, loading } = useUserInfo(userId);
 
     useEffect(() => {
@@ -123,42 +125,45 @@ const UserProfile = () => {
   return (
     <>
         {match || (
-            <ProfileCard>
-                <div className="flex spacer">
-                    <div>
-                        <UserImage src={userProfileImg} />
+            <>
+                <ProfileCard>
+                    <div className="flex spacer">
+                        <div>
+                            <UserImage src={userProfileImg} />
+                        </div>
+                        <div>
+                        {isCurrentUser ? (
+                            <Button onClick={toggleEditProfile} >Edit profile</Button>
+                        ) : (
+                            <FollowButton user={userInfo?.uid} />
+                        )}
+                        </div>
                     </div>
-                    <div>
-                    {isCurrentUser ? (
-                        <Button onClick={toggleEditProfile} >Edit profile</Button>
-                    ) : (
-                        <FollowButton user={userInfo?.uid} />
-                    )}
+                    <div className="flex column">
+                        <Title>{localDisplayName}</Title>
+                        <UserHandle>{localHandle}</UserHandle>
+                        <CountsDiv>
+                            <StyledLink to={`/profile/${userId}/following`} >
+                                <span>{userInfo?.following.length}</span>Following
+                            </StyledLink>
+                            <StyledLink to={`/profile/${userId}/followers`} >
+                                <span>{userInfo?.followers.length}</span>Followers
+                            </StyledLink>
+                        </CountsDiv>
+                        <UserProfileControls userId={userId} />
                     </div>
-                </div>
-                <div className="flex column">
-                    <Title>{localDisplayName}</Title>
-                    <UserHandle>{localHandle}</UserHandle>
-                    <CountsDiv>
-                        <StyledLink to={`/profile/${userId}/following`} >
-                            <span>{userInfo?.following.length}</span>Following
-                        </StyledLink>
-                        <StyledLink to={`/profile/${userId}/followers`} >
-                            <span>{userInfo?.followers.length}</span>Followers
-                        </StyledLink>
-                    </CountsDiv>
-                    <UserProfileControls/>
-                </div>
-                {editProfile && (
-                <EditProfile onUpdateUser={handleUpdateUser} 
-                toggleClose={toggleEditProfile}
-                user={userInfo}
-                setLocalHandle={setLocalHandle}
-                localHandle={localHandle}
-                setLocalDisplayName={setLocalDisplayName}
-                localDisplayName={localDisplayName}
-                updateUserProfileImg={setUserProfileImg} />)}
-            </ProfileCard>
+                    {editProfile && (
+                    <EditProfile onUpdateUser={handleUpdateUser} 
+                    toggleClose={toggleEditProfile}
+                    user={userInfo}
+                    setLocalHandle={setLocalHandle}
+                    localHandle={localHandle}
+                    setLocalDisplayName={setLocalDisplayName}
+                    localDisplayName={localDisplayName}
+                    updateUserProfileImg={setUserProfileImg} />)}
+                </ProfileCard>
+                <TweetFetcher userUid={userId} showLikes={showLikes} />
+            </>
         )}
         <Outlet/>
     </>
