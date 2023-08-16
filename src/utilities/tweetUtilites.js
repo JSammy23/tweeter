@@ -145,3 +145,33 @@ export const reduceReplyCount = async (tweetId) => {
         transaction.update(tweetRef, { replies: currentReplyCount });
     });
 };
+
+// **************** Grab Tweet Id's ******************* //
+
+export const fetchTweetBucket = async (userUid) => {
+    const tweetBucketRef = collection(db, 'users', userUid, 'tweetBucket');
+    const tweetBucketQuery = query(tweetBucketRef);
+    const tweetBucketSnapshot = await getDocs(tweetBucketQuery);
+    const tweetBucketData = tweetBucketSnapshot.docs.map(doc => doc.data());
+    const tweetIds = tweetBucketData.map((data) => data.tweetID);
+
+    // 2. Use the tweetID values to get the actual tweets
+    const tweetsRef = collection(db, 'tweets');
+    const tweetsQuery = query(tweetsRef, where('__name__', 'in', tweetIds));
+    const tweetsSnapshot = await getDocs(tweetsQuery);
+
+    // 3. Combine the two arrays based on the tweetID
+    const tweetsData = tweetsSnapshot.docs.map(doc => doc.data());
+    const combinedData = tweetBucketData.map(bucketItem => {
+        const tweet = tweetsData.find(t => t.id === bucketItem.tweetID);
+        return {
+            ...tweet,
+            bucketDate: bucketItem.date
+        };
+    });
+
+    // 4. Sort the combined array based on the bucketDate values
+    combinedData.sort((a, b) => b.bucketDate - a.bucketDate);
+
+    return combinedData;
+}
