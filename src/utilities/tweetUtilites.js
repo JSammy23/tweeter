@@ -148,12 +148,20 @@ export const reduceReplyCount = async (tweetId) => {
 
 // **************** Grab Tweet Id's ******************* //
 
-export const fetchTweetBucket = async (userUid) => {
-    const tweetBucketRef = collection(db, 'users', userUid, 'tweetBucket');
-    const tweetBucketQuery = query(tweetBucketRef);
-    const tweetBucketSnapshot = await getDocs(tweetBucketQuery);
-    const tweetBucketData = tweetBucketSnapshot.docs.map(doc => doc.data());
-    const tweetIds = tweetBucketData.map((data) => data.tweetID);
+export const fetchFromUserSubCollection = async (userUid, collectionName) => {
+    // 1. Fetch data from the specified user's sub-collection
+    const subCollectionRef = collection(db, 'users', userUid, collectionName);
+    const subCollectionQuery = query(subCollectionRef);
+    const subCollectionSnapshot = await getDocs(subCollectionQuery);
+    const subCollectionData = subCollectionSnapshot.docs.map(doc => doc.data());
+    if (subCollectionData.length === 0) {
+        return [];
+    };
+
+    const tweetIds = subCollectionData.map((data) => data.tweetID);
+    if (tweetIds.length === 0) {
+        return [];
+    };
 
     // 2. Use the tweetID values to get the actual tweets
     const tweetsRef = collection(db, 'tweets');
@@ -162,16 +170,16 @@ export const fetchTweetBucket = async (userUid) => {
 
     // 3. Combine the two arrays based on the tweetID
     const tweetsData = tweetsSnapshot.docs.map(doc => doc.data());
-    const combinedData = tweetBucketData.map(bucketItem => {
-        const tweet = tweetsData.find(t => t.id === bucketItem.tweetID);
+    const combinedData = subCollectionData.map(subItem => {
+        const tweet = tweetsData.find(t => t.id === subItem.tweetID);
         return {
             ...tweet,
-            bucketDate: bucketItem.date
+            subCollectionDate: subItem.date
         };
     });
 
-    // 4. Sort the combined array based on the bucketDate values
-    combinedData.sort((a, b) => b.bucketDate - a.bucketDate);
+    // 4. Sort the combined array based on the subCollectionDate values
+    combinedData.sort((a, b) => b.subCollectionDate - a.subCollectionDate);
 
     return combinedData;
 }
