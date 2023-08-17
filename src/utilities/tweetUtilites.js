@@ -177,3 +177,12 @@ export const fetchFromUserSubCollection = async (userUid, collectionName) => {
 
     return combinedData;
 }
+
+export const fetchUserTweetsAndLikes = async (userUid) => {
+    const userTweets = await fetchFromUserSubCollection(userUid, 'tweetBucket');
+    const userLikes = await fetchFromUserSubCollection(userUid, 'likes');
+    return {
+        userTweets,
+        userLikes
+    };
+};
