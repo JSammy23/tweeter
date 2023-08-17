@@ -30,13 +30,25 @@ const TweetFetcher = ({ userUid, showLikes, fetchDataFunction, showType }) => {
         }
     };
 
+    const tweetTypes = {
+        userTweets: tweetData.userTweets,
+        userLikes: tweetData.userLikes,
+        subscribedTweets: tweetData.subscribedTweets,
+        recentTweets: tweetData.recentTweets,
+    };
+
     const renderTweets = () => {
         let tweets;
+    
         if (showLikes) {
             tweets = tweetData.userLikes;
+        } else if (showType && tweetTypes[showType]) {
+            tweets = tweetTypes[showType];
         } else {
-            tweets = tweetData.userTweets;
+            // Default scenario or you can throw an error, depending on your use case.
+            tweets = [];
         }
+    
         return mapTweetsToComponents(tweets);
     };
 
