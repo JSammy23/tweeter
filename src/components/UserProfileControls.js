@@ -1,4 +1,3 @@
-import React, { useContext, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -24,16 +23,6 @@ const UserProfileControls = ({ userId }) => {
       {id: 'userTweets', text: 'Tweets', link: `/profile/${userId}`},
       {id: 'userLikes', text: 'Likes', link: `/profile/${userId}/likes`},
   ];
-
-    // const handleClick = (itemId) => {
-    //     setActiveTab(itemId);
-    
-    //     if (itemId === 'userLikes') {
-    //       showLikes(true);
-    //     } else {
-    //       showLikes(false); 
-    //     }
-    // };
 
   return (
     <div className='flex around'>
