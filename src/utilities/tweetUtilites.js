@@ -1,5 +1,6 @@
 import { updateDoc, deleteDoc, getDocs, addDoc, arrayRemove, arrayUnion, collection, doc, where, query, increment, orderBy, runTransaction } from 'firebase/firestore'; 
 import db from 'services/storage';
+import { fetchFromFirestore } from './firebaseUtils';
 
 // ***********/ Retweet Tweet /**************/
 
@@ -204,3 +205,13 @@ export const fetchSubscribedTweets = async (usersFollowingUidArray) => {
         subscribedTweets
     };
 }
+
+export const fetchExploreTweets = async () => {
+    const recentTweets = await fetchFromFirestore('tweets', [
+        ['isReply', '==', false],
+        ['date', 'orderBy', 'desc']
+    ]);
+    return {
+        recentTweets
+    };
+};

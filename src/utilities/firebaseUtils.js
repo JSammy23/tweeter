@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import db from "services/storage";
 
 export const checkUserHandleAvailability = async (userHandle) => {
@@ -22,7 +22,13 @@ export const fetchFromFirestore = async (collectionName, queryArgs) => {
   let conditions = [];
 
   for (const [field, operation, value] of queryArgs) {
+    if(operation === 'orderBy') {
+      // If operation is orderBy, push an orderBy condition
+      conditions.push(orderBy(field, value)); // 'value' here can be 'asc' or 'desc'
+    } else {
+      // Else, push a where condition
       conditions.push(where(field, operation, value));
+    }
   }
 
   // Apply the conditions to the base query
