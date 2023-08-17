@@ -3,10 +3,9 @@ import FeedPage from "pages/Feed/FeedPage";
 import { Routes, Route, Navigate } from "react-router-dom";
 import SignUpPage from "pages/SignUp/SignUpPage";
 import PrivateRoute from "components/PrivateRoute";
-import Compose from "components/Compose";
+import HomeContent from "components/HomeContent";
 import UserProfile from "components/UserProfile";
-import { useContext } from "react";
-import { AppContext } from "services/appContext";
+
 
 function App() {
 
@@ -21,7 +20,7 @@ function App() {
             <PrivateRoute>
               <FeedPage>
                 <Routes>
-                <Route path="/home" element={<Compose/>} />
+                <Route path="/home" element={<HomeContent/>} />
                 <Route path="/profile/:userId/*" element={<UserProfile/>} />
                 <Route exact path="/profile/:userId/likes" element={<UserProfile/>} />
                 </Routes>
