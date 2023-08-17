@@ -1,27 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import Tweet from './Tweet';
-import { fetchFromFirestore } from 'utilities/firebaseUtils';
-import { fetchFromUserSubCollection } from 'utilities/tweetUtilites';
 
-const TweetFetcher = ({ userUid, showLikes }) => {
+const TweetFetcher = ({ userUid, showLikes, fetchDataFunction, showType }) => {
 
-    const [userTweetBucket, setUserTweetBucket] = useState([]);
-    const [userLikes, setUserLikes] = useState([]);
+    const [tweetData, setTweetData] = useState({
+        userTweets: [],
+        userLikes: [],
+        subscribedTweets: [],
+        recentTweets: []
+    });
 
     useEffect(() => {
         const fetchTweets = async () => {
             try {
-                const userTweets = await fetchFromUserSubCollection(userUid, 'tweetBucket');
-                setUserTweetBucket(userTweets); // To set the fetched tweets to the data state
-                const userLikes = await fetchFromUserSubCollection(userUid, 'likes');
-                setUserLikes(userLikes);
+                const data = await fetchDataFunction();
+                setTweetData(data);
             } catch (error) {
                 console.error("Error fetching tweets:", error);
             }
         }
-
         fetchTweets();  // Invoke the fetchTweets function
-    }, [userUid]); 
+    }, [fetchDataFunction]); 
 
     const mapTweetsToComponents = (tweets) => {
         if (tweets.length === 0) {
@@ -34,9 +33,9 @@ const TweetFetcher = ({ userUid, showLikes }) => {
     const renderTweets = () => {
         let tweets;
         if (showLikes) {
-            tweets = userLikes;
+            tweets = tweetData.userLikes;
         } else {
-            tweets = userTweetBucket
+            tweets = tweetData.userTweets;
         }
         return mapTweetsToComponents(tweets);
     };
