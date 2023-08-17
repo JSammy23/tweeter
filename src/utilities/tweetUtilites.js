@@ -154,15 +154,8 @@ export const fetchFromUserSubCollection = async (userUid, collectionName) => {
     const subCollectionQuery = query(subCollectionRef);
     const subCollectionSnapshot = await getDocs(subCollectionQuery);
     const subCollectionData = subCollectionSnapshot.docs.map(doc => doc.data());
-    if (subCollectionData.length === 0) {
-        return [];
-    };
-
     const tweetIds = subCollectionData.map((data) => data.tweetID);
-    if (tweetIds.length === 0) {
-        return [];
-    };
-
+    
     // 2. Use the tweetID values to get the actual tweets
     const tweetsRef = collection(db, 'tweets');
     const tweetsQuery = query(tweetsRef, where('__name__', 'in', tweetIds));
@@ -172,11 +165,12 @@ export const fetchFromUserSubCollection = async (userUid, collectionName) => {
     const tweetsData = tweetsSnapshot.docs.map(doc => doc.data());
     const combinedData = subCollectionData.map(subItem => {
         const tweet = tweetsData.find(t => t.id === subItem.tweetID);
+        if (!tweet) return null;
         return {
             ...tweet,
             subCollectionDate: subItem.date
         };
-    });
+    }).filter(item => item !== null);
 
     // 4. Sort the combined array based on the subCollectionDate values
     combinedData.sort((a, b) => b.subCollectionDate - a.subCollectionDate);
