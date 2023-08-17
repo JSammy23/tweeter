@@ -25,10 +25,7 @@ const UserInfoCard = ({ uid, onBackClick }) => {
   const navigate = useNavigate();
   // const handleUserProfileClick = useUserProfileClick();
 
-  const handleUserProfileClickWithBackClick = () => {
-    // onBackClick();
-    navigate(`/profile/${uid}`);
-  };
+  const handleUserProfileClick = useUserProfileClick();
 
   if (loading) {
     return <div>Loading...</div>;
@@ -36,10 +33,10 @@ const UserInfoCard = ({ uid, onBackClick }) => {
 
   return (
     <UserCard>
-      <UserImage src={userInfo?.profileImg} onClick={handleUserProfileClickWithBackClick} />
+      <UserImage src={userInfo?.profileImg} onClick={() => handleUserProfileClick(uid)} />
       <div className='flex column' >
         <Name>{userInfo?.displayName}</Name>
-        <Handle onClick={handleUserProfileClickWithBackClick}>{userInfo?.userHandle}</Handle>
+        <Handle onClick={() => handleUserProfileClick(uid)}>{userInfo?.userHandle}</Handle>
       </div>
       <Container>
         <FollowButton user={uid} />
