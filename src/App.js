@@ -5,6 +5,8 @@ import SignUpPage from "pages/SignUp/SignUpPage";
 import PrivateRoute from "components/PrivateRoute";
 import HomeContent from "components/HomeContent";
 import UserProfile from "components/UserProfile";
+import ExploreContent from "components/ExploreContent";
+import Thread from "components/Thread";
 
 
 function App() {
@@ -21,8 +23,10 @@ function App() {
               <FeedPage>
                 <Routes>
                 <Route path="/home" element={<HomeContent/>} />
+                <Route path="/explore" element={<ExploreContent/>} />
                 <Route path="/profile/:userId/*" element={<UserProfile/>} />
                 <Route exact path="/profile/:userId/likes" element={<UserProfile/>} />
+                <Route path="/thread/:activeThread" element={<Thread />} />
                 </Routes>
               </FeedPage>
             </PrivateRoute>
