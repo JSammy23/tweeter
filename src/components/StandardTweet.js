@@ -11,6 +11,7 @@ import DeleteTweetButton from './DeleteTweetButton';
 import { useUserProfileClick } from 'hooks/useUserProfileClick';
 import CommentsButton from './CommentsButton';
 import { format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 import { TweetCard, TweetHeader, FlexDiv, UserImage, Name, Handle, TweetDate, TweetBody, TweetReactions, StyledIcon, MenuContainer, MenuOptions, LeftThreadLine } from '../styles/tweetStyles';
@@ -26,6 +27,8 @@ const StandardTweet = ({ tweet, isMini }) => {
     const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
     );
+
+    const navigate = useNavigate();
 
     useEffect(() => {
       const hashtagStrategy = (contentBlock, callback, contentState) => {
@@ -92,6 +95,7 @@ const StandardTweet = ({ tweet, isMini }) => {
     const handleTweetThreadClick = () => {
         setActiveThread(tweet);
         setActiveFilter('thread');
+        navigate(`/thread/${tweet.id}`);
     };
 
     // Format dueDate
