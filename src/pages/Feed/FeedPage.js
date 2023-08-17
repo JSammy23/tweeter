@@ -67,7 +67,7 @@ const FeedContainer = styled.div`
 `;
 
 const FeedPage = ({ children }) => {
-  const { setCurrentUser, currentUser } = useContext(AppContext);
+  const { setCurrentUser } = useContext(AppContext);
 
   const { loading, userInfo } = useUserInfo(auth.currentUser.uid);
 
