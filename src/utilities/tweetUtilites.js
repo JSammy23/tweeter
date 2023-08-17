@@ -186,3 +186,21 @@ export const fetchUserTweetsAndLikes = async (userUid) => {
         userLikes
     };
 };
+
+export const fetchSubscribedTweets = async (usersFollowingUidArray) => {
+    const subscribedTweets = [];
+    const fetchUserTweetsPromise = usersFollowingUidArray.map(async (user) => {
+        const followedUserTweetBucketTweets = await fetchFromUserSubCollection(user, 'tweetBucket');
+        followedUserTweetBucketTweets.forEach((tweet) => {
+            const isDuplicate = subscribedTweets.some((existingTweet) => existingTweet.id === tweet.id);
+            if (!isDuplicate) {
+                subscribedTweets.push(tweet);
+            }
+        });
+    });
+    await Promise.all(fetchUserTweetsPromise);
+
+    return {
+        subscribedTweets
+    };
+}
