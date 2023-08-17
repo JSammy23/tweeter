@@ -12,6 +12,7 @@ import styled from 'styled-components';
 import { Title, UserHandle, Button } from 'styles/styledComponents';
 import { useParams, Outlet, Link, useRoutes, useLocation } from 'react-router-dom';
 import TweetFetcher from './TweetFetcher';
+import { fetchFromUserSubCollection, fetchUserTweetsAndLikes } from 'utilities/tweetUtilites';
 
 
 const ProfileCard = styled.div`
@@ -162,7 +163,7 @@ const UserProfile = () => {
                     localDisplayName={localDisplayName}
                     updateUserProfileImg={setUserProfileImg} />)}
                 </ProfileCard>
-                <TweetFetcher userUid={userId} showLikes={showLikes} />
+                <TweetFetcher fetchDataFunction={() => fetchUserTweetsAndLikes(userId)} showLikes={showLikes} showType='userTweets' />
             </>
         )}
         <Outlet/>
