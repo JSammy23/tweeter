@@ -8,7 +8,7 @@ const HomeContent = () => {
     const { currentUser } = useContext(AppContext);
   return (
     <>
-        <Compose />
+        <Compose action='tweet' />
         {currentUser && <TweetFetcher fetchDataFunction={() => fetchSubscribedTweets(currentUser?.following)} showType='subscribedTweets' />}
     </>
   )
