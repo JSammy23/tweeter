@@ -64,11 +64,7 @@ const StyledLink = styled(Link)`
 `;
 
 
-// TODO:
-// Pass follower & Following array down to follow button?
-
-
-const UserProfile = () => {
+const UserProfile = ({ userInfo, showLikes }) => {
 
     const [isCurrentUser, setIsCurrentUser] = useState(false);
     const [editProfile, setEditProfile] = useState(false);
@@ -77,30 +73,23 @@ const UserProfile = () => {
     const [userProfileImg, setUserProfileImg] = useState('');
     const { currentUser } = useContext(AppContext);
 
-    const { userId } = useParams();
-    const location = useLocation();
-    const showLikes = location.pathname.endsWith('/likes');
-    const { userInfo, loading } = useUserInfo(userId);
-
     useEffect(() => {
-        if (currentUser.uid === userId) {
+        if (currentUser.uid === userInfo.uid) {
             setIsCurrentUser(true);
         } else {
             setIsCurrentUser(false);
         };
-        if (userInfo && !loading) {
-            if (localDisplayName !== userInfo.displayName) {
-                setLocalDisplayName(userInfo.displayName);
-            }
-            if (localHandle !== userInfo.userHandle) {
-                setLocalHandle(userInfo.userHandle);
-            }
-            if (userProfileImg !== userInfo.profileImg) {
-                setUserProfileImg(userInfo.profileImg);
-            }
+        if (localDisplayName !== userInfo.displayName) {
+            setLocalDisplayName(userInfo.displayName);
+        }
+        if (localHandle !== userInfo.userHandle) {
+            setLocalHandle(userInfo.userHandle);
+        }
+        if (userProfileImg !== userInfo.profileImg) {
+            setUserProfileImg(userInfo.profileImg);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [userId, userInfo, loading, currentUser]);
+    }, [userInfo, currentUser]);
 
     const match = useRoutes([
         {
@@ -118,55 +107,50 @@ const UserProfile = () => {
     };
     
     const handleUpdateUser = async (updatedUser) => {
-        const userRef = doc(db, 'users', userId);
+        const userRef = doc(db, 'users', userInfo.uid);
         setEditProfile(false);
         await setDoc(userRef, updatedUser);
     };
 
   return (
     <>
-        {match || (
-            <>
-                <ProfileCard>
-                    <div className="flex spacer">
-                        <div>
-                            <UserImage src={userProfileImg} />
-                        </div>
-                        <div>
-                        {isCurrentUser ? (
-                            <Button onClick={toggleEditProfile} >Edit profile</Button>
-                        ) : (
-                            <FollowButton user={userInfo?.uid} />
-                        )}
-                        </div>
-                    </div>
-                    <div className="flex column">
-                        <Title>{localDisplayName}</Title>
-                        <UserHandle>{localHandle}</UserHandle>
-                        <CountsDiv>
-                            <StyledLink to={`/profile/${userId}/following`} >
-                                <span>{userInfo?.following.length}</span>Following
-                            </StyledLink>
-                            <StyledLink to={`/profile/${userId}/followers`} >
-                                <span>{userInfo?.followers.length}</span>Followers
-                            </StyledLink>
-                        </CountsDiv>
-                        <UserProfileControls userId={userId} />
-                    </div>
-                    {editProfile && (
-                    <EditProfile onUpdateUser={handleUpdateUser} 
-                    toggleClose={toggleEditProfile}
-                    user={userInfo}
-                    setLocalHandle={setLocalHandle}
-                    localHandle={localHandle}
-                    setLocalDisplayName={setLocalDisplayName}
-                    localDisplayName={localDisplayName}
-                    updateUserProfileImg={setUserProfileImg} />)}
-                </ProfileCard>
-                <TweetFetcher fetchDataFunction={() => fetchUserTweetsAndLikes(userId)} showLikes={showLikes} showType='userTweets' />
-            </>
-        )}
-        <Outlet/>
+        <ProfileCard>
+            <div className="flex spacer">
+                <div>
+                    <UserImage src={userProfileImg} />
+                </div>
+                <div>
+                {isCurrentUser ? (
+                    <Button onClick={toggleEditProfile} >Edit profile</Button>
+                ) : (
+                    <FollowButton user={userInfo?.uid} />
+                )}
+                </div>
+            </div>
+            <div className="flex column">
+                <Title>{localDisplayName}</Title>
+                <UserHandle>{localHandle}</UserHandle>
+                <CountsDiv>
+                    <StyledLink to={`/profile/${userInfo.uid}/following`} >
+                        <span>{userInfo?.following.length}</span>Following
+                    </StyledLink>
+                    <StyledLink to={`/profile/${userInfo.uid}/followers`} >
+                        <span>{userInfo?.followers.length}</span>Followers
+                    </StyledLink>
+                </CountsDiv>
+                <UserProfileControls userUid={userInfo.uid} />
+            </div>
+            {editProfile && (
+            <EditProfile onUpdateUser={handleUpdateUser} 
+            toggleClose={toggleEditProfile}
+            user={userInfo}
+            setLocalHandle={setLocalHandle}
+            localHandle={localHandle}
+            setLocalDisplayName={setLocalDisplayName}
+            localDisplayName={localDisplayName}
+            updateUserProfileImg={setUserProfileImg} />)}
+        </ProfileCard>
+        <TweetFetcher fetchDataFunction={() => fetchUserTweetsAndLikes(userInfo.uid)} showLikes={showLikes} showType='userTweets' />
     </>
   );
 };
