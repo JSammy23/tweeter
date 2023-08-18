@@ -10,6 +10,9 @@ import { AppContext } from 'services/appContext';
 
 import styled from 'styled-components';
 import { Title, UserHandle, Button } from 'styles/styledComponents';
+import { useParams, Outlet, Link, useRoutes, useLocation } from 'react-router-dom';
+import TweetFetcher from './TweetFetcher';
+import { fetchFromUserSubCollection, fetchUserTweetsAndLikes } from 'utilities/tweetUtilites';
 
 
 const ProfileCard = styled.div`
@@ -41,141 +44,115 @@ const CountsDiv = styled.div`
  span {
     color: ${props => props.theme.colors.primary};
     margin: 0 .3em;
-
-    &:hover {
-        text-decoration: underline;
-        cursor: pointer;
-    }
- }
-
- button {
-    color: ${props => props.theme.colors.secondary};
-    background-color: transparent;
-    border: none;
-    outline: none;
     cursor: pointer;
-    font-size: 1em;
-
-    &:hover {
-        color: ${props => props.theme.colors.primary};
-        text-decoration: underline;
-    }
  }
+`;
 
+const StyledLink = styled(Link)`
+ color: ${props => props.theme.colors.secondary};
+ background-color: transparent;
+ border: none;
+ outline: none;
+ cursor: pointer;
+ font-size: 1em; 
+ text-decoration: none;
+
+ &:hover {
+     color: ${props => props.theme.colors.primary};
+     text-decoration: underline;
+ }
 `;
 
 
-// TODO:
-// Pass follower & Following array down to follow button?
-
-
-const UserProfile = ({userUid, showLikes, showNewsFeed }) => {
+const UserProfile = ({ userInfo, showLikes }) => {
 
     const [isCurrentUser, setIsCurrentUser] = useState(false);
     const [editProfile, setEditProfile] = useState(false);
     const [localHandle, setLocalHandle] = useState('');
     const [localDisplayName, setLocalDisplayName] = useState('');
     const [userProfileImg, setUserProfileImg] = useState('');
-    const [showFollowList, setShowFollowList] = useState(false);
-    const [listType, setListType] = useState(null);
     const { currentUser } = useContext(AppContext);
 
-    const { userInfo, loading } = useUserInfo(userUid);
-
     useEffect(() => {
-        if (currentUser.uid === userUid) {
+        if (currentUser.uid === userInfo.uid) {
             setIsCurrentUser(true);
+        } else {
+            setIsCurrentUser(false);
         };
-        if (userInfo && !loading) {
-            if (localDisplayName !== userInfo.displayName) {
-                setLocalDisplayName(userInfo.displayName);
-            }
-            if (localHandle !== userInfo.userHandle) {
-                setLocalHandle(userInfo.userHandle);
-            }
-            if (userProfileImg !== userInfo.profileImg) {
-                setUserProfileImg(userInfo.profileImg);
-            }
+        if (localDisplayName !== userInfo.displayName) {
+            setLocalDisplayName(userInfo.displayName);
+        }
+        if (localHandle !== userInfo.userHandle) {
+            setLocalHandle(userInfo.userHandle);
+        }
+        if (userProfileImg !== userInfo.profileImg) {
+            setUserProfileImg(userInfo.profileImg);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [userUid, userInfo, loading]);
+    }, [userInfo, currentUser]);
+
+    const match = useRoutes([
+        {
+            path: 'following',
+            element: <FollowList listType='following' following={userInfo?.following} user={userInfo} />
+        },
+        {
+            path: 'followers',
+            element: <FollowList listType='followers' followers={userInfo?.followers} user={userInfo} />
+        },
+    ]);
 
     const toggleEditProfile = () => {
         setEditProfile(!editProfile);
     };
     
     const handleUpdateUser = async (updatedUser) => {
-        const userRef = doc(db, 'users', userUid);
+        const userRef = doc(db, 'users', userInfo.uid);
         setEditProfile(false);
         await setDoc(userRef, updatedUser);
     };
 
-    const handleFollowCountClick = (event) => {
-        const LinkId = event.target.id;
-        setListType(LinkId);
-        setShowFollowList(true);
-        showNewsFeed(false);
-    };
-
-    const handleBackClick = () => {
-        setShowFollowList(false);
-        showNewsFeed(true);
-    };
-
-    useEffect(() => {
-        console.log('UserProfile rendered')
-      });
-
   return (
     <>
-        {showFollowList ? (
-            <FollowList
-              followers={userInfo?.followers}
-              following={userInfo?.following}
-              listType={listType}
-              user={userInfo}
-              onBackClick={handleBackClick}
-            />
-        ) : (
-            <ProfileCard>
-                <div className="flex spacer">
-                    <div>
-                        <UserImage src={userProfileImg} />
-                    </div>
-                    <div>
-                    {isCurrentUser ? (
-                        <Button onClick={toggleEditProfile} >Edit profile</Button>
-                     ) : (
-                          <FollowButton user={userInfo?.uid} />
-                     )}
-                    </div>
+        <ProfileCard>
+            <div className="flex spacer">
+                <div>
+                    <UserImage src={userProfileImg} />
                 </div>
-                <div className="flex column">
-                    <Title>{localDisplayName}</Title>
-                    <UserHandle>{localHandle}</UserHandle>
-                    <CountsDiv>
-                        <button id='following' onClick={handleFollowCountClick} >
-                            <span>{userInfo?.following.length}</span>Following
-                        </button>
-                        <button id='followers' onClick={handleFollowCountClick} >
-                            <span>{userInfo?.followers.length}</span>Followers
-                        </button>
-                    </CountsDiv>
-                    <UserProfileControls showLikes={showLikes} />
+                <div>
+                {isCurrentUser ? (
+                    <Button onClick={toggleEditProfile} >Edit profile</Button>
+                ) : (
+                    <FollowButton user={userInfo?.uid} />
+                )}
                 </div>
-                {editProfile && (
-                <EditProfile onUpdateUser={handleUpdateUser} 
-                toggleClose={toggleEditProfile}
-                user={userInfo}
-                setLocalHandle={setLocalHandle}
-                localHandle={localHandle}
-                setLocalDisplayName={setLocalDisplayName}
-                localDisplayName={localDisplayName}
-                updateUserProfileImg={setUserProfileImg} />)}
-            </ProfileCard>
-        )}
+            </div>
+            <div className="flex column">
+                <Title>{localDisplayName}</Title>
+                <UserHandle>{localHandle}</UserHandle>
+                <CountsDiv>
+                    <StyledLink to={`/profile/${userInfo.uid}/following`} >
+                        <span>{userInfo?.following.length}</span>Following
+                    </StyledLink>
+                    <StyledLink to={`/profile/${userInfo.uid}/followers`} >
+                        <span>{userInfo?.followers.length}</span>Followers
+                    </StyledLink>
+                </CountsDiv>
+                <UserProfileControls userUid={userInfo.uid} />
+            </div>
+            {editProfile && (
+            <EditProfile onUpdateUser={handleUpdateUser} 
+            toggleClose={toggleEditProfile}
+            user={userInfo}
+            setLocalHandle={setLocalHandle}
+            localHandle={localHandle}
+            setLocalDisplayName={setLocalDisplayName}
+            localDisplayName={localDisplayName}
+            updateUserProfileImg={setUserProfileImg} />)}
+        </ProfileCard>
+        <TweetFetcher fetchDataFunction={() => fetchUserTweetsAndLikes(userInfo.uid)} showLikes={showLikes} showType='userTweets' />
     </>
-  )
-}
+  );
+};
 
 export default UserProfile

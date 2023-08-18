@@ -5,6 +5,7 @@ import { useUserProfileClick } from 'hooks/useUserProfileClick';
 import styled from 'styled-components';
 import { UserImage, Name, Handle } from '../styles/tweetStyles';
 import useUserInfo from 'hooks/useUserInfo';
+import { useNavigate } from 'react-router-dom';
 
 const UserCard = styled.div`
  width: 100%;
@@ -21,13 +22,10 @@ const Container = styled.div`
 
 const UserInfoCard = ({ uid, onBackClick }) => {
   const { userInfo, loading } = useUserInfo(uid);
+  const navigate = useNavigate();
+  // const handleUserProfileClick = useUserProfileClick();
 
   const handleUserProfileClick = useUserProfileClick();
-
-  const handleUserProfileClickWithBackClick = () => {
-    onBackClick();
-    handleUserProfileClick(uid);
-  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -35,10 +33,10 @@ const UserInfoCard = ({ uid, onBackClick }) => {
 
   return (
     <UserCard>
-      <UserImage src={userInfo?.profileImg} onClick={handleUserProfileClickWithBackClick} />
+      <UserImage src={userInfo?.profileImg} onClick={() => handleUserProfileClick(uid)} />
       <div className='flex column' >
         <Name>{userInfo?.displayName}</Name>
-        <Handle onClick={handleUserProfileClickWithBackClick}>{userInfo?.userHandle}</Handle>
+        <Handle onClick={() => handleUserProfileClick(uid)}>{userInfo?.userHandle}</Handle>
       </div>
       <Container>
         <FollowButton user={uid} />

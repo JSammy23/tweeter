@@ -1,5 +1,6 @@
 import { updateDoc, deleteDoc, getDocs, addDoc, arrayRemove, arrayUnion, collection, doc, where, query, increment, orderBy, runTransaction } from 'firebase/firestore'; 
 import db from 'services/storage';
+import { fetchFromFirestore } from './firebaseUtils';
 
 // ***********/ Retweet Tweet /**************/
 
@@ -144,4 +145,73 @@ export const reduceReplyCount = async (tweetId) => {
         }
         transaction.update(tweetRef, { replies: currentReplyCount });
     });
+};
+
+// **************** Grab Tweet Id's ******************* //
+
+export const fetchFromUserSubCollection = async (userUid, collectionName) => {
+    // 1. Fetch data from the specified user's sub-collection
+    const subCollectionRef = collection(db, 'users', userUid, collectionName);
+    const subCollectionQuery = query(subCollectionRef);
+    const subCollectionSnapshot = await getDocs(subCollectionQuery);
+    const subCollectionData = subCollectionSnapshot.docs.map(doc => doc.data());
+    const tweetIds = subCollectionData.map((data) => data.tweetID);
+    
+    // 2. Use the tweetID values to get the actual tweets
+    const tweetsRef = collection(db, 'tweets');
+    const tweetsQuery = query(tweetsRef, where('__name__', 'in', tweetIds));
+    const tweetsSnapshot = await getDocs(tweetsQuery);
+
+    // 3. Combine the two arrays based on the tweetID
+    const tweetsData = tweetsSnapshot.docs.map(doc => doc.data());
+    const combinedData = subCollectionData.map(subItem => {
+        const tweet = tweetsData.find(t => t.id === subItem.tweetID);
+        if (!tweet) return null;
+        return {
+            ...tweet,
+            subCollectionDate: subItem.date
+        };
+    }).filter(item => item !== null);
+
+    // 4. Sort the combined array based on the subCollectionDate values
+    combinedData.sort((a, b) => b.subCollectionDate - a.subCollectionDate);
+
+    return combinedData;
+}
+
+export const fetchUserTweetsAndLikes = async (userUid) => {
+    const userTweets = await fetchFromUserSubCollection(userUid, 'tweetBucket');
+    const userLikes = await fetchFromUserSubCollection(userUid, 'likes');
+    return {
+        userTweets,
+        userLikes
+    };
+};
+
+export const fetchSubscribedTweets = async (usersFollowingUidArray) => {
+    const subscribedTweets = [];
+    const fetchUserTweetsPromise = usersFollowingUidArray.map(async (user) => {
+        const followedUserTweetBucketTweets = await fetchFromUserSubCollection(user, 'tweetBucket');
+        followedUserTweetBucketTweets.forEach((tweet) => {
+            const isDuplicate = subscribedTweets.some((existingTweet) => existingTweet.id === tweet.id);
+            if (!isDuplicate) {
+                subscribedTweets.push(tweet);
+            }
+        });
+    });
+    await Promise.all(fetchUserTweetsPromise);
+
+    return {
+        subscribedTweets
+    };
+}
+
+export const fetchExploreTweets = async () => {
+    const recentTweets = await fetchFromFirestore('tweets', [
+        ['isReply', '==', false],
+        ['date', 'orderBy', 'desc']
+    ]);
+    return {
+        recentTweets
+    };
 };

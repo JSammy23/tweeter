@@ -22,10 +22,10 @@ const CommentsButton = ({ tweet, onClick }) => {
   const [repliesCount, setRepliesCount] = useState(tweet.replies || 0);
 
   useEffect(() => {
-    if (activeFilter === 'thread' && activeThread?.id === tweet.id && localReplyCount > repliesCount) {
+    if (activeFilter === 'thread' && activeThread?.id === tweet.id && localReplyCount !== repliesCount) {
       setRepliesCount(localReplyCount);
     }
-  }, [activeFilter, activeThread, localReplyCount]);
+  }, [activeFilter, activeThread, tweet.id, localReplyCount, repliesCount]);
 
   return (
     <div onClick={onClick}>
