@@ -39,6 +39,11 @@ const FeedContainer = styled.div`
   width: 100vw;
  }
 
+ @media (min-width: 683px) and (max-width: 838px) {
+    /* flex-shrink: 0; */
+    min-width: 600px;
+  }
+
  /* Hide the scrollbar */
  &::-webkit-scrollbar {
     width: 0em;
