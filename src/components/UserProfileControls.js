@@ -1,9 +1,8 @@
-import React, { useContext, useState } from 'react';
-import { AppContext } from 'services/appContext';
+import { useLocation, Link } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-const StyledTab = styled.button`
+const StyledTab = styled(Link)`
  background-color: transparent;
  color: ${props => props.active ? props.theme.colors.primary : props.theme.colors.secondary};
  border: none;
@@ -12,35 +11,27 @@ const StyledTab = styled.button`
  font-size: 1em;
  margin-top: 1em;
  cursor: pointer;
+ text-decoration: none;
 `;
 
 
-const UserProfileControls = ({ showLikes }) => {
-    const [activeTab, setActiveTab] = useState('userTweets');
-    const { setActiveFilter } = useContext(AppContext);
+const UserProfileControls = ({ userUid }) => {
+    const location = useLocation();
+    const activeTab = location.pathname.endsWith('/likes') ? 'userLikes' : 'userTweets';
 
     const navItems = [
-        {id: 'userTweets', text: 'Tweets'},
-        {id: 'userLikes', text: 'Likes'},
-    ];
-
-    const handleClick = (itemId) => {
-        setActiveTab(itemId);
-    
-        if (itemId === 'userLikes') {
-          showLikes(true);
-        } else {
-          showLikes(false); 
-        }
-    };
+      {id: 'userTweets', text: 'Tweets', link: `/profile/${userUid}`},
+      {id: 'userLikes', text: 'Likes', link: `/profile/${userUid}/likes`},
+  ];
 
   return (
     <div className='flex around'>
         {navItems.map((item) => (
             <StyledTab
             key={item.id}
+            as={Link}
+            to={item.link}
             active={item.id === activeTab}
-            onClick={() => handleClick(item.id)}
             >
                 {item.text}
             </StyledTab>

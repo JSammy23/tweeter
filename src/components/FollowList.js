@@ -1,5 +1,6 @@
 import React from 'react';
 import UserInfoCard from './UserInfoCard';
+import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 import { Header } from 'styles/styledComponents';
@@ -18,7 +19,9 @@ const StyledIcon = styled(FontAwesomeIcon)`
  }
 `;
 
-const FollowList = ({ user, followers, following, onBackClick, listType }) => {
+const FollowList = ({ user, followers, following, listType }) => {
+  const navigate = useNavigate();
+
   let userList = [];
 
   if (listType === 'followers') {
@@ -27,15 +30,19 @@ const FollowList = ({ user, followers, following, onBackClick, listType }) => {
     userList = following;
   };
 
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
   return (
     <div>
         <Header>
           <h2>{user.displayName}</h2>
           <h2>{user.userHandle}</h2>
-          <StyledIcon icon={faArrowLeft} onClick={onBackClick} />
+          <StyledIcon icon={faArrowLeft} onClick={handleBackClick} />
         </Header>
         {userList.map(uid => (
-        <UserInfoCard key={uid} uid={uid} onBackClick={onBackClick} />
+        <UserInfoCard key={uid} uid={uid} onBackClick={handleBackClick} />
       ))}
     </div>
   )

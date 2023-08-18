@@ -5,6 +5,7 @@ import StandardTweet from './StandardTweet';
 import Compose from './Compose';
 import { fetchReplies } from 'utilities/tweetUtilites';
 import { ThreadContext } from 'services/ThreadContext';
+import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 import { Header } from 'styles/styledComponents';
@@ -27,9 +28,10 @@ const StyledIcon = styled(FontAwesomeIcon)`
 // Back click is not working, prevFilter in Feedpage not working.
 // When thread changes, tweet interactions are not updating.
 
-const Thread = ({ onBackClick }) => {
+const Thread = () => {
   const { currentUser } = useContext(AppContext);
   const { activeThread, setReplies, replies, setLocalReplyCount } = useContext(ThreadContext);
+  const navigate = useNavigate();
   
   useEffect(() => {
     const getReplies = async () => {
@@ -58,11 +60,15 @@ const Thread = ({ onBackClick }) => {
     setLocalReplyCount((prevLocalReplyCount) => prevLocalReplyCount + 1);
   };
 
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
   return (
     <>
         <Header>
             <h2>Tweet</h2>
-            <StyledIcon icon={faArrowLeft} onClick={onBackClick} />
+            <StyledIcon icon={faArrowLeft} onClick={handleBackClick} />
         </Header>    
         <Tweet 
          key={activeThread.ID} 

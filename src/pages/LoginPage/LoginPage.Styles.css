@@ -95,8 +95,9 @@
 
 @media screen and (max-width: 488px) {
     .login-box {
-        width: 17em;
-        padding: 20px;
+      width: 90%;
+      padding: 20px;
+      font-size: .8em;
     }
 }
 

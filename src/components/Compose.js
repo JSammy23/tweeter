@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import db from 'services/storage';
 import { collection, addDoc, Timestamp,doc, updateDoc, runTransaction } from 'firebase/firestore';
 import TextEditor from './TextEditor';
 
 import styled from 'styled-components';
 import { TweetCard, UserImage } from '../styles/tweetStyles';
+import auth from 'services/auth';
+import { AppContext } from 'services/appContext';
 
 
 
@@ -25,7 +27,10 @@ const ComposeBody = styled.div`
 `;
 
 
-const Compose = ({ user, activeThread, isReply = false, addReply, action }) => {
+const Compose = ({ activeThread, isReply = false, addReply, action }) => {
+
+    const { currentUser } = useContext(AppContext);
+    const user = currentUser;
 
     const createTweet = async (text) => {
         const date =  new Date();

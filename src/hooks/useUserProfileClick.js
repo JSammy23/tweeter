@@ -1,25 +1,13 @@
-import {  useContext } from 'react';
-import { AppContext } from 'services/appContext';
-import { doc, getDoc } from 'firebase/firestore';
-import db from 'services/storage';
+import { useNavigate } from 'react-router-dom';
 
 export const useUserProfileClick = () => {
-    const { setActiveFilter, setViewedUser, setIsUserLoaded } = useContext(AppContext);
+    const navigate = useNavigate();
 
     const handleUserProfileClick = async (userID) => {
         try {
-            const userDocRef = doc(db, 'users', userID);
-            const userDocSnap = await getDoc(userDocRef);
-
-            if (userDocSnap.exists()) {
-                setViewedUser(userDocSnap.data());
-                setIsUserLoaded(true);
-                setActiveFilter('viewUser');
-            } else {
-                console.log('No such document!');
-            }
+            navigate(`/profile/${userID}`)
         } catch (error) {
-            console.log(error);
+            console.log(error)
         }
     };
 
