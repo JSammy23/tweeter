@@ -15,13 +15,13 @@ const StyledTab = styled(Link)`
 `;
 
 
-const UserProfileControls = ({ userId }) => {
+const UserProfileControls = ({ userUid }) => {
     const location = useLocation();
     const activeTab = location.pathname.endsWith('/likes') ? 'userLikes' : 'userTweets';
 
     const navItems = [
-      {id: 'userTweets', text: 'Tweets', link: `/profile/${userId}`},
-      {id: 'userLikes', text: 'Likes', link: `/profile/${userId}/likes`},
+      {id: 'userTweets', text: 'Tweets', link: `/profile/${userUid}`},
+      {id: 'userLikes', text: 'Likes', link: `/profile/${userUid}/likes`},
   ];
 
   return (
