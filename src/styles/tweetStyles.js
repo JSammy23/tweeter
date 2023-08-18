@@ -117,7 +117,10 @@ export const TweetBody = styled.div`
 export const TweetReactions = styled.div`
  display: flex;
  margin-top: .3em;
- gap: 1em;
+`;
+
+export const TweetReactionsCount = styled.span`
+ color: ${props => props.theme.colors.primary};
 `;
 
 export const StyledIcon = styled(FontAwesomeIcon)`

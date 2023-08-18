@@ -5,12 +5,13 @@ import { getRetweets, removeRetweet, addRetweet } from 'utilities/tweetUtilites'
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRetweet } from '@fortawesome/fontawesome-free-solid';
-import { TweetReactionsCount } from 'styles/styledComponents';
+import { TweetReactionsCount } from 'styles/tweetStyles';
 
 
 export const StyledIcon = styled(FontAwesomeIcon)`
  color: ${props => (props.active ? props.theme.colors.primary : props.theme.colors.secondary)};
  cursor: pointer;
+ margin: 0 .5em;
 `;
 
 const Retweet = ({ tweet }) => {

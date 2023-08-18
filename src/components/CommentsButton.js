@@ -3,13 +3,14 @@ import React, { useContext, useState, useEffect } from 'react'
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment } from '@fortawesome/fontawesome-free-regular';
-import { TweetReactionsCount } from 'styles/styledComponents';
+import { TweetReactionsCount } from 'styles/tweetStyles';
 import { ThreadContext } from 'services/ThreadContext';
 import { AppContext } from 'services/appContext';
 
 const StyledIcon = styled(FontAwesomeIcon)`
  color: ${props => props.theme.colors.secondary};
  cursor: pointer;
+ margin: 0 .5em;
 
  &:hover {
     color:  ${props => props.theme.colors.primary};
