@@ -9,12 +9,15 @@ const TweetFetcher = ({ userUid, showLikes, fetchDataFunction, showType }) => {
         subscribedTweets: [],
         recentTweets: []
     });
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const fetchTweets = async () => {
             try {
+                setIsLoading(true);
                 const data = await fetchDataFunction();
                 setTweetData(data);
+                setIsLoading(false);
             } catch (error) {
                 console.error("Error fetching tweets:", error);
             }
@@ -51,6 +54,10 @@ const TweetFetcher = ({ userUid, showLikes, fetchDataFunction, showType }) => {
     
         return mapTweetsToComponents(tweets);
     };
+
+    if (isLoading) {
+        return <div style={{color: 'lime'}} >Loading...</div>
+    }
 
   return (
     <div>{renderTweets()}</div>
