@@ -11,7 +11,7 @@ import auth from 'services/auth';
 
 
 const Header = styled.header`
- background-color: ${props => props.theme.colors.bgDark};
+ background-color: ${props => props.theme.colors.bgVeryDark};
  display: flex;
  flex-direction: column;
  height: 100vh;

@@ -2,7 +2,7 @@ import styled from "styled-components"
 
 
 export const Background = styled.div`
-background-color: ${props => props.theme.colors.bgDark};
+background-color: ${props => props.theme.colors.bgVeryDark};
 width: 100vw;
 height: 100vh;
 `;
@@ -80,7 +80,7 @@ export const Module = styled.div`
  border-radius: 10px;
  padding: 2em;
  z-index: 999;
- background-color: ${props => props.theme.colors.bgDark};
+ background-color: ${props => props.theme.colors.bgVeryDark};
 
  @media (max-width: 400px) {
     padding: 1.3em;
