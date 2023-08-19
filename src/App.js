@@ -9,6 +9,7 @@ import ExploreContent from "components/ExploreContent";
 import Thread from "components/Thread";
 import ProfileContent from "components/ProfileContent";
 import SearchContent from "components/SearchContent";
+import LandingPage from "pages/LandingPage/LandingPage";
 
 
 function App() {
@@ -16,7 +17,8 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route 
           path="/*"
