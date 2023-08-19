@@ -3,6 +3,7 @@
   --secondary: #357266;
   --bg-light: #edf5fc;
   --bg-dark: #1e1e24;
+  --bg-veryDark: #121212;
   --accent: #63adf2;
 }
 
@@ -13,7 +14,7 @@
 }
 
 body {
-  background-color: #1e1e24;
+  background-color: var(--bg-veryDark);
 }
 
 /* Utilities */

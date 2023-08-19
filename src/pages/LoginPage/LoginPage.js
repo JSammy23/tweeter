@@ -3,12 +3,7 @@ import { login } from "services/auth";
 import { useNavigate, Link } from "react-router-dom";
 import './LoginPage.Styles.css'; 
 import styled from "styled-components";  
-
-const Background = styled.div`
-    background-color: ${props => props.theme.colors.bgDark};
-    width: 100vw;
-    height: 100vh;
-`
+import { Background } from 'styles/styledComponents';
 
 
 // TODO:
@@ -43,9 +38,6 @@ const LoginPage = () => {
             e.target.parentElement.classList.remove('has-value');
         }
     };
-
-    
-
 
   return (
     <Background>

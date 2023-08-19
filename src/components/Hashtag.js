@@ -1,4 +1,6 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 import styled from 'styled-components';
 
@@ -14,9 +16,15 @@ const StyledHashtag = styled.span`
 const Hashtag = (props) => {
     const { entityKey, contentState, children } = props;
     const { hashtag } = contentState.getEntity(entityKey).getData();
+    const navigate = useNavigate();
+
+    const navigateToSearch = () => {
+        // Navigate to the search component with the hashtag as a parameter
+        navigate(`/search?tag=${encodeURIComponent(hashtag)}`);
+    }
   
     return (
-      <StyledHashtag onClick={() => console.log("Hashtag Clicked: " + hashtag)}>
+      <StyledHashtag onClick={navigateToSearch}>
         {children}
       </StyledHashtag>
     );
