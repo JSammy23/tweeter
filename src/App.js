@@ -8,6 +8,7 @@ import UserProfile from "components/UserProfile";
 import ExploreContent from "components/ExploreContent";
 import Thread from "components/Thread";
 import ProfileContent from "components/ProfileContent";
+import SearchContent from "components/SearchContent";
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
                 <Route path="/explore" element={<ExploreContent/>} />
                 <Route path="/profile/:userUid/*" element={<ProfileContent/>} />
                 <Route path="/thread/:activeThread" element={<Thread />} />
+                <Route path="/search" element={<SearchContent />} />
                 </Routes>
               </FeedPage>
             </PrivateRoute>
